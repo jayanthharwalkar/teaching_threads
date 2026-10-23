@@ -1,0 +1,302 @@
+<title>Kainchi Prototype</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;1,500&family=Jost:wght@300;400;500&display=swap">
+<style>
+/* Layout: the minimal direction (off-white, ink, no accent). Hero: copy left, dot-matrix 3D kainchi right. Then a pinned section where a measuring tape unrolls to 20. */
+:root{
+  --paper:#F3F1EC; --ink:#141414; --body:#3B3935; --muted:#77736B; --line:#D9D5CC;
+  --f-display:'Cormorant Garamond',Georgia,serif; --f-body:'Jost',system-ui,sans-serif;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:var(--f-body);font-weight:300;font-size:17px;line-height:1.6}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--paper)}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
+.wrap{max-width:1240px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+
+.proto{border-bottom:1px solid var(--line);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.proto .wrap{padding-block:8px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+
+.hdr .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:16px;padding-block:20px;border-bottom:1px solid var(--line)}
+.logo{display:flex;align-items:center;gap:12px;text-decoration:none;line-height:1.1}
+.logo svg{stroke:currentColor}
+.logo b{display:block;font-family:var(--f-display);font-weight:500;font-size:21px;letter-spacing:.1em}
+.logo small{display:block;font-size:10px;letter-spacing:.36em}
+.nav{display:flex;flex-wrap:wrap;gap:24px;font-size:14px;align-items:center}
+.nav a{text-decoration:none}
+.nav .cta{padding:10px 18px;border:1px solid var(--ink)}
+
+.hero .wrap{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,440px),1fr));gap:24px 56px;align-items:center;padding-block:40px 64px}
+.hero-txt{display:flex;flex-direction:column;gap:24px;min-width:0}
+.eyebrow{margin:0;font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
+h1{margin:0;font-family:var(--f-display);font-weight:500;font-size:clamp(54px,6.6vw,104px);line-height:.96;text-wrap:balance}
+h1 em{font-style:italic}
+.lede{margin:0;max-width:32em;color:var(--body);font-size:18px}
+.ctas{display:flex;flex-wrap:wrap;gap:12px}
+.btn,.btn2{text-decoration:none;font-size:14px;font-weight:500;letter-spacing:.04em;padding:15px 26px;border:1px solid var(--ink)}
+.btn{background:var(--ink);color:var(--paper)}
+.stage{position:relative;min-width:0}
+.stage canvas{display:block;width:100%;aspect-ratio:1;max-width:100%;cursor:pointer;touch-action:pan-y}
+.hint{position:absolute;left:0;bottom:4px;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+
+.tape-sec{height:240vh;position:relative;border-top:1px solid var(--line)}
+.tape-pin{position:sticky;top:env(safe-area-inset-top,0px);height:100vh;display:flex;flex-direction:column;justify-content:center;gap:28px;overflow:hidden}
+.tape-head{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px 36px;align-items:end}
+.count{font-family:var(--f-display);font-weight:500;font-size:clamp(120px,17vw,240px);line-height:.8;font-variant-numeric:lining-nums tabular-nums;min-width:2ch}
+.tape-head h2{margin:0;font-family:var(--f-display);font-weight:500;font-size:clamp(32px,4vw,56px);line-height:1.05;text-wrap:balance}
+.tape-head h2 em{font-style:italic}
+.tape-head p{margin:12px 0 0;max-width:34em;color:var(--body)}
+#tape{display:block;width:100%;height:clamp(140px,22vw,220px)}
+@media (max-width:640px){.tape-head{grid-template-columns:1fr}}
+
+@media (max-width:640px){
+  .proto .wrap span+span{display:none}
+  .nav a:not(.cta){display:none}
+  .nav .cta{padding:8px 14px;font-size:13px}
+  .logo b{font-size:17px}.logo small{font-size:9px}
+  .hdr .wrap{flex-wrap:nowrap;padding-block:14px}
+  .hero .wrap{padding-block:8px 48px;gap:8px}
+  .stage{order:-1;margin-inline:-8px}
+  .hint{position:static;display:block;text-align:center;margin-top:-4px}
+  h1{font-size:clamp(44px,12.5vw,60px)}
+  .lede{font-size:16px}
+  .tape-pin{height:100svh;gap:20px}
+  .count{font-size:112px;line-height:.85}
+  .tape-head{gap:16px}
+  .tape-head p{font-size:15px}
+  #tape{height:170px}
+}
+.next .wrap{padding-block:96px 120px;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:12px}
+.next p{margin:0;max-width:40em;color:var(--body)}
+
+.ctrl{position:fixed;right:max(16px,env(safe-area-inset-right,0px));bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:20;background:var(--paper);border:1px solid var(--ink);font-size:12px;max-width:calc(100vw - 32px)}
+.ctrl summary{cursor:pointer;list-style:none;padding:8px 12px;letter-spacing:.14em;text-transform:uppercase}
+.ctrl summary::-webkit-details-marker{display:none}
+.ctrl summary::after{content:" +"}.ctrl[open] summary::after{content:" −"}
+.ctrl .in{display:flex;flex-direction:column;gap:8px;padding:0 12px 12px}
+.ctrl span{letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.seg{display:flex;flex-wrap:wrap}
+.seg button{font:inherit;font-size:12px;cursor:pointer;background:transparent;color:var(--ink);border:1px solid var(--line);padding:6px 10px;margin:0 -1px -1px 0}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+
+</style>
+
+<div class="proto"><div class="wrap"><span>Prototype 01 · Kainchi + tape</span><span>Teaching Threads · draft</span></div></div>
+
+<header class="hdr"><div class="wrap">
+  <a class="logo" href="#" onclick="return false"><svg width="34" height="26" viewBox="0 0 44 34" fill="none" stroke-width="1.5" aria-hidden="true"><path d="M22 3 L22 33"></path><path d="M22 6 C16 1 7 3 8 9 C9 13 15 11 13 7"></path><path d="M22 6 C28 2 37 2 36 7 C35 10 31 9 30 7"></path></svg><span><b>TEACHING THREADS</b><small>FASHION ACADEMY</small></span></a>
+  <nav class="nav" aria-label="Main"><a href="#" onclick="return false">Courses</a><a href="#" onclick="return false">Your teacher</a><a href="#" onclick="return false">Fees &amp; dates</a><a class="cta" href="#" onclick="return false">Book a visit</a></nav>
+</div></header>
+
+<section class="hero"><div class="wrap">
+  <div class="hero-txt">
+    <p class="eyebrow">Taught by Shruti Mahajan · Hubballi</p>
+    <h1>From first stitch <em>to first sale.</em></h1>
+    <p class="lede">A hands-on fashion academy. Learn to measure, cut, embroider and finish from a working couturier, and leave with a collection and a plan for your own label.</p>
+    <div class="ctas"><a class="btn" href="#" onclick="return false">See the courses</a><a class="btn2" href="#" onclick="return false">Book a studio visit</a></div>
+  </div>
+  <div class="stage">
+    <canvas id="kainchi" aria-label="Tailor's shears drawn in dots, slowly turning and snipping"></canvas>
+    <span class="hint">Tap to snip · move to tilt</span>
+  </div>
+</div></section>
+
+<section class="tape-sec" id="tapeSec">
+  <div class="tape-pin"><div class="wrap" style="display:flex;flex-direction:column;gap:28px;width:100%">
+    <div class="tape-head">
+      <span class="count" id="count" aria-hidden="true">0</span>
+      <div>
+        <h2>Twenty years inside the industry. <em>Now at your cutting table.</em></h2>
+        <p>From her own label to the ramp at the Kerala Fashion League. Everything she learned outside the books, taught at the table.</p>
+      </div>
+    </div>
+    <canvas id="tape" aria-label="A measuring tape unrolling to the 20 inch mark"></canvas>
+  </div></div>
+</section>
+
+<section class="next"><div class="wrap">
+  <p class="eyebrow">End of prototype</p>
+  <p>Next sections to design: curriculum, courses, the Forest Fury archive, press, and the enquiry form.</p>
+</div></section>
+
+<details class="ctrl" id="ctrl"><summary>Texture</summary><div class="in" role="group" aria-label="Prototype controls">
+  <span>Texture</span>
+  <div class="seg" id="segStyle"><button type="button" data-v="dots" aria-pressed="true">Dots</button><button type="button" data-v="cross" aria-pressed="false">Cross-stitch</button><button type="button" data-v="type" aria-pressed="false">Type</button></div>
+  <span>Grain</span>
+  <div class="seg" id="segGrain"><button type="button" data-v="5" aria-pressed="false">Fine</button><button type="button" data-v="7" aria-pressed="true">Medium</button><button type="button" data-v="10" aria-pressed="false">Coarse</button></div>
+</div></details>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+const INK = '#141414';
+const opt = { style: 'dots', cell: 7 };
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const RAMP = ' .:-=+*#%@';
+
+// Draws a bright-on-black source as ink marks on the paper, one mark per cell.
+function dotify(src, out, cell) {
+  const dpr = Math.min(devicePixelRatio || 1, 2);
+  const w = out.clientWidth, h = out.clientHeight;
+  if (out.width !== Math.round(w * dpr) || out.height !== Math.round(h * dpr)) { out.width = Math.round(w * dpr); out.height = Math.round(h * dpr); }
+  const cols = Math.max(1, Math.floor(w / cell)), rows = Math.max(1, Math.floor(h / cell));
+  const s = dotify.tmp || (dotify.tmp = document.createElement('canvas'));
+  s.width = cols; s.height = rows;
+  const sc = s.getContext('2d', { willReadFrequently: true });
+  sc.clearRect(0, 0, cols, rows);
+  sc.drawImage(src, 0, 0, cols, rows);
+  const px = sc.getImageData(0, 0, cols, rows).data;
+  const c = out.getContext('2d');
+  c.setTransform(dpr, 0, 0, dpr, 0, 0);
+  c.clearRect(0, 0, w, h);
+  c.fillStyle = INK; c.strokeStyle = INK;
+  const ox = (w - cols * cell) / 2, oy = (h - rows * cell) / 2;
+  if (opt.style === 'type') { c.font = `500 ${cell * 1.25}px ui-monospace, Menlo, monospace`; c.textAlign = 'center'; c.textBaseline = 'middle'; }
+  else c.beginPath();
+  c.lineWidth = Math.max(1, cell * 0.16); c.lineCap = 'round';
+  for (let y = 0; y < rows; y++) for (let x = 0; x < cols; x++) {
+    const i = (y * cols + x) * 4;
+    const v = (px[i] * 0.3 + px[i + 1] * 0.59 + px[i + 2] * 0.11) / 255 * (px[i + 3] / 255);
+    if (v < 0.07) continue;
+    const cx = ox + x * cell + cell / 2, cy = oy + y * cell + cell / 2;
+    if (opt.style === 'dots') {
+      const r = cell * 0.5 * Math.min(1, Math.pow(v * 1.1, 0.85));
+      c.moveTo(cx + r, cy); c.arc(cx, cy, r, 0, Math.PI * 2);
+    } else if (opt.style === 'cross') {
+      const a = cell * 0.42 * Math.min(1, 0.35 + v);
+      if (v < 0.3) { c.moveTo(cx - a, cy + a); c.lineTo(cx + a, cy - a); }
+      else { c.moveTo(cx - a, cy - a); c.lineTo(cx + a, cy + a); c.moveTo(cx - a, cy + a); c.lineTo(cx + a, cy - a); }
+    } else {
+      c.fillText(RAMP[Math.min(RAMP.length - 1, Math.floor(v * RAMP.length))], cx, cy);
+    }
+  }
+  if (opt.style === 'dots') c.fill(); else if (opt.style === 'cross') c.stroke();
+}
+
+/* ---------- Kainchi: two extruded steel halves on a pivot ---------- */
+const kOut = document.getElementById('kainchi');
+const gl = new THREE.WebGLRenderer({ antialias: false, alpha: false, preserveDrawingBuffer: true });
+gl.setPixelRatio(1); gl.setClearColor(0x000000, 1);
+const scene = new THREE.Scene();
+const cam = new THREE.PerspectiveCamera(30, 1, 0.1, 100);
+cam.position.set(0, 0, 23);
+scene.add(new THREE.AmbientLight(0xffffff, 0.22));
+const key = new THREE.DirectionalLight(0xffffff, 1.15); key.position.set(-4, 6, 8); scene.add(key);
+const rim = new THREE.DirectionalLight(0xffffff, 0.5); rim.position.set(6, -3, 4); scene.add(rim);
+const steel = new THREE.MeshStandardMaterial({ color: 0xffffff, metalness: 0.35, roughness: 0.42 });
+
+function half(loopR, loopIn, flip) {
+  const g = new THREE.Group();
+  const s = flip ? -1 : 1;
+  const blade = new THREE.Shape();
+  [[-0.5, 0.05], [0.6, 0.5], [3.4, 0.46], [6.0, 0.2], [7.2, 0.0], [6.2, -0.04], [0.6, -0.04], [-0.5, -0.1]]
+    .forEach(([x, y], i) => i ? blade.lineTo(x, y * s) : blade.moveTo(x, y * s));
+  const shank = new THREE.Shape();
+  [[0.2, 0.05], [-0.5, -0.35], [-2.1, -0.95], [-2.2, -0.45], [-0.6, 0.1]]
+    .forEach(([x, y], i) => i ? shank.lineTo(x, y * s) : shank.moveTo(x, y * s));
+  const ring = new THREE.Shape(); const cx = -2.2 - loopR * 0.85, cy = -0.95 * s;
+  ring.absellipse(cx, cy, loopR * 1.15, loopR, 0, Math.PI * 2, false, 0);
+  const hole = new THREE.Path(); hole.absellipse(cx, cy, loopIn * 1.2, loopIn, 0, Math.PI * 2, true, 0);
+  ring.holes.push(hole);
+  const ex = { depth: 0.2, bevelEnabled: true, bevelThickness: 0.05, bevelSize: 0.05, bevelSegments: 2, curveSegments: 28 };
+  [blade, shank, ring].forEach(sh => g.add(new THREE.Mesh(new THREE.ExtrudeGeometry(sh, ex), steel)));
+  return g;
+}
+const kainchi = new THREE.Group();
+const A = half(0.95, 0.62, false), B = half(1.2, 0.85, true);
+B.position.z = 0.32;
+const screw = new THREE.Mesh(new THREE.CylinderGeometry(0.32, 0.32, 0.7, 24), steel);
+screw.rotation.x = Math.PI / 2; screw.position.z = 0.2;
+kainchi.add(A, B, screw);
+kainchi.position.set(-1.6, 0, -0.2);
+const spin = new THREE.Group(); spin.add(kainchi);
+const tilt = new THREE.Group(); tilt.add(spin); scene.add(tilt);
+
+let pointer = { x: 0, y: 0 }, snipAt = -10, t0 = performance.now();
+kOut.addEventListener('pointermove', e => { const r = kOut.getBoundingClientRect(); pointer.x = (e.clientX - r.left) / r.width - 0.5; pointer.y = (e.clientY - r.top) / r.height - 0.5; });
+kOut.addEventListener('pointerleave', () => { pointer.x = pointer.y = 0; });
+kOut.addEventListener('click', () => { snipAt = (performance.now() - t0) / 1000; });
+
+const ease = x => 1 - Math.pow(1 - Math.min(1, Math.max(0, x)), 3);
+function openness(t) {
+  // Idle: a slow snip every 3.2s. A click starts an extra snip right away.
+  const since = t - snipAt;
+  const p = since < 1.2 ? since / 1.2 * 3.2 : (t % 3.2);
+  return p < 0.18 ? 1 - p / 0.18 : ease((p - 0.35) / 1.4);
+}
+function hero(now) {
+  const t = (now - t0) / 1000;
+  const r = kOut.getBoundingClientRect();
+  if (r.bottom < 0 || r.top > innerHeight) return;
+  const cell = opt.cell;
+  const cols = Math.max(1, Math.floor(r.width / cell)), rows = Math.max(1, Math.floor(r.height / cell));
+  gl.setSize(cols * 2, rows * 2, false);
+  cam.aspect = r.width / r.height; cam.updateProjectionMatrix();
+  const scroll = Math.min(1, Math.max(0, -r.top / r.height));
+  const open = reduce ? 0.7 : openness(t);
+  const ang = 0.05 + open * 0.42;
+  A.rotation.z = ang / 2; B.rotation.z = -ang / 2;
+  spin.rotation.set(0, reduce ? 0.5 : t * 0.7 + scroll * Math.PI * 2, 0);
+  tilt.rotation.set(-0.25 + pointer.y * 0.5, pointer.x * 0.6, 0.55);
+  gl.render(scene, cam);
+  dotify(gl.domElement, kOut, cell);
+}
+
+/* ---------- Tape: drawn white-on-black, then dotted ---------- */
+const tOut = document.getElementById('tape'), tSec = document.getElementById('tapeSec'), countEl = document.getElementById('count');
+const tSrc = document.createElement('canvas');
+function tape() {
+  const w = tOut.clientWidth, h = tOut.clientHeight;
+  const r = tSec.getBoundingClientRect();
+  const p = Math.min(1, Math.max(0, -r.top / (r.height - innerHeight)));
+  const reach = reduce ? 1 : ease(p / 0.85);
+  const inches = 20 * reach;
+  countEl.textContent = Math.floor(inches + 0.0001);
+  tSrc.width = w; tSrc.height = h;
+  const c = tSrc.getContext('2d');
+  c.fillStyle = '#000'; c.fillRect(0, 0, w, h);
+  const caseR = h * 0.3, unit = Math.max(52, (w - caseR * 2.4) / 21.2);
+  const endAbs = (inches + 0.7 * reach) * unit, left = -Math.max(0, endAbs + caseR * 2.3 - w), end = left + endAbs, bandY = h * 0.3, bandH = h * 0.42;
+  // tape band
+  c.fillStyle = '#fff'; c.fillRect(left, bandY, end - left, bandH);
+  c.fillStyle = '#000';
+  for (let i = 0; i <= Math.floor(inches * 8); i++) {
+    const x = left + i * unit / 8, major = i % 8 === 0, half = i % 4 === 0;
+    c.fillRect(x - (major ? 1.5 : 0.75), bandY, major ? 3 : 1.5, bandH * (major ? 0.3 : half ? 0.2 : 0.12));
+  }
+  const step = 1;
+  c.font = `600 ${Math.min(bandH * 0.5, unit * 0.6)}px Jost, system-ui, sans-serif`; c.textAlign = 'center'; c.textBaseline = 'alphabetic';
+  for (let n = step; n <= Math.floor(inches); n += step) c.fillText(n, left + n * unit, bandY + bandH * 0.86);
+  // the 20 mark, circled once reached
+  if (inches >= 19.99) { c.strokeStyle = '#fff'; c.lineWidth = Math.max(3, h * 0.025); c.beginPath(); c.ellipse(left + 20 * unit, bandY + bandH * 0.68, Math.max(unit * 0.6, bandH * 0.45), bandH * 0.62, -0.12, 0, Math.PI * 2); c.stroke(); }
+  // the tape case rides the free end
+  const cx = end + caseR * 1.05, cy = bandY + bandH / 2;
+  const g = c.createRadialGradient(cx - caseR * 0.3, cy - caseR * 0.35, caseR * 0.1, cx, cy, caseR);
+  g.addColorStop(0, '#fff'); g.addColorStop(1, '#8a8a8a');
+  c.fillStyle = g; c.beginPath(); c.arc(cx, cy, caseR, 0, Math.PI * 2); c.fill();
+  c.fillStyle = '#000'; c.beginPath(); c.arc(cx, cy, caseR * 0.7, 0, Math.PI * 2); c.fill();
+  c.save(); c.translate(cx, cy); c.rotate(-inches * 0.9);
+  c.fillStyle = '#d0d0d0'; c.beginPath(); c.arc(0, -caseR * 0.36, caseR * 0.14, 0, Math.PI * 2); c.fill();
+  c.restore();
+  dotify(tSrc, tOut, w < 640 ? 3 : Math.max(3, opt.cell - 3));
+}
+
+function frame(now) { hero(now); tape(); if (!reduce) requestAnimationFrame(frame); }
+requestAnimationFrame(frame);
+if (reduce) { addEventListener('scroll', () => requestAnimationFrame(frame), { passive: true }); addEventListener('resize', () => requestAnimationFrame(frame)); }
+
+function seg(id, key, parse) {
+  const el = document.getElementById(id);
+  el.addEventListener('click', e => {
+    const b = e.target.closest('button'); if (!b) return;
+    opt[key] = parse(b.dataset.v);
+    el.querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', x === b));
+    if (reduce) requestAnimationFrame(frame);
+  });
+}
+if (innerWidth > 640) document.getElementById('ctrl').open = true;
+seg('segStyle', 'style', v => v);
+seg('segGrain', 'cell', Number);
+</script>
