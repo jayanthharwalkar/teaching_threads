@@ -4,19 +4,19 @@ Decided 2026-10-25. Prompts are in `nano-banana-prompts.md`; prototype is `proto
 
 ## What we're making
 
-A first-person (POV) shot of a student working through the course, played as the reader scrolls through the modules. The reader is the student: measure on the dress form, sit at the machine and sew, then cut. Quick whip pans carry them from one object to the next.
+A first-person (POV) shot of a student working through the course, played as the reader scrolls through the modules. The reader is the student: measure on the dress form, sit at the machine and sew, then cut. Slow camera moves carry them from one object to the next.
 
 ## Decisions
 
 - **No room.** The warm brown studio (Prototype 05) clashed with the site, and a clay-white room (tried 2026-10-25, `nano banana images/image.png`) still looked ugly: walls, doorway and window add clutter. Objects float in an endless backdrop in the site's own colours.
 - **Flat backdrop, no shadows.** Background is the page colour (#F3F1EC) everywhere, with no floor, no horizon and no cast or contact shadows, so the section merges into the page. Objects keep soft shading on their own surfaces so they still read as 3D.
-- **Whip pans between objects.** Transitions don't need to be continuous or exact: a fast pan with motion blur hides the cut. That means each object is its own still and clip, with no floor plan to keep consistent. The whip can be done in the browser (blur + slide between frame sequences), so the video tool only has to make clean clips.
+- **Camera moves between objects, not whip pans** (changed 2026-10-25). A whip pan felt like an edit cut. Instead the camera pulls back from one object, drifts across the empty backdrop and settles on the next, like a person turning to the next tool. Made in Kling with start and end frames: start = last frame of the previous clip, end = first frame of the next, one simple move per prompt. Cheaper model (2.5 Turbo) for transitions, better model for the scene clips. All clips and transitions join into one continuous shot that the scroll scrubs.
 - **Video, not live 3D.** Stills in Nano Banana, animated with an image-to-video tool (Veo / Kling), played on the site as a scroll-scrubbed frame sequence (WebP frames on a canvas, not a scrubbed `<video>`).
 - **Clay-white objects.** Matte off-white, smooth, no wood grain or metal shine.
 - **Black only on what the student uses:** tape markings (week 1), thread (week 2), kainchi handles and chalk line (week 3).
 - **Clay hands** in frame, not real skin: consistent with the objects, avoids bad AI hands, and the student could be anyone.
 - **9:16 vertical** for every frame and clip. The picture panel is portrait on desktop and phone.
-- **Slow, steady camera inside each scene.** Speed lives only in the whip pans.
+- **Slow, steady camera inside each scene.** Transitions are smooth pull-back-and-drift moves, also scrubbed by scroll.
 
 ## Layout
 
@@ -36,11 +36,23 @@ A first-person (POV) shot of a student working through the course, played as the
 
 ## How to build it
 
-1. One still per scene in Nano Banana, all with the same backdrop, light and clay look.
+1. One still per scene (ChatGPT or Nano Banana), all with the same backdrop, light and clay look.
 2. Animate each still into a 4-6 s clip (image-to-video).
-3. Export each clip as a frame sequence; the page scrubs through them on scroll and whip-pans between them.
+3. Export each clip as a frame sequence; the page scrubs through scenes and transitions as one continuous shot.
 
-## Status
+## Status (2026-10-25)
 
-- Scene 1 dress-form still (v2, not POV) works: flat #EEEDE8 background, used in the prototype panel. Needs a higher-res version.
-- Next: POV stills for scenes 1-3.
+- Prototype: `prototypes/course.html`, published at https://claude.ai/artifact/XzfP8atzkSRExcZZzP7nWy (private; share from the page's Share menu before sending to Arun).
+- Stills for weeks 1-3 made in ChatGPT (`chat gpt images/`); week 2 uses `week 2 .1.png` (industrial machine). Week 3 kainchi grip could be better.
+- Kling clips done for weeks 1 and 2 (`kling videos/`), live in the prototype as scroll-scrubbed frame sequences (`prototypes/assets/week-1/`, `week-2/`). Week 3 is still a still with a slow push-in.
+- Scene changes in the prototype still use the old timed whip pan. Once transition clips exist, replace it with one continuous scroll-scrubbed sequence: scene, transition, scene, transition, scene.
+- Kling Standard plan: 660 credits/month. Audio off on every clip.
+- Prompts, settings and the processing recipe: `video-prompts.md`.
+
+## Next
+
+1. Transition 1 -> 2 test in Kling (keyframes ready in `kling videos/`).
+2. Week 3 clip (optionally fix the kainchi grip first), then transition 2 -> 3.
+3. Join everything into one continuous scrubbed shot on the page; drop the timed whip pan.
+4. Share with Arun and Shruti, then confirm scenes for the remaining modules (blouse, lehenga, design, aari, finishing, branding) and repeat.
+5. Rest of the website: kainchi hero, teacher section, fees and dates, WhatsApp enquiry, frame loading on phones.
