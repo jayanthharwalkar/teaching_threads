@@ -24,15 +24,19 @@ A first-person (POV) shot of a student working through the course, played as the
 - Phone: picture on top, modules below.
 - Course contents come from the two course PDFs, with a 3 months / 6 months toggle; 6-month-only items are tagged "6 mo".
 
-## Shot list, weeks 1-3
+## Shot list: five stages (decided 2026-10-25)
 
-| # | What the student sees | Moment |
-|---|---|---|
-| 1 | Close to the dress form; clay hands wrap the tape around the bust and pull it snug; tilt down to read the number | Week 1: take a measurement |
-| – | Whip pan right | |
-| 2 | Seated at the sewing machine, looking down at the needle; hands feed fabric, needle runs a black stitch line | Week 2: meet the machine |
-| – | Whip pan right | |
-| 3 | Looking down at a sheet of fabric on a tabletop; hand draws a chalk line, then cuts along it with the kainchi | Week 3: mark and cut |
+Stages, not weeks: the course PDFs have modules, not a weekly schedule, and "Week 1 of 12 / of 26" would be invented. The same five stages serve both courses; 6-month extras stay in the syllabus with their "6 mo" tag.
+
+| # | Stage | What the student sees | Syllabus |
+|---|---|---|---|
+| 1 | Measure | Hands pull the tape snug around the dress form | Body measurements |
+| 2 | Draft the pattern | Looking down at pattern paper; ruler and pencil trace a bodice block | Basic bodice block, kurta and sleeve drafts |
+| 3 | Stitch | At the industrial machine, the needle runs a black seam | Machine practice, piping, darts |
+| 4 | Your first blouse | The blouse on the dress form; hands pin the neckline | Blouses, finishing |
+| 5 | Lehenga | Pull back to the full form wearing a flared lehenga | Lehenga and gowns |
+
+Left out: cutting (a step, not an outcome), aari (6-month only), design basics (abstract). Optional 6th "Your own label" if Arun wants the branding angle.
 
 ## How to build it
 
@@ -40,19 +44,18 @@ A first-person (POV) shot of a student working through the course, played as the
 2. Animate each still into a 4-6 s clip (image-to-video).
 3. Export each clip as a frame sequence; the page scrubs through scenes and transitions as one continuous shot.
 
-## Status (2026-10-25)
+## Status (2026-10-26)
 
-- Prototype: `prototypes/course.html`, published at https://claude.ai/artifact/XzfP8atzkSRExcZZzP7nWy (private; share from the page's Share menu before sending to Arun).
-- Stills for weeks 1-3 made in ChatGPT (`chat gpt images/`); week 2 uses `week 2 .1.png` (industrial machine). Week 3 kainchi grip could be better.
-- Kling clips done for weeks 1 and 2 (`kling videos/`), live in the prototype as scroll-scrubbed frame sequences (`prototypes/assets/week-1/`, `week-2/`). Week 3 is still a still with a slow push-in.
-- Scene changes in the prototype still use the old timed whip pan. Once transition clips exist, replace it with one continuous scroll-scrubbed sequence: scene, transition, scene, transition, scene.
-- Kling Standard plan: 660 credits/month. Audio off on every clip.
-- Prompts, settings and the processing recipe: `video-prompts.md`.
+- Prototype 07 (`prototypes/course.html`, https://claude.ai/artifact/XzfP8atzkSRExcZZzP7nWy, shared by link) shows the five stages: stage 1 → 2 → 3 → 4 as one scroll-scrubbed shot (scene clips plus the 1→2, 2→3 and 3→4 camera moves), then stage 5 as the still `stage 5.1.png` with a slow push-in, joined to stage 4 by the old whip pan until the 4→5 clip exists.
+- Stage 2 (drafting) and stage 4 (fastening the blouse hooks) clips done. Stage 4's action changed from one pin to the hooks: a single pin in a finished neckline isn't something a tailor does.
+- Stage 5 changed from hands lifting the hem to tying the lehenga's dori (tassel making is in the finishing module). Start still `stage 5.1.png` done; end still 5b (full lehenga, no hands, dori tied) still to make from `stage 5.png`.
+- Kling: about 250 credits left (2026-10-26), about 35-40 per clip; 2 clips to go.
+- Clip-by-clip status and prompts: `video-prompts.md`.
 
 ## Next
 
-1. Transition 1 -> 2 test in Kling (keyframes ready in `kling videos/`).
-2. Week 3 clip (optionally fix the kainchi grip first), then transition 2 -> 3.
-3. Join everything into one continuous scrubbed shot on the page; drop the timed whip pan.
-4. Share with Arun and Shruti, then confirm scenes for the remaining modules (blouse, lehenga, design, aari, finishing, branding) and repeat.
+1. Stage 5 end still (5b) in ChatGPT, then the stage 5 clip in Kling with start + end frames (`video-prompts.md`).
+2. Claude makes the 4→5 end frame from the stage 5 clip's first frame; then the 4→5 transition clip.
+3. Swap stage 5 and 4→5 into the page, drop the last whip pan, then tune all transitions together (speed, focus heights).
+4. Share with Arun and Shruti.
 5. Rest of the website: kainchi hero, teacher section, fees and dates, WhatsApp enquiry, frame loading on phones.
