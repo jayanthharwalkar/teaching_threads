@@ -1,0 +1,178 @@
+<title>Teaching Threads Course</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;1,500&family=Jost:wght@300;400;500&display=swap">
+<style>
+/* Layout: course contents on the left, a pinned clay-render still on the right (desktop). On phones the still sits on top and the modules follow. */
+:root{
+  --paper:#F3F1EC; --studio:#EEEDE8; --ink:#141414; --body:#3B3935; --muted:#77736B; --line:#D9D5CC;
+  --f-display:'Cormorant Garamond',Georgia,serif; --f-body:'Jost',system-ui,sans-serif;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:var(--f-body);font-weight:300;font-size:17px;line-height:1.6}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--paper)}
+a{color:inherit}
+p{margin:0}
+:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
+.wrap{max-width:1240px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.eyebrow{font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
+
+.proto{border-bottom:1px solid var(--line);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.proto .wrap{padding-block:8px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.hdr .wrap{display:flex;justify-content:space-between;align-items:center;gap:16px;padding-block:18px}
+.hdr{border-bottom:1px solid var(--line)}
+.logo{display:flex;align-items:center;gap:12px;text-decoration:none;line-height:1.1}
+.logo svg{stroke:currentColor;flex:0 0 auto}
+.logo b{display:block;font-family:var(--f-display);font-weight:500;font-size:21px;letter-spacing:.1em}
+.logo small{display:block;font-size:10px;letter-spacing:.36em}
+.nav{display:flex;gap:24px;font-size:14px;align-items:center}
+.nav a{text-decoration:none}
+.nav .cta{padding:10px 18px;border:1px solid var(--ink);white-space:nowrap}
+
+/* course: two columns, the visual on the left bleeds to the viewport edge */
+.course{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+.txt{min-width:0;display:flex;flex-direction:column;gap:28px;padding-block:88px 120px;padding-left:clamp(24px,5vw,72px);padding-right:max(16px,env(safe-area-inset-right,0px),calc((100vw - 1240px) / 2 + 16px))}
+.visual{position:sticky;top:env(safe-area-inset-top,0px);height:100vh;align-self:start;background:var(--studio);display:flex;align-items:flex-end;justify-content:center;overflow:hidden;order:-1}
+.visual img{display:block;height:92%;width:auto;max-width:100%;object-fit:contain;object-position:center bottom}
+.cap{position:absolute;left:28px;bottom:24px;display:flex;flex-direction:column;gap:2px}
+.cap b{font-family:var(--f-display);font-weight:500;font-size:28px;line-height:1}
+.cap span{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+
+h2{margin:0;font-family:var(--f-display);font-weight:500;font-size:clamp(40px,4.4vw,64px);line-height:1;text-wrap:balance}
+h2 em{font-style:italic}
+.lede{max-width:30em;color:var(--body)}
+
+.pick{display:flex;flex-wrap:wrap;align-items:center;gap:12px 20px}
+.seg{display:flex}
+.seg button{font:inherit;font-size:14px;font-weight:400;letter-spacing:.04em;cursor:pointer;background:transparent;color:var(--ink);border:1px solid var(--ink);padding:11px 20px}
+.seg button+button{border-left:0}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
+.pick .count{font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+
+.mods{list-style:none;margin:0;padding:0;counter-reset:mod;border-top:1px solid var(--ink)}
+.mod{counter-increment:mod;display:grid;grid-template-columns:3.2rem minmax(0,1fr);gap:4px 16px;padding-block:24px;border-bottom:1px solid var(--line)}
+.mod::before{content:counter(mod,decimal-leading-zero);font-family:var(--f-display);font-weight:500;font-size:30px;line-height:1;font-variant-numeric:lining-nums tabular-nums;color:var(--muted)}
+.mod h3{margin:0;font-family:var(--f-display);font-weight:500;font-size:28px;line-height:1.05}
+.mod ul{grid-column:2;list-style:none;margin:8px 0 0;padding:0;display:flex;flex-direction:column;gap:6px;color:var(--body);font-size:16px}
+.mod li small{display:block;font-size:14px;color:var(--muted)}
+.x6::after{content:"6 mo";margin-left:8px;font-size:10px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--ink);border:1px solid var(--ink);padding:1px 5px;vertical-align:2px}
+.mod.x6 h3::after{content:"6 mo";margin-left:10px;font-family:var(--f-body);font-size:10px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;border:1px solid var(--ink);padding:1px 5px;vertical-align:6px}
+.mod.x6::after{content:none}
+.course[data-dur="3"] .x6{display:none}
+
+.foot{display:flex;flex-wrap:wrap;align-items:center;gap:12px 20px}
+.btn{display:inline-block;text-decoration:none;font-size:14px;font-weight:500;letter-spacing:.04em;padding:15px 26px;background:var(--ink);color:var(--paper);border:1px solid var(--ink)}
+.foot p{font-size:15px;color:var(--body)}
+.foot p b{font-weight:500;color:var(--ink);user-select:all}
+
+@media (max-width:900px){
+  .course{grid-template-columns:1fr}
+  .visual{position:relative;height:62svh;min-height:380px}
+  .cap{left:max(16px,env(safe-area-inset-left,0px));bottom:16px}
+  .txt{padding-block:40px 80px;padding-left:max(16px,env(safe-area-inset-left,0px))}
+}
+@media (max-width:640px){
+  .proto .wrap span+span{display:none}
+  .nav a:not(.cta){display:none}
+  .nav .cta{padding:8px 14px;font-size:13px}
+  .logo b{font-size:17px}.logo small{font-size:9px}
+  .hdr .wrap{padding-block:12px}
+  .mod{grid-template-columns:2.4rem minmax(0,1fr);gap:4px 12px;padding-block:20px}
+  .mod::before{font-size:24px}
+  .mod h3{font-size:24px}
+  .mod ul{font-size:15px}
+}
+</style>
+
+<div class="proto"><div class="wrap"><span>Prototype 06 · Clay still + course contents</span><span>Nano Banana test image</span></div></div>
+
+<header class="hdr"><div class="wrap">
+  <a class="logo" href="#" onclick="return false"><svg width="34" height="26" viewBox="0 0 44 34" fill="none" stroke-width="1.5" aria-hidden="true"><path d="M22 3 L22 33"></path><path d="M22 6 C16 1 7 3 8 9 C9 13 15 11 13 7"></path><path d="M22 6 C28 2 37 2 36 7 C35 10 31 9 30 7"></path></svg><span><b>TEACHING THREADS</b><small>FASHION ACADEMY</small></span></a>
+  <nav class="nav" aria-label="Main"><a href="#" onclick="return false">Courses</a><a href="#" onclick="return false">Your teacher</a><a href="#" onclick="return false">Fees &amp; dates</a><a class="cta" href="#" onclick="return false">WhatsApp us</a></nav>
+</div></header>
+
+<section class="course" id="course" data-dur="3">
+  <div class="txt">
+    <p class="eyebrow">The course</p>
+    <h2>What you'll learn, <em>module by module.</em></h2>
+    <p class="lede">Both courses run in the studio on industrial machines. The 6-month course adds more drafts, aari work, boutique management and a local market visit.</p>
+    <div class="pick">
+      <div class="seg" role="group" aria-label="Course length">
+        <button type="button" id="dur3" data-v="3" aria-pressed="true">3 months</button>
+        <button type="button" id="dur6" data-v="6" aria-pressed="false">6 months</button>
+      </div>
+      <span class="count" id="modCount">6 modules</span>
+    </div>
+
+    <ol class="mods">
+      <li class="mod"><h3>Pattern making and stitching</h3><ul>
+        <li>How to take body measurements</li>
+        <li>Machine practice on an industrial sewing machine</li>
+        <li>Cutting practice</li>
+        <li>Making and stitching cord piping</li>
+        <li>Darts: what they are and how to give them to a garment</li>
+        <li>Drafting the basic bodice block</li>
+        <li>Kurta drafts<small>Straight cut (side and centre slit) · A-line kurti</small></li>
+        <li class="x6">More kurta drafts<small>Centre slit kurta with placket · designer tunic</small></li>
+        <li>Sleeve drafts<small>Regular · puff (up, down, both) · low sleeves</small></li>
+        <li class="x6">More sleeves<small>Petal · waterfall · roll-on</small></li>
+      </ul></li>
+      <li class="mod"><h3>Blouses</h3><ul>
+        <li>One-dart and four-dart blouse, with and without waistband</li>
+        <li>Princess cut, deep and high neck<small>Padded · zipper · hooks</small></li>
+        <li>Collar blouse · boat neck blouse</li>
+        <li class="x6">Katori blouse · shirt collar blouse · cape</li>
+      </ul></li>
+      <li class="mod"><h3>Lehenga and gowns</h3><ul>
+        <li>Lehenga<small>Panel flare · umbrella flare · pleated</small></li>
+        <li class="x6">Fishcut lehenga · knot skirt</li>
+        <li>Gowns<small>Panel flare · umbrella flare</small></li>
+      </ul></li>
+      <li class="mod"><h3>Basics of design</h3><ul>
+        <li>Elements of design</li>
+        <li>Principles of design</li>
+        <li>Colour theory and composition</li>
+      </ul></li>
+      <li class="mod x6"><h3>Aari work</h3><ul>
+        <li>Practice with the aari needle on the frame</li>
+        <li>Aari styles<small>Pearl · beads · zardozi · thread work</small></li>
+      </ul></li>
+      <li class="mod"><h3>Finishing techniques</h3><ul>
+        <li>Hooks and eyes, blind hemming, tassel making</li>
+        <li>Bead and crystal hangings</li>
+      </ul></li>
+      <li class="mod"><h3>Branding and marketing</h3><ul>
+        <li>Building a brand that stands out</li>
+        <li>Why sales matter, and how to sell</li>
+        <li>Building your personal brand</li>
+        <li class="x6">Introduction to boutique management</li>
+        <li class="x6">Types of fabric, with a local market visit</li>
+      </ul></li>
+    </ol>
+
+    <div class="foot">
+      <a class="btn" href="#" onclick="return false">Ask about the next batch</a>
+      <p>WhatsApp or call <b>93535 62706</b></p>
+    </div>
+  </div>
+
+  <div class="visual">
+    <img src="assets/scene-1-dress-form.webp" alt="A clay-white dress form on a stand with a measuring tape draped around its neck" width="500" height="572">
+    <div class="cap" aria-hidden="true"><b>Measure</b><span>Scene 01 · module 01</span></div>
+  </div>
+</section>
+
+<script>
+(function () {
+  const sec = document.getElementById('course'), btns = [...sec.querySelectorAll('.seg button')], count = document.getElementById('modCount');
+  function set(v) {
+    sec.dataset.dur = v;
+    btns.forEach(b => b.setAttribute('aria-pressed', String(b.dataset.v === v)));
+    count.textContent = [...sec.querySelectorAll('.mod')].filter(m => getComputedStyle(m).display !== 'none').length + ' modules';
+  }
+  btns.forEach(b => b.addEventListener('click', () => set(b.dataset.v)));
+  set('3');
+})();
+</script>
