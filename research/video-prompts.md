@@ -93,7 +93,17 @@ Take 1, `kling videos/kling_20261026_Image_to_Video_The_two_cl_3908_0.mp4`: good
 The two clay-white hands finish pulling the black drawstring into a small bow at the side of the lehenga's waist, then let go and move out of the frame. After the hands leave, the bow and its two short tasselled ends stay exactly as they are: the same size and the same length, hanging still just below the waistband, with only a tiny settling sway. The camera slowly pulls back to show the whole dress form wearing the blouse and the full lehenga. The drawstring never gets longer; it only looks smaller because the camera moves away. One smooth continuous move. Everything stays matte clay-white, the background stays flat and empty. No cuts, no new objects.
 ```
 
-Negative prompt addition: `drawstring growing, cords getting longer, strings stretching, tassels sliding down, extra strings, ribbon unrolling, morphing`. If it still drifts, split into two clips: (a) tie + hands leave with the camera still, (b) pull-back from (a)'s last frame to `stage 5b.png`.
+v3 (2026-10-26): start `stage 5.1.png`, end `kling videos/stage-5-take1-last.png` (take 1's last frame, where the cords are short again), so both ends lock the cord length. `stage 5b.png` was never made. Prompt:
+
+```
+The two clay-white hands pull the black drawstring into a small bow at the side of the lehenga's waistband, let go, and move out of the frame. The bow and its two short tasselled cords then stay completely still and keep exactly the same length the whole time, ending just below the waistband. The camera slowly moves back to show the whole dress form wearing the blouse and the full pleated lehenga. Only the camera moves; the drawstring, bow and tassels never change. One smooth continuous move, no cuts. Everything stays matte clay-white, the background stays flat and empty.
+```
+
+Negative prompt: the scene-clip one plus `drawstring growing, cords getting longer, strings stretching, tassels sliding down, tassels swinging, extra strings, ribbon unrolling, morphing`.
+
+Take 2 with v3, `kling videos/kling_20261026_Image_to_Video_The_two_cl_5267_0.mp4`: good, the cords keep their length → `prototypes/assets/stage-5/` (standard crop). All five stages and four transitions are now done.
+
+Earlier negative prompt addition (v2): `drawstring growing, cords getting longer, strings stretching, tassels sliding down, extra strings, ribbon unrolling, morphing`. If it still drifts, split into two clips: (a) tie + hands leave with the camera still, (b) pull-back from (a)'s last frame to `stage 5b.png`.
 
 ---
 
@@ -108,7 +118,7 @@ Keyframes come from the clips themselves (start = last frame of the scene before
 | 1 → 2 | `kling videos/transition-1-2-start.png` | `kling videos/transition-1-2-end.png` | Done: `kling videos/kling_20261026_Image_to_Video_The_camera_1328_0.mp4` → `prototypes/assets/trans-1-2/` (standard crop) |
 | 2 → 3 | `kling videos/transition-2-3-start.png` | `kling videos/transition-2-3-end.png` | Take 1: `kling videos/kling_20261026_Image_to_Video_The_camera_1361_0.mp4` → `prototypes/assets/trans-2-3/` (kept: the paper morphs into the fabric and the ruler and pencil vanish, read as "your pattern becomes the fabric"). Take 2 with the v2 prompt, `kling videos/kling_20261026_VIDEO_The_clay_w_1402_0.mp4`, rejected: the end frame wasn't used, so it ends on a different, domestic machine and jumps at the join |
 | 3 → 4 | `kling videos/transition-3-4-start.png` | `kling videos/transition-3-4-end.png` | Done: `kling videos/kling_20261026_Image_to_Video_The_camera_1506_0.mp4` → `prototypes/assets/trans-3-4/` (standard crop; a faint shadow under the machine table mid-move, left as is) |
-| 4 → 5 | `kling videos/transition-4-5-start.png` | `kling videos/transition-4-5-end.png` | Both frames ready (end = `stage 5.1.png` scaled and centre-cropped to 1176×1764, made 2026-10-26) |
+| 4 → 5 | `kling videos/transition-4-5-start.png` | `kling videos/transition-4-5-end.png` | Done: `kling videos/kling_20261026_Image_to_Video_The_clay_w_5236_0.mp4` → `prototypes/assets/trans-4-5/` (standard crop; the hands pull the lehenga up onto the form, so it never pops in; the bust looks slightly fuller mid-move). Its last frame is the stage 5 still until the stage 5 clip is redone |
 
 (`transition-1-2-*` and `transition-2-3-*` were remade 2026-10-26 for the new order; the old ones went form → machine → cutting.)
 
@@ -169,7 +179,7 @@ Retired 2026-10-25 when cutting was dropped:
 ffmpeg comes from the `imageio_ffmpeg` Python package (`python3 -c "import imageio_ffmpeg;print(imageio_ffmpeg.get_ffmpeg_exe())"`); there is no system ffmpeg.
 
 - **Standard crop for every clip:** `crop=1100:1650:38:0` (exact 2:3, removes the KlingAI watermark strip at the bottom, identical framing across clips).
-- **Frame sequence:** every 2nd frame, scaled to 720×1080, WebP quality 72, audio dropped → 61 frames (~0.9 MB) per 5 s clip, saved as `prototypes/assets/week-N/f001.webp …`.
+- **Frame sequence:** scenes every 2nd frame (61 frames), transitions every 4th frame (31 frames, `not(mod(n\,4))`; an artifact version holds at most 511 files), scaled to 720×1080, WebP quality 72, audio dropped → 61 frames (~0.9 MB) per 5 s clip, saved as `prototypes/assets/week-N/f001.webp …`.
   `-an -vf "select='not(mod(n\,2))',crop=1100:1650:38:0,scale=720:1080" -fps_mode vfr -c:v libwebp -quality 72`
 - **Stage 2 grade:** the pattern paper came out warmer and darker than the page (#E6DFD8). Its frames get `curves=all='0/0 0.86/0.91 1/1',hue=s=0.8` before the crop, which brings the paper to about #F0ECE8. Stage 2's side of each transition keyframe gets the same grade, so the transitions match without grading the whole transition clip.
 - **Transition keyframes:** last frame of clip A (`-sseof -0.05`) and first frame of clip B, **full frame, no crop**, as PNG at Kling's output size (1176×1764). The transition clip then gets the standard crop like every other clip, so its ends match the scene frames exactly.

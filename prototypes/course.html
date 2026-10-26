@@ -128,7 +128,7 @@ h2 em{font-style:italic}
 }
 </style>
 
-<div class="proto"><div class="wrap"><span>Prototype 07 · Hero placeholder + five stages</span><span>Stages 1–4 Kling video · stage 5 still for now</span></div></div>
+<div class="proto"><div class="wrap"><span>Prototype 07 · Hero placeholder + five stages</span><span>All five stages on Kling video</span></div></div>
 
 <header class="hdr"><div class="wrap">
   <a class="logo" href="#" onclick="return false"><svg width="34" height="26" viewBox="0 0 44 34" fill="none" stroke-width="1.5" aria-hidden="true"><path d="M22 3 L22 33"></path><path d="M22 6 C16 1 7 3 8 9 C9 13 15 11 13 7"></path><path d="M22 6 C28 2 37 2 36 7 C35 10 31 9 30 7"></path></svg><span><b>TEACHING THREADS</b><small>FASHION ACADEMY</small></span></a>
@@ -149,13 +149,14 @@ h2 em{font-style:italic}
   <div class="pin">
     <div class="visual">
     <div class="shot on" style="--fy:62%" data-fy="0.62" data-stage="0" data-seq="assets/week-1/f" data-count="61"><canvas aria-hidden="true"></canvas><img src="assets/week-1-measure.webp" alt="Seen through the student's eyes: clay-white hands holding a measuring tape around the bust of a dress form" width="1024" height="1536"></div>
-    <div class="shot tr" style="--fy:62%" data-fy="0.62" data-fy-end="0.55" data-stage="1" data-span="0.25" data-seq="assets/trans-1-2/f" data-count="61"><canvas aria-hidden="true"></canvas><img src="assets/trans-1-2/f001.webp" alt="" width="720" height="1080"></div>
+    <div class="shot tr" style="--fy:62%" data-fy="0.62" data-fy-end="0.55" data-stage="1" data-span="0.25" data-seq="assets/trans-1-2/f" data-count="31"><canvas aria-hidden="true"></canvas><img src="assets/trans-1-2/f001.webp" alt="" width="720" height="1080"></div>
     <div class="shot" style="--fy:55%" data-fy="0.55" data-fy-end="0.75" data-stage="1" data-seq="assets/stage-2/f" data-count="61"><canvas aria-hidden="true"></canvas><img src="assets/stage-2/f001.webp" alt="Looking down at pattern paper: one hand holds a ruler flat while the other draws a bodice block line in black pencil" width="720" height="1080"></div>
-    <div class="shot tr" style="--fy:75%" data-fy="0.75" data-fy-end="0.72" data-stage="2" data-span="0.25" data-seq="assets/trans-2-3/f" data-count="61"><canvas aria-hidden="true"></canvas><img src="assets/trans-2-3/f001.webp" alt="" width="720" height="1080"></div>
+    <div class="shot tr" style="--fy:75%" data-fy="0.75" data-fy-end="0.72" data-stage="2" data-span="0.25" data-seq="assets/trans-2-3/f" data-count="31"><canvas aria-hidden="true"></canvas><img src="assets/trans-2-3/f001.webp" alt="" width="720" height="1080"></div>
     <div class="shot" style="--fy:72%" data-fy="0.72" data-stage="2" data-seq="assets/week-2/f" data-count="61"><canvas aria-hidden="true"></canvas><img src="assets/week-2-machine.webp" alt="Seated at an industrial sewing machine: clay-white hands guide fabric under the needle along a black stitch line" width="1024" height="1536"></div>
-    <div class="shot tr" style="--fy:72%" data-fy="0.72" data-fy-end="0.48" data-stage="3" data-span="0.25" data-seq="assets/trans-3-4/f" data-count="61"><canvas aria-hidden="true"></canvas><img src="assets/trans-3-4/f001.webp" alt="" width="720" height="1080"></div>
+    <div class="shot tr" style="--fy:72%" data-fy="0.72" data-fy-end="0.48" data-stage="3" data-span="0.25" data-seq="assets/trans-3-4/f" data-count="31"><canvas aria-hidden="true"></canvas><img src="assets/trans-3-4/f001.webp" alt="" width="720" height="1080"></div>
     <div class="shot" style="--fy:48%" data-fy="0.48" data-stage="3" data-seq="assets/stage-4/f" data-count="61"><canvas aria-hidden="true"></canvas><img src="assets/stage-4/f001.webp" alt="A finished blouse on the dress form: clay-white hands fasten the top black hook at the neckline" width="720" height="1080"></div>
-    <div class="shot" style="--fy:50%" data-stage="4"><img src="assets/stage-5-lehenga.webp" alt="A pleated lehenga under the blouse: clay-white hands tie its black drawstring into a bow, two black tassels hanging" width="1024" height="1536"></div>
+    <div class="shot tr" style="--fy:48%" data-fy="0.48" data-fy-end="0.5" data-stage="4" data-span="0.25" data-seq="assets/trans-4-5/f" data-count="31"><canvas aria-hidden="true"></canvas><img src="assets/trans-4-5/f001.webp" alt="" width="720" height="1080"></div>
+    <div class="shot" style="--fy:50%" data-fy="0.5" data-fy-end="0.45" data-stage="4" data-seq="assets/stage-5/f" data-count="61"><canvas aria-hidden="true"></canvas><img src="assets/stage-5/f001.webp" alt="A pleated lehenga under the blouse: clay-white hands tie its black drawstring into a bow, two black tassels hanging" width="720" height="1080"></div>
     </div>
     <div class="wtxt">
       <div><p class="eyebrow">The course</p><h2>From first measurement <em>to your own lehenga.</em></h2></div>
@@ -282,24 +283,39 @@ h2 em{font-style:italic}
   function drawSeq(shot, k) {
     const tr = shot.classList.contains('tr');
     if (tr) k = k < 0.5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2;
-    const q = shot.seq, img = q.frames[Math.round(k * (q.frames.length - 1))];
-    if (!q.ready || !img.complete) return;
+    const q = shot.seq, want = Math.round(k * (q.frames.length - 1));
+    if (!q.ready) return;
+    let at = want;  // a frame not decoded yet would stall the scroll: draw the nearest one that is
+    for (let d = 1; !q.ok[at] && d < q.frames.length; d++) at = q.ok[want - d] ? want - d : q.ok[want + d] ? want + d : at;
+    const img = q.frames[at];
+    if (want !== q.want) { q.want = want; for (let d = 1; d <= 4; d++) [want + d, want - d].forEach(j => q.frames[j] && q.ok[j] && q.frames[j].decode().catch(() => {})); }  // keep the frames around the playhead decoded
+    const key = at + ':' + k.toFixed(3) + ':' + q.cv.clientWidth + 'x' + q.cv.clientHeight;
+    if (key === q.key) return;  // nothing changed since the last draw
+    q.key = key;
     const c = q.cv, w = c.clientWidth, h = c.clientHeight, dpr = Math.min(devicePixelRatio || 1, 2);
     if (c.width !== Math.round(w * dpr) || c.height !== Math.round(h * dpr)) { c.width = Math.round(w * dpr); c.height = Math.round(h * dpr); }
     const sc = Math.max(c.width / img.naturalWidth, c.height / img.naturalHeight), dw = img.naturalWidth * sc, dh = img.naturalHeight * sc;
     const fy0 = +shot.dataset.fy || 0.5, fy1 = shot.dataset.fyEnd ? +shot.dataset.fyEnd : fy0;  // a transition eases between its scenes' focus heights
     q.ctx.drawImage(img, (c.width - dw) / 2, (c.height - dh) * (fy0 + (fy1 - fy0) * k), dw, dh);
   }
+  // frames download coarse to fine (every 8th, then 4th, 2nd, all) so a fast scroll always has something near;
+  // each is decoded off the main thread before it is used. A scene shows once its first pass is in.
   shots.forEach(s => {
     if (!s.dataset.seq) return;
-    const n = +s.dataset.count, cv = s.querySelector('canvas'), q = { cv, ctx: cv.getContext('2d'), frames: [], ready: false };
-    let left = n;
-    for (let f = 1; f <= n; f++) {
+    const n = +s.dataset.count, cv = s.querySelector('canvas'), q = { cv, ctx: cv.getContext('2d', { alpha: false }), frames: [], ok: [], ready: false };
+    const order = [];
+    [8, 4, 2, 1].forEach(st => { for (let f = 0; f < n; f += st) if (!order.includes(f)) order.push(f); });
+    if (!order.slice(0, Math.ceil(n / 8)).includes(n - 1)) order.splice(Math.ceil(n / 8), 0, ...order.splice(order.indexOf(n - 1), 1));
+    let first = Math.ceil(n / 8) + 1;
+    order.forEach(f => {
       const im = new Image();
-      im.onload = im.onerror = () => { if (--left === 0) { q.ready = true; s.classList.add('ready'); onScroll(); } };
-      im.src = s.dataset.seq + String(f).padStart(3, '0') + '.webp';
-      q.frames.push(im);
-    }
+      im.decoding = 'async';
+      const done = ok => { q.ok[f] = ok; if (--first === 0) { q.ready = true; s.classList.add('ready'); } if (ok) { q.key = null; onScroll(); } };
+      im.onload = () => im.decode().then(() => done(true), () => done(true));
+      im.onerror = () => done(false);
+      im.src = s.dataset.seq + String(f + 1).padStart(3, '0') + '.webp';
+      q.frames[f] = im;
+    });
     s.seq = q;
   });
   function onScroll() {

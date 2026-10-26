@@ -1,0 +1,355 @@
+<meta charset="utf-8">
+<title>Teaching Threads Runway</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: her real runway work hangs on a clothes rail under the headline (swipe and it swings), then the press clipping, the five stages, the teacher, the two courses and the visit. One light look on purpose: the brand is off-white paper and black ink. */
+:root{
+  --paper:#F3F2EF; --ink:#151514; --body:#3A3936; --pencil:#85827B; --line:#DAD7D0; --tag:#FBFAF7; --rail:#2A2927;
+  --serif:"Instrument Serif","Iowan Old Style",Georgia,serif;
+  --sans:"Instrument Sans","Helvetica Neue",Arial,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+  --ph:clamp(260px,50vh,440px);
+  --gut:max(16px,env(safe-area-inset-left,0px));
+  --gut-r:max(16px,env(safe-area-inset-right,0px));
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:17px;line-height:1.6}
+a{color:inherit}
+p,h1,h2,h3,figure,blockquote,ol,ul,dl,dd{margin:0}
+ol,ul{padding:0;list-style:none}
+button{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
+.wrap{max-width:1240px;margin:0 auto;padding-left:var(--gut);padding-right:var(--gut-r)}
+.kicker{font-family:var(--mono);font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--pencil)}
+h1,h2,h3{font-family:var(--serif);font-weight:400;text-wrap:balance;letter-spacing:-.01em}
+h1 em,h2 em{font-style:italic}
+h2{font-size:clamp(36px,4.6vw,60px);line-height:1}
+.lede{color:var(--body);max-width:34em}
+.btn{display:inline-flex;align-items:center;gap:8px;text-decoration:none;font-size:15px;font-weight:500;padding:14px 22px;border-radius:999px;background:var(--ink);color:var(--paper);border:1px solid var(--ink);cursor:pointer}
+.btn.ghost{background:transparent;color:var(--ink)}
+.acts{display:flex;flex-wrap:wrap;gap:10px}
+section{border-top:1px solid var(--line)}
+
+/* header */
+.hdr .wrap{display:flex;justify-content:space-between;align-items:center;gap:16px;padding-block:16px}
+.logo{display:flex;align-items:center;gap:12px;line-height:1.1}
+.logo svg{stroke:currentColor;flex:0 0 auto}
+.logo b{display:block;font-family:var(--serif);font-weight:400;font-size:22px;letter-spacing:.08em}
+.logo small{display:block;font-family:var(--mono);font-size:9.5px;letter-spacing:.3em}
+.hdr .btn{padding:10px 18px;font-size:14px}
+
+/* hero */
+.hero{border-top:0}
+.hero-top{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,.75fr);gap:24px 56px;align-items:end;padding-block:40px 28px}
+.hero h1{margin-top:14px;font-size:clamp(46px,6.4vw,92px);line-height:.95}
+.hero-side{display:flex;flex-direction:column;gap:22px;padding-bottom:8px}
+.hero-side .lede{font-size:16px}
+
+/* the rail */
+.rail-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding-block:8px 0}
+.arrows{display:flex;gap:8px}
+.arrows button{width:42px;height:42px;border-radius:50%;border:1px solid var(--ink);background:transparent;cursor:pointer;font-size:18px;line-height:1}
+.arrows button:disabled{opacity:.3;cursor:default}
+.rail{overflow-x:auto;overflow-y:hidden;overscroll-behavior-x:contain;scrollbar-width:none;cursor:grab;padding-block:22px 40px;-webkit-overflow-scrolling:touch}
+.rail::-webkit-scrollbar{display:none}
+.rail.dragging{cursor:grabbing}
+.track{position:relative;display:flex;align-items:flex-start;gap:clamp(30px,4vw,60px);width:max-content;
+  padding-left:max(var(--gut),calc((100vw - 1240px) / 2 + 16px));padding-right:max(var(--gut-r),calc((100vw - 1240px) / 2 + 16px))}
+.track::before{content:"";position:absolute;left:0;right:0;top:3px;height:5px;border-radius:3px;background:linear-gradient(#77746e,var(--rail) 60%)}
+.item{position:relative;display:flex;flex-direction:column;align-items:center;transform-origin:50% 4px;transform:rotate(var(--a,0deg));padding-bottom:70px;will-change:transform}
+.hook{width:24px;height:36px;display:block;fill:none;stroke:var(--ink);stroke-width:2.4;stroke-linecap:round;position:relative;z-index:1}
+.bar{position:relative;z-index:2;width:calc(var(--ph) * var(--ar) + 10px);height:7px;margin-top:-1px;border:2px solid var(--ink);border-radius:4px;background:var(--paper)}
+.bar i{position:absolute;top:3px;width:12px;height:20px;background:var(--ink);border-radius:2px 2px 3px 3px}
+.bar i:first-child{left:8px}.bar i:last-child{right:8px}
+.photo{display:block;margin-top:4px;padding:0;border:0;background:none;cursor:zoom-in;box-shadow:0 18px 30px -22px rgba(21,21,20,.55)}
+.photo img{display:block;height:var(--ph);width:auto;max-width:none;pointer-events:none;user-select:none}
+.rail.dragging .photo{cursor:grabbing}
+.tag{position:absolute;left:22px;bottom:2px;transform-origin:50% -18px;transform:rotate(calc(-6deg + var(--a,0deg) * 1.6));
+  display:grid;gap:1px;min-width:120px;padding:16px 12px 9px;background:var(--tag);border:1px solid var(--line);
+  font-family:var(--mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--pencil);line-height:1.45;
+  clip-path:polygon(10px 0,calc(100% - 10px) 0,100% 10px,100% 100%,0 100%,0 10px)}
+.tag::before{content:"";position:absolute;left:50%;top:5px;width:6px;height:6px;margin-left:-3px;border-radius:50%;border:1px solid var(--pencil);background:var(--paper)}
+.tag::after{content:"";position:absolute;left:50%;top:-22px;width:1px;height:28px;background:var(--pencil)}
+.tag b{font-family:var(--serif);font-weight:400;font-size:17px;letter-spacing:0;text-transform:none;color:var(--ink);line-height:1.1}
+
+/* press */
+.press-grid{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:40px 72px;align-items:center;padding-block:88px}
+.clip{position:relative;justify-self:center;max-width:380px;transform:rotate(-2deg)}
+.clip button{display:block;padding:0;border:0;background:none;cursor:zoom-in;box-shadow:0 22px 40px -26px rgba(21,21,20,.6)}
+.clip img{display:block;width:100%;height:auto}
+.pin{position:absolute;left:50%;top:-9px;width:18px;height:18px;margin-left:-9px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#6a6863,var(--ink) 70%);box-shadow:0 3px 4px rgba(21,21,20,.35)}
+.press-text{display:flex;flex-direction:column;gap:20px;min-width:0}
+.press-text h2{font-size:clamp(32px,3.8vw,50px)}
+.press-text p{color:var(--body);max-width:36em}
+blockquote{font-family:var(--serif);font-style:italic;font-size:clamp(24px,2.4vw,30px);line-height:1.2;border-left:2px solid var(--ink);padding-left:20px;max-width:24em}
+blockquote cite{display:block;margin-top:10px;font-family:var(--mono);font-style:normal;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--pencil)}
+.also{display:flex;align-items:center;gap:14px;padding:0;border:0;background:none;cursor:zoom-in;text-align:left;font-size:14px;color:var(--body)}
+.also img{width:96px;height:auto;border:1px solid var(--line)}
+.also span{text-decoration:underline;text-underline-offset:3px}
+
+/* stages */
+.learn .wrap,.courses .wrap{display:flex;flex-direction:column;gap:40px;padding-block:88px}
+.sec-head{display:flex;flex-direction:column;gap:14px}
+.steps{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:20px;counter-reset:s}
+.steps li{display:flex;flex-direction:column;gap:10px;counter-increment:s}
+.steps img{display:block;width:100%;height:auto;aspect-ratio:4/5;object-fit:cover;background:#ECEAE6}
+.steps h3{font-size:26px;line-height:1.05;display:flex;gap:10px;align-items:baseline}
+.steps h3::before{content:counter(s,decimal-leading-zero);font-family:var(--mono);font-size:11px;color:var(--pencil);letter-spacing:.08em}
+.steps p{font-size:15px;line-height:1.5;color:var(--body)}
+.more{align-self:flex-start;font-size:15px;font-weight:500;text-underline-offset:4px}
+
+/* teacher */
+.t-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:40px 72px;align-items:center;padding-block:88px}
+.t-grid figure{display:flex;flex-direction:column;gap:10px}
+.t-grid figure img{display:block;width:100%;height:auto}
+.t-grid figcaption{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--pencil)}
+.t-text{display:flex;flex-direction:column;gap:22px;min-width:0}
+.facts{display:grid;gap:0;border-top:1px solid var(--ink)}
+.facts div{display:grid;grid-template-columns:8.5em minmax(0,1fr);gap:16px;align-items:baseline;padding-block:14px;border-bottom:1px solid var(--line)}
+.facts dt{font-family:var(--serif);font-size:26px;line-height:1.1}
+.facts dd{font-size:15px;color:var(--body)}
+
+/* courses */
+.c-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
+.course{display:flex;flex-direction:column;gap:14px;padding:28px;border:1px solid var(--ink);background:var(--tag)}
+.dur{font-family:var(--serif);font-size:72px;line-height:.9}
+.dur span{font-size:26px;font-style:italic;margin-left:6px}
+.course p:not(.dur){color:var(--body);font-size:16px}
+.note{font-size:15px;color:var(--body)}
+
+/* visit */
+.visit{background:var(--ink);color:var(--paper);border-top:0}
+.v-grid{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:32px 72px;align-items:end;padding-block:88px}
+.visit .kicker{color:#A8A59E}
+.visit h2{margin-top:14px}
+.v-side{display:flex;flex-direction:column;gap:18px;min-width:0}
+.v-side p{color:#D6D3CC}
+.phone b{font-weight:500;color:var(--paper);user-select:all;font-variant-numeric:tabular-nums}
+.copy{margin-left:8px;padding:5px 12px;border-radius:999px;border:1px solid #6b6964;background:transparent;color:var(--paper);font-size:13px;cursor:pointer}
+.btn.light{background:var(--paper);color:var(--ink);border-color:var(--paper);align-self:flex-start}
+.foot{background:var(--ink);color:#A8A59E;border-top:1px solid #2e2d2b;font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase}
+.foot .wrap{padding-block:22px 28px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+
+/* floating WhatsApp on phones */
+.fab{display:none;position:fixed;z-index:20;right:calc(16px + env(safe-area-inset-right,0px));bottom:calc(16px + env(safe-area-inset-bottom,0px));box-shadow:0 10px 24px -10px rgba(21,21,20,.6)}
+
+/* larger view */
+.lb{position:fixed;inset:0;z-index:30;background:rgba(21,21,20,.94);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:14px;
+  padding:calc(56px + env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) calc(24px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+.lb[hidden]{display:none}
+.lb img{max-width:100%;max-height:calc(100% - 40px);width:auto;height:auto;object-fit:contain}
+.lb p{font-family:var(--mono);font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:#D6D3CC;text-align:center}
+.lb-x{position:absolute;top:calc(12px + env(safe-area-inset-top,0px));right:calc(12px + env(safe-area-inset-right,0px));width:44px;height:44px;border-radius:50%;border:1px solid #6b6964;background:transparent;color:var(--paper);font-size:22px;cursor:pointer}
+
+@media (max-width:900px){
+  .hero-top,.press-grid,.t-grid,.v-grid{grid-template-columns:1fr}
+  .hero-top{padding-block:28px 16px;gap:20px}
+  .press-grid,.t-grid,.v-grid,.learn .wrap,.courses .wrap{padding-block:64px}
+  .clip{max-width:300px}
+  .steps{grid-template-columns:1fr;gap:0;border-top:1px solid var(--line)}
+  .steps li{display:grid;grid-template-columns:96px minmax(0,1fr);grid-template-rows:auto 1fr;column-gap:16px;row-gap:4px;padding-block:14px;border-bottom:1px solid var(--line)}
+  .steps img{grid-row:1/3;aspect-ratio:1}
+  .steps h3{font-size:24px}
+  .c-grid{grid-template-columns:1fr}
+}
+@media (max-width:640px){
+  :root{--ph:clamp(240px,46vh,340px)}
+  .hdr .btn{display:none}
+  .fab{display:inline-flex}
+  .logo b{font-size:19px}
+  .arrows{display:none}
+  .facts div{grid-template-columns:6.5em minmax(0,1fr)}
+  .facts dt{font-size:22px}
+  .dur{font-size:60px}
+  .course{padding:22px}
+}
+@media (prefers-reduced-motion:reduce){.item,.tag{transform:none!important}}
+</style>
+
+<header class="hdr"><div class="wrap">
+  <span class="logo"><svg width="34" height="26" viewBox="0 0 44 34" fill="none" stroke-width="1.5" aria-hidden="true"><path d="M22 3 L22 33"></path><path d="M22 6 C16 1 7 3 8 9 C9 13 15 11 13 7"></path><path d="M22 6 C28 2 37 2 36 7 C35 10 31 9 30 7"></path></svg><span><b>TEACHING THREADS</b><small>FASHION ACADEMY</small></span></span>
+  <a class="btn" href="https://wa.me/919353562706" target="_blank" rel="noopener">WhatsApp us</a>
+</div></header>
+
+<main>
+<section class="hero" aria-label="Introduction">
+  <div class="wrap hero-top">
+    <div>
+      <p class="kicker">Fashion academy · Hubballi</p>
+      <h1>Learn fashion design from a <em>Kerala Fashion League</em> designer.</h1>
+    </div>
+    <div class="hero-side">
+      <p class="lede">Shruti Mahajan has designed for 15 years and run her own boutique in Hubli-Dharwad for 12. In her Hubballi studio she teaches 3 and 6-month courses, from your first measurement to a lehenga you stitch yourself.</p>
+      <div class="acts"><a class="btn" href="https://wa.me/919353562706" target="_blank" rel="noopener">Ask on WhatsApp</a><a class="btn ghost" href="#learn">What you'll learn</a></div>
+    </div>
+  </div>
+  <div class="wrap rail-head">
+    <p class="kicker">Her collections on the rail · swipe or drag</p>
+    <div class="arrows"><button type="button" id="prev" aria-label="Previous looks">←</button><button type="button" id="next" aria-label="Next looks">→</button></div>
+  </div>
+  <div class="rail" id="rail" tabindex="0" aria-label="Runway photos of Shruti Mahajan's collections">
+    <ul class="track">
+{{RAIL}}
+    </ul>
+  </div>
+</section>
+
+<section class="press" aria-labelledby="press-h">
+  <div class="wrap press-grid">
+    <figure class="clip">
+      <button type="button" data-lb data-cap="Deccan Herald, 2016" aria-label="View the Deccan Herald clipping larger"><img {{news_en}} alt="Deccan Herald clipping headlined Hubballi designer shines at Kerala Fashion League, with a photo of Shruti between two models"></button>
+      <span class="pin" aria-hidden="true"></span>
+    </figure>
+    <div class="press-text">
+      <p class="kicker">In the papers · Deccan Herald, 2016</p>
+      <h2 id="press-h">“Hubballi designer shines at Kerala Fashion League”</h2>
+      <p>Shruti showed her collection Forest Fury at the Kerala Fashion League in Kochi, one of the biggest fashion events in South India, alongside more than 20 designers from across the country. She made the collection from upholstery fabric, the kind used for curtains, and actress Radhika Chetan wore one of her designs on the ramp.</p>
+      <blockquote>“These kind of events helped to understand the fashion industry, which is not taught by the books.”<cite>Shruti Mahajan, to the Deccan Herald</cite></blockquote>
+      <p>Her courses work the same way. You learn at the machine, on real garments.</p>
+      <button type="button" class="also" data-lb data-cap="Kannada press, 2016"><img {{news_kn}} alt="Kannada newspaper clipping with a photo of Shruti and two models"><span>Also covered in the Kannada papers</span></button>
+    </div>
+  </div>
+</section>
+
+<section class="learn" id="learn" aria-labelledby="learn-h">
+  <div class="wrap">
+    <div class="sec-head"><p class="kicker">What you'll learn</p><h2 id="learn-h">From your first measurement <em>to your own lehenga.</em></h2></div>
+    <ol class="steps">
+      <li><img {{s1}} alt="Hands holding a measuring tape around the bust of a dress form" loading="lazy"><h3>Measure</h3><p>Take body measurements the way a tailor does, and note the numbers a pattern needs.</p></li>
+      <li><img {{s2}} alt="A hand drawing a bodice block on pattern paper with a ruler" loading="lazy"><h3>Draft the pattern</h3><p>Turn those numbers into a bodice block with a ruler and pencil.</p></li>
+      <li><img {{s3}} alt="Hands guiding fabric under the needle of an industrial sewing machine" loading="lazy"><h3>Stitch</h3><p>Practise on an industrial machine until your lines run straight and even.</p></li>
+      <li><img {{s4}} alt="Hands fastening the hooks of a finished blouse on a dress form" loading="lazy"><h3>Your first blouse</h3><p>A fitted blouse with darts, piping at the neck and hooks you set yourself.</p></li>
+      <li><img {{s5}} alt="Hands tying the drawstring of a pleated lehenga" loading="lazy"><h3>Lehenga</h3><p>Draft, stitch and finish a flared lehenga with a dori and tassels.</p></li>
+    </ol>
+    <a class="more" href="#" onclick="return false">Full course details →</a>
+  </div>
+</section>
+
+<section class="teacher" aria-labelledby="t-h">
+  <div class="wrap t-grid">
+    <figure><img {{founder}} alt="Shruti Mahajan in a black dress on the Kerala Fashion League ramp, beside her model in a floral lehenga" loading="lazy"><figcaption>Shruti (right) with her model at the Kerala Fashion League</figcaption></figure>
+    <div class="t-text">
+      <p class="kicker">Your teacher</p>
+      <h2 id="t-h">Shruti Mahajan</h2>
+      <p class="lede">A registered fashion designer who has run her own boutique in Hubli-Dharwad for more than 12 years. She teaches every batch herself, in her own studio.</p>
+      <dl class="facts">
+        <div><dt>15 years</dt><dd>in the fashion industry</dd></div>
+        <div><dt>12+ years</dt><dd>running her boutique in Hubli-Dharwad</dd></div>
+        <div><dt>2016</dt><dd>showed Forest Fury at the Kerala Fashion League, Kochi</dd></div>
+        <div><dt>Award</dt><dd>youngest female entrepreneur, Times of India</dd></div>
+      </dl>
+    </div>
+  </div>
+</section>
+
+<section class="courses" aria-labelledby="c-h">
+  <div class="wrap">
+    <div class="sec-head"><p class="kicker">Two courses</p><h2 id="c-h">Choose how deep you go.</h2></div>
+    <div class="c-grid">
+      <article class="course"><p class="dur">3<span>months</span></p><p>Measuring, pattern drafting and machine stitching. Kurtas, sleeves, blouses, lehengas and gowns. Finishing, the basics of design, and how to brand and sell your work.</p></article>
+      <article class="course"><p class="dur">6<span>months</span></p><p>Everything in the 3-month course, plus more drafts like the katori blouse and fishcut lehenga, aari work with beads and zardozi, boutique management, and a visit to the local fabric market.</p></article>
+    </div>
+    <p class="note">Both courses run in the studio on industrial machines. Ask on WhatsApp for fees and the next batch date.</p>
+  </div>
+</section>
+
+<section class="visit" aria-labelledby="v-h">
+  <div class="wrap v-grid">
+    <div><p class="kicker">Visit the studio</p><h2 id="v-h">Come and see the machines <em>before you join.</em></h2></div>
+    <div class="v-side">
+      <p>Teaching Threads Fashion Academy, Hubballi, Karnataka</p>
+      <p class="phone">WhatsApp or call <b id="phone">93535 62706</b><button type="button" class="copy" id="copy">Copy</button></p>
+      <a class="btn light" href="https://wa.me/919353562706" target="_blank" rel="noopener">Open WhatsApp</a>
+    </div>
+  </div>
+</section>
+</main>
+<footer class="foot"><div class="wrap"><span>Teaching Threads Fashion Academy</span><span>Hubballi, Karnataka</span></div></footer>
+
+<a class="btn fab" href="https://wa.me/919353562706" target="_blank" rel="noopener">WhatsApp us</a>
+
+<div class="lb" id="lb" hidden role="dialog" aria-modal="true" aria-label="Larger photo">
+  <button type="button" class="lb-x" id="lbx" aria-label="Close">×</button>
+  <img id="lbimg" alt="">
+  <p id="lbcap"></p>
+</div>
+
+<script>
+(function () {
+  const rail = document.getElementById('rail'), items = [...rail.querySelectorAll('.item')];
+  const calm = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // each hanger is a damped pendulum; moving the rail pushes it the other way
+  const sw = items.map(() => ({ a: 0, v: 0 }));
+  let running = false, last = rail.scrollLeft;
+  function step() {
+    let moving = false;
+    sw.forEach((s, i) => {
+      s.v = s.v * 0.93 - s.a * 0.035;
+      s.a = Math.max(-16, Math.min(16, s.a + s.v));
+      if (Math.abs(s.a) > 0.02 || Math.abs(s.v) > 0.02) moving = true; else { s.a = 0; s.v = 0; }
+      items[i].style.setProperty('--a', s.a.toFixed(2) + 'deg');
+    });
+    if (moving) requestAnimationFrame(step); else running = false;
+  }
+  function kick() { if (!running && !calm) { running = true; requestAnimationFrame(step); } }
+  rail.addEventListener('scroll', () => {
+    const dx = rail.scrollLeft - last; last = rail.scrollLeft;
+    sw.forEach((s, i) => { s.v += dx * (0.035 + (i % 3) * 0.008); });
+    kick(); arrows();
+  }, { passive: true });
+  // a small swing on load, as if they were just hung up
+  sw.forEach((s, i) => { s.v = (i % 2 ? 1 : -1) * (0.9 + (i % 3) * 0.25); });
+  kick();
+
+  // mouse drag to slide the rail (touch scrolls natively)
+  let drag = null, moved = false;
+  rail.addEventListener('pointerdown', e => {
+    if (e.pointerType !== 'mouse' || e.button !== 0) return;
+    drag = { x: e.clientX, s: rail.scrollLeft }; moved = false;
+  });
+  addEventListener('pointermove', e => {
+    if (!drag) return;
+    const dx = e.clientX - drag.x;
+    if (Math.abs(dx) > 5) { moved = true; rail.classList.add('dragging'); }
+    rail.scrollLeft = drag.s - dx;
+  });
+  addEventListener('pointerup', () => { drag = null; rail.classList.remove('dragging'); });
+
+  const prev = document.getElementById('prev'), next = document.getElementById('next');
+  prev.addEventListener('click', () => rail.scrollBy({ left: -rail.clientWidth * 0.7, behavior: calm ? 'auto' : 'smooth' }));
+  next.addEventListener('click', () => rail.scrollBy({ left: rail.clientWidth * 0.7, behavior: calm ? 'auto' : 'smooth' }));
+  function arrows() { prev.disabled = rail.scrollLeft < 4; next.disabled = rail.scrollLeft > rail.scrollWidth - rail.clientWidth - 4; }
+  arrows(); addEventListener('resize', arrows);
+
+  // larger view for the rail photos and the clippings
+  const lb = document.getElementById('lb'), lbimg = document.getElementById('lbimg'), lbcap = document.getElementById('lbcap'), lbx = document.getElementById('lbx');
+  let opener = null;
+  function open(btn, img, cap) {
+    if (moved) { moved = false; return; }
+    opener = btn; lbimg.src = img.src; lbimg.alt = img.alt; lbcap.textContent = cap; lb.hidden = false; lbx.focus();
+  }
+  function close() { lb.hidden = true; lbimg.removeAttribute('src'); if (opener) opener.focus(); }
+  items.forEach(it => {
+    const b = it.querySelector('.photo'), tag = [...it.querySelectorAll('.tag b, .tag span')].map(n => n.textContent);
+    b.addEventListener('click', () => open(b, b.querySelector('img'), tag[1] + ' · ' + tag[2]));
+  });
+  document.querySelectorAll('[data-lb]').forEach(b => b.addEventListener('click', () => open(b, b.querySelector('img'), b.dataset.cap)));
+  lbx.addEventListener('click', close);
+  lb.addEventListener('click', e => { if (e.target === lb) close(); });
+  addEventListener('keydown', e => { if (e.key === 'Escape' && !lb.hidden) close(); });
+
+  const copy = document.getElementById('copy');
+  copy.addEventListener('click', () => {
+    const done = () => { copy.textContent = 'Copied'; setTimeout(() => copy.textContent = 'Copy', 1600); };
+    navigator.clipboard.writeText('+91 93535 62706').then(done, () => {
+      const r = document.createRange(); r.selectNodeContents(document.getElementById('phone'));
+      const sel = getSelection(); sel.removeAllRanges(); sel.addRange(r);
+    });
+  });
+})();
+</script>
