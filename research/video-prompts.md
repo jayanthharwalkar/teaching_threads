@@ -87,6 +87,14 @@ The student ties the lehenga's dori and the camera pulls back to show the finish
 The two clay-white hands pull the black drawstring into a small bow at the side of the lehenga's waist, then let go and move out of the frame. The black tassels swing gently and settle. The camera slowly pulls back to show the whole dress form wearing the blouse and the full lehenga, the skirt's folds settling. One smooth continuous move. Everything stays matte clay-white, the background stays flat and empty. No cuts, no new objects.
 ```
 
+Take 1, `kling videos/kling_20261026_Image_to_Video_The_two_cl_3908_0.mp4`: good, except the two tasselled cords keep growing longer after the hands let go, during the pull-back. Fix prompt (v2):
+
+```
+The two clay-white hands finish pulling the black drawstring into a small bow at the side of the lehenga's waist, then let go and move out of the frame. After the hands leave, the bow and its two short tasselled ends stay exactly as they are: the same size and the same length, hanging still just below the waistband, with only a tiny settling sway. The camera slowly pulls back to show the whole dress form wearing the blouse and the full lehenga. The drawstring never gets longer; it only looks smaller because the camera moves away. One smooth continuous move. Everything stays matte clay-white, the background stays flat and empty. No cuts, no new objects.
+```
+
+Negative prompt addition: `drawstring growing, cords getting longer, strings stretching, tassels sliding down, extra strings, ribbon unrolling, morphing`. If it still drifts, split into two clips: (a) tie + hands leave with the camera still, (b) pull-back from (a)'s last frame to `stage 5b.png`.
+
 ---
 
 ## Transitions
@@ -100,7 +108,7 @@ Keyframes come from the clips themselves (start = last frame of the scene before
 | 1 → 2 | `kling videos/transition-1-2-start.png` | `kling videos/transition-1-2-end.png` | Done: `kling videos/kling_20261026_Image_to_Video_The_camera_1328_0.mp4` → `prototypes/assets/trans-1-2/` (standard crop) |
 | 2 → 3 | `kling videos/transition-2-3-start.png` | `kling videos/transition-2-3-end.png` | Take 1: `kling videos/kling_20261026_Image_to_Video_The_camera_1361_0.mp4` → `prototypes/assets/trans-2-3/` (kept: the paper morphs into the fabric and the ruler and pencil vanish, read as "your pattern becomes the fabric"). Take 2 with the v2 prompt, `kling videos/kling_20261026_VIDEO_The_clay_w_1402_0.mp4`, rejected: the end frame wasn't used, so it ends on a different, domestic machine and jumps at the join |
 | 3 → 4 | `kling videos/transition-3-4-start.png` | `kling videos/transition-3-4-end.png` | Done: `kling videos/kling_20261026_Image_to_Video_The_camera_1506_0.mp4` → `prototypes/assets/trans-3-4/` (standard crop; a faint shadow under the machine table mid-move, left as is) |
-| 4 → 5 | `kling videos/transition-4-5-start.png` | `kling videos/transition-4-5-end.png` | Start frame ready; end frame comes from `stage 5.1.png` |
+| 4 → 5 | `kling videos/transition-4-5-start.png` | `kling videos/transition-4-5-end.png` | Both frames ready (end = `stage 5.1.png` scaled and centre-cropped to 1176×1764, made 2026-10-26) |
 
 (`transition-1-2-*` and `transition-2-3-*` were remade 2026-10-26 for the new order; the old ones went form → machine → cutting.)
 
@@ -128,7 +136,7 @@ The camera slowly rises and pulls back from the sewing machine, then drifts to t
 
 ### Transition 4 → 5: blouse to the lehenga's waist
 
-Start: last frame of stage 4 (`transition-4-5-start.png`, ready). End: `stage 5.1.png` scaled to the clip size (Claude makes `transition-4-5-end.png` from it). A short, simple move: the dress form is the same, only the lehenga appears below the blouse.
+Start: last frame of stage 4 (`transition-4-5-start.png`, ready). End: `transition-4-5-end.png` (`stage 5.1.png` scaled to the clip size, ready). A short, simple move: the dress form is the same, only the lehenga appears below the blouse.
 
 ```
 The clay-white hands let go of the blouse and move out of the frame. The camera slowly tilts down and moves to the left side of the dress form's waist, where the form now wears a lehenga below the blouse, and the hands come back in holding the ends of a black drawstring. One smooth continuous camera move, no cuts. Everything stays matte clay-white, the background stays flat and empty, no room, no shadows.

@@ -1,0 +1,205 @@
+<title>After The Course Options</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wdth,wght@75..100,400..700&family=Instrument+Serif:ital@0;1&family=IBM+Plex+Mono:wght@400;500&family=Anek+Kannada:wdth,wght@75..125,300..700&family=Caveat:wght@500&display=swap">
+<style>
+:root{
+  /* Layout: a spec-sheet page; each option is a live brand mock with notes beneath. Chrome follows theme, mocks keep the brand paper. */
+  --bg:#ebeae6; --fg:#1b1a18; --muted:#66635d; --line:#d3d0c9; --card:#f8f7f4; --chip:#dedbd4;
+  --paper:#f5f4f0; --ink:#161514; --pencil:#8c887f; --rule:#d8d4cc;
+  --serif:"Instrument Serif", "Iowan Old Style", Georgia, serif;
+  --sans:"Instrument Sans", "Helvetica Neue", Arial, sans-serif;
+  --mono:"IBM Plex Mono", ui-monospace, Menlo, monospace;
+  --kn:"Anek Kannada", "Noto Sans Kannada", "Tunga", sans-serif;
+  --hand:"Caveat", "Bradley Hand", cursive;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#141413;--fg:#ebe9e4;--muted:#9d9a93;--line:#34332f;--card:#1c1c1a;--chip:#2b2a27;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#141413;--fg:#ebe9e4;--muted:#9d9a93;--line:#34332f;--card:#1c1c1a;--chip:#2b2a27;color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--sans);font-size:15px;line-height:1.55;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:28px 64px}
+.wrap{max-width:1080px;margin:0 auto;display:flex;flex-direction:column;gap:56px}
+a{color:inherit;text-underline-offset:3px;text-decoration-thickness:1px}
+a:focus-visible,button:focus-visible{outline:2px solid currentColor;outline-offset:2px}
+header.page{display:grid;gap:14px;border-bottom:1px solid var(--line);padding-bottom:28px}
+.kicker{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+header.page h1{font-family:var(--serif);font-weight:400;font-size:clamp(40px,7vw,76px);line-height:.98;margin:0;letter-spacing:-.01em;text-wrap:balance}
+header.page p{max-width:64ch;margin:0;color:var(--muted)}
+.legend{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:13px;color:var(--muted)}
+.tag{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;
+  padding:3px 8px;border-radius:2px;background:var(--chip);color:var(--fg);white-space:nowrap}
+.tag.rec{background:var(--fg);color:var(--bg)}
+.tag.orig{background:transparent;border:1px dashed var(--muted)}
+section.opt{display:grid;gap:16px}
+.opt-head{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+.opt-letter{font-family:var(--serif);font-size:54px;line-height:.8}
+.opt-name{font-family:var(--serif);font-size:30px;line-height:1.05;margin:0;font-weight:400}
+.opt-tags{display:flex;gap:6px;flex-wrap:wrap}
+.notes{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px;font-size:14px}
+.notes h4{margin:0 0 4px;font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:500}
+.notes p{margin:0}
+.links{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:13.5px;align-items:baseline;border-top:1px solid var(--line);padding-top:12px}
+.links .kicker{margin-right:4px}
+.links a::after{content:" ↗";font-size:11px;color:var(--muted)}
+.aside{background:var(--card);border:1px solid var(--line);border-radius:4px;padding:18px 20px;font-size:14px;display:grid;gap:8px}
+.aside h3{margin:0;font-family:var(--serif);font-weight:400;font-size:24px}
+.aside p,.aside ul{margin:0}
+.aside ul{padding-left:18px}
+@media (max-width:720px){.notes{grid-template-columns:1fr;gap:12px}.opt-letter{font-size:42px}.opt-name{font-size:25px}}
+
+/* ---------- the brand mock ---------- */
+.mock{background:var(--paper);color:var(--ink);border:1px solid var(--line);border-radius:4px;overflow:hidden;position:relative;
+  container-type:inline-size;font-family:var(--sans)}
+.mock .chrome{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 16px;border-bottom:1px solid var(--rule);
+  font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--pencil)}
+.mock .chrome b{color:var(--ink);font-weight:500}
+.mock .eyebrow{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--pencil)}
+.mock .h1{font-family:var(--serif);font-weight:400;font-size:clamp(34px,6.2cqi,64px);line-height:.96;margin:0;letter-spacing:-.01em;text-wrap:balance}
+.mock .h2{font-family:var(--serif);font-weight:400;font-size:clamp(28px,4.6cqi,46px);line-height:1;margin:0}
+.mock .sub{font-size:14px;line-height:1.5;max-width:44ch;margin:0;color:#3d3b37}
+.mock .btn{display:inline-flex;align-items:center;gap:8px;background:var(--ink);color:var(--paper);font-size:13px;font-weight:600;
+  padding:11px 16px;border-radius:999px;border:1px solid var(--ink);white-space:nowrap;cursor:pointer;font-family:var(--sans)}
+.mock .btn.ghost{background:transparent;color:var(--ink)}
+.mock .ctas{display:flex;gap:8px;flex-wrap:wrap}
+.mock .mono{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase}
+.mock .ph{font-family:var(--mono);font-size:10px;letter-spacing:.06em;color:#9a5b2e;background:#f1e6da;padding:1px 5px;border-radius:2px;text-transform:none}
+.mock img{display:block;max-width:100%}
+.duo{background:var(--paper);position:relative;overflow:hidden}
+.duo img{filter:grayscale(1) contrast(1.18) brightness(1.06);mix-blend-mode:multiply;width:100%;height:100%;object-fit:cover}
+.duo.grain::after{content:"";position:absolute;inset:0;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");opacity:.14;mix-blend-mode:multiply;pointer-events:none}
+.clay{width:100%;height:100%;object-fit:cover}
+@media (prefers-reduced-motion: reduce){.mock *,.mock *::before,.mock *::after{animation:none!important;transition:none!important}}
+
+.railwrap{padding:34px 0 28px;display:grid;gap:18px}
+.railwrap .hd{padding:0 28px}
+.rail{position:relative;overflow-x:auto;scroll-snap-type:x mandatory;padding:0 28px 14px}
+.rail .bar{position:absolute;left:0;right:0;top:12px;height:4px;background:var(--ink);border-radius:2px;min-width:1200px}
+.rail .row{display:flex;gap:22px;width:max-content;padding-top:4px}
+.hanger{width:170px;scroll-snap-align:start;display:flex;flex-direction:column;align-items:center;cursor:pointer;flex:none}
+.hanger svg{width:120px;height:62px;stroke:var(--ink);fill:none;stroke-width:2}
+.htag{width:150px;min-height:150px;perspective:800px;margin-top:-4px}
+.htag .in{position:relative;width:100%;height:150px;transition:transform .6s;transform-style:preserve-3d;transform-origin:50% 0;animation:sway 5s ease-in-out infinite}
+.hanger:nth-child(even) .htag .in{animation-delay:-2.5s}
+.hanger.flip .htag .in{transform:rotateY(180deg)}
+.htag .f{position:absolute;inset:0;backface-visibility:hidden;background:#ece5d6;border:1px solid #c9bfa9;border-radius:4px;padding:14px 12px;display:flex;flex-direction:column;gap:6px}
+.htag .b{transform:rotateY(180deg);background:#fbfaf6}
+.htag .f .t{font-family:var(--serif);font-size:23px;line-height:1}
+.htag .f p{margin:0;font-size:12px;line-height:1.35}
+@keyframes sway{0%,100%{rotate:-1.5deg}50%{rotate:1.5deg}}
+
+.pieces{display:grid;grid-template-columns:1fr 1fr;gap:20px;padding:30px 28px;align-items:center;min-height:440px}
+.pieces svg{width:100%;height:auto;max-height:380px}
+.pieces .pc{fill:#fbfaf6;stroke:var(--ink);stroke-width:1.4;transition:transform 1.1s cubic-bezier(.6,0,.2,1)}
+.pieces .lbl{font-family:var(--mono);font-size:9px;letter-spacing:.1em;fill:var(--ink);transition:opacity .4s}
+.pieces .notch{stroke:var(--ink);stroke-dasharray:4 3;fill:none}
+.pieces:not(.go) .p1{transform:translate(-60px,-40px) rotate(-12deg)}
+.pieces:not(.go) .p2{transform:translate(70px,-30px) rotate(10deg)}
+.pieces:not(.go) .p3{transform:translate(-70px,70px) rotate(14deg)}
+.pieces:not(.go) .p4{transform:translate(80px,80px) rotate(-16deg)}
+.pieces .then{opacity:0;transition:opacity .6s .9s;display:grid;gap:8px}
+.pieces.go .then{opacity:1}
+.pieces.go .lbl{opacity:0}
+.pieces ul{margin:0;padding:0;list-style:none;display:grid;gap:6px}
+.pieces li{font-family:var(--serif);font-size:24px;line-height:1.1;border-bottom:1px solid var(--rule);padding-bottom:6px}
+@container (max-width:600px){.pieces{grid-template-columns:1fr}}
+
+.sign{padding:36px 28px;display:grid;gap:26px}
+.board{background:#1d1c1a;color:#f5f1e6;border-radius:4px;padding:26px 28px;border:6px solid #3a3733;box-shadow:inset 0 0 0 1px #57534c;display:grid;gap:6px;text-align:center}
+.board .name{font-family:var(--serif);font-size:clamp(38px,7.4cqi,72px);line-height:1;min-height:1em}
+.board .name .cur{display:inline-block;width:3px;height:.8em;background:#f5f1e6;margin-left:4px;vertical-align:-2px;animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+.board .en{font-family:var(--mono);font-size:12px;letter-spacing:.2em;text-transform:uppercase}
+.board .kn{font-family:var(--kn);font-size:20px;font-weight:600;letter-spacing:.02em}
+.cards3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.cards3 div{border-top:1.5px solid var(--ink);padding-top:10px}
+.cards3 b{font-family:var(--serif);font-weight:400;font-size:23px;display:block;line-height:1.05}
+.cards3 p{margin:4px 0 0;font-size:12.5px;color:#4a4843}
+@container (max-width:560px){.cards3{grid-template-columns:1fr}}
+
+.ledger{padding:36px 28px;display:flex;justify-content:center}
+.book{width:min(620px,100%);background:#fbfaf6;border:1px solid #cfc9bc;padding:22px 24px;background-image:repeating-linear-gradient(180deg,transparent 0 31px,#cfd8e3 31px 32px);background-position:0 54px}
+.book h6{margin:0 0 18px;font-family:var(--serif);font-weight:400;font-size:28px;line-height:1}
+.book .r{display:grid;grid-template-columns:40px 1fr 110px;height:32px;align-items:end;font-family:var(--hand);font-size:22px;border-left:1px solid #e2a7a0}
+.book .r span:first-child{font-family:var(--mono);font-size:10px;padding-left:6px;color:var(--pencil)}
+.book .r span:last-child{font-family:var(--mono);font-size:13px}
+</style>
+<div class="wrap">
+<header class="page">
+  <span class="kicker">Teaching Threads · Landing page options · 06 / 09</span>
+  <h1>After the course</h1>
+  <p>What a student can do once they finish. No student stories or placement numbers yet, so these name real local paths: a boutique, stitching from home, bridal blouses, Aari work, alterations, further study.</p>
+  <div class="legend"><span><span class="tag rec">Recommended</span> my pick</span><span><span class="tag orig">Original idea</span> no real-world example found, the links are the closest techniques</span><span><span class="ph">orange</span> = placeholder to confirm with Shruti</span></div>
+</header>
+
+<section class="opt" id="opt-a">
+  <div class="opt-head"><span class="opt-letter">A</span><h2 class="opt-name">Clothes rail of paths</h2><div class="opt-tags"><span class="tag">Runner-up</span><span class="tag orig">Original idea</span></div></div>
+  <div class="mock"><div class="railwrap"><div class="hd"><span class="eyebrow">After the course</span><p class="h2">Pick a path off the rail.</p></div><div class="rail"><div class="bar"></div><div class="row"><div class="hanger" tabindex="0" role="button"><svg viewBox="0 0 120 62"><path d="M60 4 q8 0 8 7 q0 6 -8 9 v6 L8 56 h104 L60 26"/></svg><div class="htag"><div class="in"><div class="f"><span class="mono" style="font-size:9px">Path</span><span class="t">Open your own boutique</span><span class="mono" style="font-size:9px;margin-top:auto;color:#6b6150">tap ↻</span></div><div class="f b"><span class="mono" style="font-size:9px">What you need next</span><p>Boutique management + branding modules (6-month).</p></div></div></div></div><div class="hanger" tabindex="0" role="button"><svg viewBox="0 0 120 62"><path d="M60 4 q8 0 8 7 q0 6 -8 9 v6 L8 56 h104 L60 26"/></svg><div class="htag"><div class="in"><div class="f"><span class="mono" style="font-size:9px">Path</span><span class="t">Stitch from home</span><span class="mono" style="font-size:9px;margin-top:auto;color:#6b6150">tap ↻</span></div><div class="f b"><span class="mono" style="font-size:9px">What you need next</span><p>Take blouse and kurta orders from your neighbourhood.</p></div></div></div></div><div class="hanger" tabindex="0" role="button"><svg viewBox="0 0 120 62"><path d="M60 4 q8 0 8 7 q0 6 -8 9 v6 L8 56 h104 L60 26"/></svg><div class="htag"><div class="in"><div class="f"><span class="mono" style="font-size:9px">Path</span><span class="t">Blouse &amp; bridal specialist</span><span class="mono" style="font-size:9px;margin-top:auto;color:#6b6150">tap ↻</span></div><div class="f b"><span class="mono" style="font-size:9px">What you need next</span><p>8 blouse types, lehenga, Aari work.</p></div></div></div></div><div class="hanger" tabindex="0" role="button"><svg viewBox="0 0 120 62"><path d="M60 4 q8 0 8 7 q0 6 -8 9 v6 L8 56 h104 L60 26"/></svg><div class="htag"><div class="in"><div class="f"><span class="mono" style="font-size:9px">Path</span><span class="t">Alterations service</span><span class="mono" style="font-size:9px;margin-top:auto;color:#6b6150">tap ↻</span></div><div class="f b"><span class="mono" style="font-size:9px">What you need next</span><p>Fast, steady local income.</p></div></div></div></div><div class="hanger" tabindex="0" role="button"><svg viewBox="0 0 120 62"><path d="M60 4 q8 0 8 7 q0 6 -8 9 v6 L8 56 h104 L60 26"/></svg><div class="htag"><div class="in"><div class="f"><span class="mono" style="font-size:9px">Path</span><span class="t">Aari &amp; embroidery work</span><span class="mono" style="font-size:9px;margin-top:auto;color:#6b6150">tap ↻</span></div><div class="f b"><span class="mono" style="font-size:9px">What you need next</span><p>Pearl, beads, zardozi, thread work (6-month).</p></div></div></div></div><div class="hanger" tabindex="0" role="button"><svg viewBox="0 0 120 62"><path d="M60 4 q8 0 8 7 q0 6 -8 9 v6 L8 56 h104 L60 26"/></svg><div class="htag"><div class="in"><div class="f"><span class="mono" style="font-size:9px">Path</span><span class="t">Go on to a design degree</span><span class="mono" style="font-size:9px;margin-top:auto;color:#6b6150">tap ↻</span></div><div class="f b"><span class="mono" style="font-size:9px">What you need next</span><p>A portfolio of real garments for NIFT-style entrance.</p></div></div></div></div></div></div></div></div>
+  <div class="notes">
+    <div><h4>What you see</h4><p>Six clay hangers on a black rail, each with a swing tag naming a real local career. Tap a tag to flip it and see what you'd need next.</p></div>
+    <div><h4>Why it works</h4><p>Turns a list of careers into a physical object. Honest content, no made-up numbers.</p></div>
+    <div><h4>On mobile</h4><p>A horizontal snap scroller, one hanger at a time.</p></div>
+  </div>
+  <div class="links"><span class="kicker">Inspiration</span><a href="https://www.polimoda.com/courses" target="_blank" rel="noopener">Polimoda: career-path filter</a><a href="https://pearlacademy.com/programs/certificate-courses/fashion/fashion-design-womenswear" target="_blank" rel="noopener">Pearl Academy: careers list</a></div>
+</section>
+<section class="opt" id="opt-b">
+  <div class="opt-head"><span class="opt-letter">B</span><h2 class="opt-name">Pattern pieces assemble</h2><div class="opt-tags"></div></div>
+  <div class="mock"><div class="pieces" id="pieces">
+<svg viewBox="0 0 300 300" aria-hidden="true">
+ <g class="pc p1"><path d="M70 60 L130 50 L140 150 L60 150 Z"/><text class="lbl" x="72" y="105">MEASURE</text></g>
+ <g class="pc p2"><path d="M150 50 L210 60 L220 150 L140 150 Z"/><text class="lbl" x="160" y="105">DRAFT</text></g>
+ <g class="pc p3"><path d="M60 150 L140 150 L135 240 L70 240 Z"/><text class="lbl" x="74" y="200">STITCH</text></g>
+ <g class="pc p4"><path d="M140 150 L220 150 L210 240 L145 240 Z"/><text class="lbl" x="152" y="200">FINISH</text></g>
+ <path class="notch" d="M100 52 Q140 90 180 52"/>
+</svg>
+<div><span class="eyebrow">Skills, assembled</span><p class="h2" style="margin:8px 0 14px">Four skills. One garment.</p>
+<div class="then"><span class="mono">…and now you can</span><ul><li>Open your own boutique</li><li>Stitch orders from home</li><li>Specialise in bridal blouses</li></ul></div>
+<button class="btn ghost" id="assemble" type="button" style="margin-top:14px">Assemble</button></div></div></div>
+  <div class="notes">
+    <div><h4>What you see</h4><p>Four blouse pattern pieces labelled Measure, Draft, Stitch, Finish float apart, then slide together into one garment, revealing what you can do now. Press Assemble.</p></div>
+    <div><h4>Why it works</h4><p>Shows skills combining into a livelihood, and reuses the stage vocabulary from the course section.</p></div>
+    <div><h4>On mobile</h4><p>Shorter scroll pin, or just show the assembled still.</p></div>
+  </div>
+  <div class="links"><span class="kicker">Inspiration</span><a href="https://tympanus.net/codrops/2022/06/08/how-to-animate-svg-shapes-on-scroll/" target="_blank" rel="noopener">Codrops: SVG shapes on scroll</a><a href="https://www.framer.com/marketplace/components/scroll-stack/" target="_blank" rel="noopener">Framer: Scroll Stack</a></div>
+</section>
+<section class="opt" id="opt-c">
+  <div class="opt-head"><span class="opt-letter">C</span><h2 class="opt-name">Shop-front signboard</h2><div class="opt-tags"><span class="tag rec">Recommended</span><span class="tag orig">Original idea</span></div></div>
+  <div class="mock"><div class="sign"><span class="eyebrow">After the course</span>
+<div class="board"><div class="name"><span id="tw"></span><span class="cur"></span></div>
+<div class="en">Boutique · Ladies tailoring · Blouse specialist</div>
+<div class="kn">ಲೇಡೀಸ್ ಟೈಲರಿಂಗ್ · ಬ್ಲೌಸ್ ಸ್ಪೆಷಲಿಸ್ಟ್</div></div>
+<div class="cards3"><div><b>Open your own boutique</b><p>The 6-month course includes boutique management, branding and a local market visit.</p></div>
+<div><b>Stitch from home</b><p>Blouse and kurta orders from your street, on your hours.</p></div>
+<div><b>Go further</b><p>Aari specialist, alterations, or on to a design degree with a real portfolio.</p></div></div>
+<span class="ph" style="justify-self:start">Kannada line to be checked by a native speaker</span></div></div>
+  <div class="notes">
+    <div><h4>What you see</h4><p>A painted Hubballi shop board: "____ Boutique · Ladies tailoring · Blouse specialist", with the blank typing out different names. A Kannada line underneath, like real signboards. Three path cards below.</p></div>
+    <div><h4>Why it works</h4><p>Aspirational and very local: the real outcome for most students is their own shop. Karnataka signboards are bilingual by law, so the Kannada line feels native.</p></div>
+    <div><h4>On mobile</h4><p>Works as is.</p></div>
+  </div>
+  <div class="links"><span class="kicker">Inspiration</span><a href="https://yellowslice.in/bed/?p=11115" target="_blank" rel="noopener">Yellowslice: Kannada signage</a><a href="https://bfacd.parsons.edu/2021/maya-eapen" target="_blank" rel="noopener">Parsons: Maya Eapen, Bangalore display lettering</a></div>
+</section>
+<section class="opt" id="opt-d">
+  <div class="opt-head"><span class="opt-letter">D</span><h2 class="opt-name">First-orders ledger</h2><div class="opt-tags"><span class="tag orig">Original idea</span></div></div>
+  <div class="mock"><div class="ledger"><div class="book"><h6>Your first orders</h6>
+<div class="r"><span>01</span><span>Princess-cut blouse, padded</span><span>₹ ____</span></div>
+<div class="r"><span>02</span><span>Kurti alteration</span><span>₹ ____</span></div>
+<div class="r"><span>03</span><span>Umbrella-flare lehenga</span><span>₹ ____</span></div>
+<div class="r"><span>04</span><span>Boat-neck blouse</span><span>₹ ____</span></div>
+<div class="r"><span>05</span><span>Aari work, sleeves</span><span>₹ ____</span></div>
+<div style="margin-top:14px"><span class="ph">only with real local rates from Shruti; never invent them</span></div></div></div></div>
+  <div class="notes">
+    <div><h4>What you see</h4><p>An order-book page of "your first orders": blouse, alteration, lehenga, each with a price.</p></div>
+    <div><h4>Why it works</h4><p>Makes earning potential concrete.</p></div>
+    <div><h4>On mobile</h4><p>Works as is.</p></div>
+  </div>
+  <div class="links"><span class="kicker">Inspiration</span><a href="https://en.wikipedia.org/wiki/Tailor" target="_blank" rel="noopener">No precedent found; based on real tailor order books</a></div>
+</section><div class="aside"><h3>The rule here</h3><p>No placement percentages or salary claims. Big schools quote them (Marangoni: "91% find work within a year"); we don't have the data, so every option names paths, not numbers.</p></div>
+</div>
+<script>
+document.querySelectorAll('.hanger').forEach(h=>{const f=()=>h.classList.toggle('flip');h.addEventListener('click',f);h.addEventListener('keydown',e=>{if(e.key==='Enter'){f()}})});
+const pc=document.getElementById('pieces');document.getElementById('assemble').addEventListener('click',e=>{pc.classList.toggle('go');e.target.textContent=pc.classList.contains('go')?'Take apart':'Assemble'});
+const names=['Your name','Priya','Ananya','Lakshmi','Shreya','Your name'],tw=document.getElementById('tw');let ni=0,ci=0,del=false;
+function step(){const n=names[ni]+' Boutique';if(!del){ci++;tw.textContent=n.slice(0,ci);if(ci===n.length){del=true;return setTimeout(step,1600)}}
+ else{ci--;tw.textContent=n.slice(0,ci);if(ci===0){del=false;ni=(ni+1)%names.length}}setTimeout(step,del?45:90)}
+if(matchMedia('(prefers-reduced-motion: reduce)').matches){tw.textContent='Your name Boutique'}else step();
+</script>

@@ -1,0 +1,175 @@
+<title>FAQ Options</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wdth,wght@75..100,400..700&family=Instrument+Serif:ital@0;1&family=IBM+Plex+Mono:wght@400;500&family=Anek+Kannada:wdth,wght@75..125,300..700&family=Caveat:wght@500&display=swap">
+<style>
+:root{
+  /* Layout: a spec-sheet page; each option is a live brand mock with notes beneath. Chrome follows theme, mocks keep the brand paper. */
+  --bg:#ebeae6; --fg:#1b1a18; --muted:#66635d; --line:#d3d0c9; --card:#f8f7f4; --chip:#dedbd4;
+  --paper:#f5f4f0; --ink:#161514; --pencil:#8c887f; --rule:#d8d4cc;
+  --serif:"Instrument Serif", "Iowan Old Style", Georgia, serif;
+  --sans:"Instrument Sans", "Helvetica Neue", Arial, sans-serif;
+  --mono:"IBM Plex Mono", ui-monospace, Menlo, monospace;
+  --kn:"Anek Kannada", "Noto Sans Kannada", "Tunga", sans-serif;
+  --hand:"Caveat", "Bradley Hand", cursive;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#141413;--fg:#ebe9e4;--muted:#9d9a93;--line:#34332f;--card:#1c1c1a;--chip:#2b2a27;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#141413;--fg:#ebe9e4;--muted:#9d9a93;--line:#34332f;--card:#1c1c1a;--chip:#2b2a27;color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--sans);font-size:15px;line-height:1.55;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:28px 64px}
+.wrap{max-width:1080px;margin:0 auto;display:flex;flex-direction:column;gap:56px}
+a{color:inherit;text-underline-offset:3px;text-decoration-thickness:1px}
+a:focus-visible,button:focus-visible{outline:2px solid currentColor;outline-offset:2px}
+header.page{display:grid;gap:14px;border-bottom:1px solid var(--line);padding-bottom:28px}
+.kicker{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+header.page h1{font-family:var(--serif);font-weight:400;font-size:clamp(40px,7vw,76px);line-height:.98;margin:0;letter-spacing:-.01em;text-wrap:balance}
+header.page p{max-width:64ch;margin:0;color:var(--muted)}
+.legend{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:13px;color:var(--muted)}
+.tag{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;
+  padding:3px 8px;border-radius:2px;background:var(--chip);color:var(--fg);white-space:nowrap}
+.tag.rec{background:var(--fg);color:var(--bg)}
+.tag.orig{background:transparent;border:1px dashed var(--muted)}
+section.opt{display:grid;gap:16px}
+.opt-head{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+.opt-letter{font-family:var(--serif);font-size:54px;line-height:.8}
+.opt-name{font-family:var(--serif);font-size:30px;line-height:1.05;margin:0;font-weight:400}
+.opt-tags{display:flex;gap:6px;flex-wrap:wrap}
+.notes{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px;font-size:14px}
+.notes h4{margin:0 0 4px;font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:500}
+.notes p{margin:0}
+.links{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:13.5px;align-items:baseline;border-top:1px solid var(--line);padding-top:12px}
+.links .kicker{margin-right:4px}
+.links a::after{content:" ↗";font-size:11px;color:var(--muted)}
+.aside{background:var(--card);border:1px solid var(--line);border-radius:4px;padding:18px 20px;font-size:14px;display:grid;gap:8px}
+.aside h3{margin:0;font-family:var(--serif);font-weight:400;font-size:24px}
+.aside p,.aside ul{margin:0}
+.aside ul{padding-left:18px}
+@media (max-width:720px){.notes{grid-template-columns:1fr;gap:12px}.opt-letter{font-size:42px}.opt-name{font-size:25px}}
+
+/* ---------- the brand mock ---------- */
+.mock{background:var(--paper);color:var(--ink);border:1px solid var(--line);border-radius:4px;overflow:hidden;position:relative;
+  container-type:inline-size;font-family:var(--sans)}
+.mock .chrome{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 16px;border-bottom:1px solid var(--rule);
+  font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--pencil)}
+.mock .chrome b{color:var(--ink);font-weight:500}
+.mock .eyebrow{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--pencil)}
+.mock .h1{font-family:var(--serif);font-weight:400;font-size:clamp(34px,6.2cqi,64px);line-height:.96;margin:0;letter-spacing:-.01em;text-wrap:balance}
+.mock .h2{font-family:var(--serif);font-weight:400;font-size:clamp(28px,4.6cqi,46px);line-height:1;margin:0}
+.mock .sub{font-size:14px;line-height:1.5;max-width:44ch;margin:0;color:#3d3b37}
+.mock .btn{display:inline-flex;align-items:center;gap:8px;background:var(--ink);color:var(--paper);font-size:13px;font-weight:600;
+  padding:11px 16px;border-radius:999px;border:1px solid var(--ink);white-space:nowrap;cursor:pointer;font-family:var(--sans)}
+.mock .btn.ghost{background:transparent;color:var(--ink)}
+.mock .ctas{display:flex;gap:8px;flex-wrap:wrap}
+.mock .mono{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase}
+.mock .ph{font-family:var(--mono);font-size:10px;letter-spacing:.06em;color:#9a5b2e;background:#f1e6da;padding:1px 5px;border-radius:2px;text-transform:none}
+.mock img{display:block;max-width:100%}
+.duo{background:var(--paper);position:relative;overflow:hidden}
+.duo img{filter:grayscale(1) contrast(1.18) brightness(1.06);mix-blend-mode:multiply;width:100%;height:100%;object-fit:cover}
+.duo.grain::after{content:"";position:absolute;inset:0;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");opacity:.14;mix-blend-mode:multiply;pointer-events:none}
+.clay{width:100%;height:100%;object-fit:cover}
+@media (prefers-reduced-motion: reduce){.mock *,.mock *::before,.mock *::after{animation:none!important;transition:none!important}}
+
+.ob{padding:30px 28px;display:grid;gap:10px}
+.chit{background:#fbfaf6;border:1px solid #cfc9bc;position:relative;padding-left:22px}
+.chit::before{content:"";position:absolute;left:8px;top:0;bottom:0;width:0;border-left:2px dotted #b8b2a5}
+.chit button{all:unset;cursor:pointer;display:grid;grid-template-columns:86px 1fr 24px;gap:12px;align-items:baseline;padding:14px 14px 14px 4px;width:calc(100% - 18px)}
+.chit button:focus-visible{outline:2px solid var(--ink)}
+.chit .no{font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;color:#b0472f}
+.chit .q{font-family:var(--serif);font-size:21px;line-height:1.15}
+.chit .pm{font-family:var(--mono);font-size:16px;transition:transform .3s;text-align:right}
+.chit button[aria-expanded="true"] .pm{transform:rotate(45deg)}
+.chit .a{display:grid;grid-template-rows:0fr;transition:grid-template-rows .35s}
+.chit .a>div{overflow:hidden}
+.chit .a p{margin:0;padding:0 14px 16px 102px;font-size:14px;line-height:1.5;background:repeating-linear-gradient(180deg,transparent 0 23px,#dfe5ec 23px 24px)}
+.chit.open .a{grid-template-rows:1fr}
+.chit.ask{border-style:dashed;background:transparent}
+@container (max-width:560px){.chit button{grid-template-columns:1fr 24px}.chit .no{grid-column:1/-1}.chit .a p{padding-left:4px}}
+
+.mgrid{padding:30px 28px}
+.mgrid table{width:100%;border-collapse:collapse}
+.mgrid th{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--pencil);font-weight:400;text-align:left;padding:8px;border-bottom:1.5px solid var(--ink)}
+.mgrid td{padding:12px 8px;border-bottom:1px solid var(--rule);vertical-align:top;font-size:14px}
+.mgrid td:first-child{font-family:var(--serif);font-size:19px;line-height:1.15;width:55%}
+.mgrid td:nth-child(2){font-family:var(--mono);font-size:13px;white-space:nowrap}
+.mgrid details summary{cursor:pointer;font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--pencil)}
+.mgrid details p{margin:6px 0 0}
+
+.board2{padding:34px 24px;display:grid;grid-template-columns:repeat(3,1fr);gap:22px;background-color:#e9e5db}
+.slip{background:#f6f1e4;border:1px solid #d7cfbd;padding:22px 14px 14px;position:relative;cursor:pointer;transform:rotate(var(--r));transition:transform .3s;
+  clip-path:polygon(0 3%,8% 0,30% 2%,55% 0,80% 3%,100% 0,98% 30%,100% 60%,97% 100%,60% 98%,30% 100%,4% 97%,2% 60%,0 30%)}
+.slip:hover{transform:rotate(0) scale(1.02)}
+.slip i{position:absolute;top:7px;left:50%;width:10px;height:10px;border-radius:50%;background:#b0472f;transform:translateX(-50%);box-shadow:0 1px 0 rgba(0,0,0,.3)}
+.slip b{font-family:var(--serif);font-weight:400;font-size:19px;line-height:1.15;display:block}
+.slip p{margin:0;font-size:13px;max-height:0;overflow:hidden;transition:max-height .4s,margin .4s}
+.slip.open p{max-height:160px;margin-top:8px}
+@container (max-width:600px){.board2{grid-template-columns:1fr 1fr}}
+
+.askc{padding:34px 28px;display:flex;justify-content:center}
+.blank{width:min(560px,100%);background:#fbfaf6;border:1.5px dashed var(--ink);padding:22px;display:grid;gap:12px}
+.blank label{font-family:var(--serif);font-size:26px;line-height:1.1}
+.blank textarea{font:inherit;font-size:15px;border:0;border-bottom:1px solid var(--ink);background:repeating-linear-gradient(180deg,transparent 0 27px,#dfe5ec 27px 28px);resize:vertical;min-height:84px;line-height:28px;padding:0 2px;color:var(--ink)}
+.blank textarea:focus{outline:none;border-bottom-width:2px}
+.msg{background:#e6f2df;border-radius:10px 10px 10px 2px;padding:12px 14px;font-size:14px;line-height:1.45;color:#1d2b17}
+.msg small{display:block;font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:#4d6343;margin-bottom:4px}
+</style>
+<div class="wrap">
+<header class="page">
+  <span class="kicker">Teaching Threads · Landing page options · 08 / 09</span>
+  <h1>FAQ</h1>
+  <p>The questions a beginner in Hubballi actually asks before joining. Answers come from the PDFs where they exist; orange tags are facts only Shruti can give us.</p>
+  <div class="legend"><span><span class="tag rec">Recommended</span> my pick</span><span><span class="tag orig">Original idea</span> no real-world example found, the links are the closest techniques</span><span><span class="ph">orange</span> = placeholder to confirm with Shruti</span></div>
+</header>
+
+<section class="opt" id="opt-a">
+  <div class="opt-head"><span class="opt-letter">A</span><h2 class="opt-name">Tailor's order book</h2><div class="opt-tags"><span class="tag rec">Recommended</span><span class="tag orig">Original idea</span></div></div>
+  <div class="mock"><div class="ob"><span class="eyebrow">Questions · Order book</span><div class="chit"><button type="button" aria-expanded="false" id="q0"><span class="no">No. 0127</span><span class="q">I've never touched a sewing machine. Can I join?</span><span class="pm">+</span></button><div class="a" role="region" aria-labelledby="q0"><div><p>The course starts with taking measurements and machine practice on industrial machines, before any garment. <span class='ph'>confirm: beginners welcome</span></p></div></div></div><div class="chit"><button type="button" aria-expanded="false" id="q1"><span class="no">No. 0128</span><span class="q">Do I need my own machine?</span><span class="pm">+</span></button><div class="a" role="region" aria-labelledby="q1"><div><p>You practise on the studio's industrial machines. <span class='ph'>confirm</span></p></div></div></div><div class="chit"><button type="button" aria-expanded="false" id="q2"><span class="no">No. 0129</span><span class="q">Which language is it taught in?</span><span class="pm">+</span></button><div class="a" role="region" aria-labelledby="q2"><div><p><span class='ph'>Kannada / Hindi / English, confirm</span></p></div></div></div><div class="chit"><button type="button" aria-expanded="false" id="q3"><span class="no">No. 0130</span><span class="q">What are the timings?</span><span class="pm">+</span></button><div class="a" role="region" aria-labelledby="q3"><div><p><span class='ph'>morning and evening batches? confirm</span> Timings for college students and working women.</p></div></div></div><div class="chit"><button type="button" aria-expanded="false" id="q4"><span class="no">No. 0131</span><span class="q">What are the fees? Can I pay in instalments?</span><span class="pm">+</span></button><div class="a" role="region" aria-labelledby="q4"><div><p><span class='ph'>fee for each course and whether instalments are allowed</span></p></div></div></div><div class="chit ask"><button type="button" aria-expanded="false"><span class="no">No. 0___</span><span class="q">Your question isn't here? Ask Shruti on WhatsApp.</span><span class="pm">→</span></button></div></div></div>
+  <div class="notes">
+    <div><h4>What you see</h4><p>A carbon-copy order book with a perforated edge. Each question is a numbered chit; tap to slide out the answer on ruled paper. The last chit is blank and opens WhatsApp.</p></div>
+    <div><h4>Why it works</h4><p>The most recognisable local object, and it's a proper accessible accordion underneath (buttons with aria-expanded, several open at once).</p></div>
+    <div><h4>On mobile</h4><p>Full-width chits; the number moves above the question.</p></div>
+  </div>
+  <div class="links"><span class="kicker">Inspiration</span><a href="https://onepagelove.com/section/faq-accordion/shelf" target="_blank" rel="noopener">One Page Love: Shelf FAQ accordion</a><a href="https://onepagelove.com/tag/faq" target="_blank" rel="noopener">One Page Love: FAQ collection</a><a href="https://www.nngroup.com/articles/accordions-on-desktop/" target="_blank" rel="noopener">NN/g: accordions on desktop</a></div>
+</section>
+<section class="opt" id="opt-b">
+  <div class="opt-head"><span class="opt-letter">B</span><h2 class="opt-name">Measurement-chart grid</h2><div class="opt-tags"><span class="tag">Runner-up</span></div></div>
+  <div class="mock"><div class="mgrid"><table><thead><tr><th>Question</th><th>Short</th><th>Detail</th></tr></thead><tbody><tr><td>I've never touched a sewing machine. Can I join?</td><td>Yes.</td><td><details><summary>more</summary><p>The course starts with taking measurements and machine practice on industrial machines, before any garment. <span class='ph'>confirm: beginners welcome</span></p></details></td></tr><tr><td>Do I need my own machine?</td><td>No</td><td><details><summary>more</summary><p>You practise on the studio's industrial machines. <span class='ph'>confirm</span></p></details></td></tr><tr><td>Which language is it taught in?</td><td><span class='ph'>?</span></td><td><details><summary>more</summary><p><span class='ph'>Kannada / Hindi / English, confirm</span></p></details></td></tr><tr><td>What are the timings?</td><td><span class='ph'>?</span></td><td><details><summary>more</summary><p><span class='ph'>morning and evening batches? confirm</span> Timings for college students and working women.</p></details></td></tr><tr><td>What are the fees? Can I pay in instalments?</td><td><span class='ph'>₹ ?</span></td><td><details><summary>more</summary><p><span class='ph'>fee for each course and whether instalments are allowed</span></p></details></td></tr><tr><td>Do I get a certificate?</td><td><span class='ph'>?</span></td><td><details><summary>more</summary><p><span class='ph'>confirm</span></p></details></td></tr><tr><td>Can I start a boutique after this?</td><td>Yes</td><td><details><summary>more</summary><p>The 6-month course includes boutique management, branding and marketing, and a fabric and local-market visit.</p></details></td></tr></tbody></table></div></div>
+  <div class="notes">
+    <div><h4>What you see</h4><p>A measurement chart where each row is a question and the short answer is visible without clicking ("Machine needed? No"). Longer answers expand.</p></div>
+    <div><h4>Why it works</h4><p>The short answers never hide, which is NN/g's main rule for FAQs.</p></div>
+    <div><h4>On mobile</h4><p>Question and short answer stay; Detail drops under the row.</p></div>
+  </div>
+  <div class="links"><span class="kicker">Inspiration</span><a href="https://onepagelove.com/section/faq-grid/pairio" target="_blank" rel="noopener">One Page Love: Pairio FAQ grid</a><a href="https://www.nngroup.com/videos/accordions-on-mobile/" target="_blank" rel="noopener">NN/g: accordions on mobile</a></div>
+</section>
+<section class="opt" id="opt-c">
+  <div class="opt-head"><span class="opt-letter">C</span><h2 class="opt-name">Pinned pattern slips</h2><div class="opt-tags"><span class="tag orig">Original idea</span></div></div>
+  <div class="mock"><div class="board2"><div class="slip" style="--r:-3deg" tabindex="0" role="button"><i></i><b>I've never touched a sewing machine. Can I join?</b><p>The course starts with taking measurements and machine practice on industrial machines, before any garment. <span class='ph'>confirm: beginners welcome</span></p></div><div class="slip" style="--r:2deg" tabindex="0" role="button"><i></i><b>Do I need my own machine?</b><p>You practise on the studio's industrial machines. <span class='ph'>confirm</span></p></div><div class="slip" style="--r:-1.5deg" tabindex="0" role="button"><i></i><b>Which language is it taught in?</b><p><span class='ph'>Kannada / Hindi / English, confirm</span></p></div><div class="slip" style="--r:3deg" tabindex="0" role="button"><i></i><b>What are the timings?</b><p><span class='ph'>morning and evening batches? confirm</span> Timings for college students and working women.</p></div><div class="slip" style="--r:-2deg" tabindex="0" role="button"><i></i><b>What are the fees? Can I pay in instalments?</b><p><span class='ph'>fee for each course and whether instalments are allowed</span></p></div><div class="slip" style="--r:1.5deg" tabindex="0" role="button"><i></i><b>Do I get a certificate?</b><p><span class='ph'>confirm</span></p></div></div></div>
+  <div class="notes">
+    <div><h4>What you see</h4><p>Questions written on torn scraps of pattern paper pinned to a board. Tap a slip to unfold the answer.</p></div>
+    <div><h4>Why it works</h4><p>The most playful of the four.</p></div>
+    <div><h4>On mobile</h4><p>Harder to scan, so only for 5-6 questions; two per row.</p></div>
+  </div>
+  <div class="links"><span class="kicker">Inspiration</span><a href="https://onepagelove.com/tag/faq" target="_blank" rel="noopener">No precedent found; pinned-note boards are the nearest</a></div>
+</section>
+<section class="opt" id="opt-d">
+  <div class="opt-head"><span class="opt-letter">D</span><h2 class="opt-name">"Ask Shruti" blank chit</h2><div class="opt-tags"></div></div>
+  <div class="mock"><div class="askc"><div class="blank"><span class="eyebrow">No. 0___ · blank chit</span>
+<label for="askq">Your question isn't here?</label>
+<textarea id="askq" placeholder="Write it here…">Can I join if I can only come on weekends?</textarea>
+<div class="msg"><small>Your WhatsApp message</small><span id="askOut"></span></div>
+<span class="btn" style="justify-self:start">Ask Shruti on WhatsApp</span></div></div></div>
+  <div class="notes">
+    <div><h4>What you see</h4><p>A blank order chit: type your question and it becomes a WhatsApp message to Shruti. Best used as the last item of A.</p></div>
+    <div><h4>Why it works</h4><p>Turns leftover doubt into an enquiry.</p></div>
+    <div><h4>On mobile</h4><p>Works as is.</p></div>
+  </div>
+  <div class="links"><span class="kicker">Inspiration</span><a href="https://bird.com/explained/whatsapp/what-is-a-whatsapp-click-to-chat-link" target="_blank" rel="noopener">Bird: WhatsApp click-to-chat with prefilled text</a></div>
+</section><div class="aside"><h3>SEO note</h3><p>Google stopped showing FAQ rich results in May 2026, so FAQ markup adds nothing. The questions still matter as visible text, because people search exactly these phrases. Fees, duration and timings must also appear in the Courses section, never only inside the FAQ.</p></div>
+</div>
+<script>
+document.querySelectorAll('.chit').forEach(c=>{const b=c.querySelector('button');if(!c.querySelector('.a'))return;
+ b.addEventListener('click',()=>{const o=c.classList.toggle('open');b.setAttribute('aria-expanded',o)})});
+document.querySelector('.chit')?.querySelector('button').click();
+document.querySelectorAll('.slip').forEach(s=>{const f=()=>s.classList.toggle('open');s.addEventListener('click',f);s.addEventListener('keydown',e=>{if(e.key==='Enter')f()})});
+const ta=document.getElementById('askq'),ao=document.getElementById('askOut');const u=()=>ao.textContent='Hi Shruti, '+(ta.value.trim()||'…');ta.addEventListener('input',u);u();
+</script>

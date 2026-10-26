@@ -1,0 +1,196 @@
+<title>Visit The Studio Options</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wdth,wght@75..100,400..700&family=Instrument+Serif:ital@0;1&family=IBM+Plex+Mono:wght@400;500&family=Anek+Kannada:wdth,wght@75..125,300..700&family=Caveat:wght@500&display=swap">
+<style>
+:root{
+  /* Layout: a spec-sheet page; each option is a live brand mock with notes beneath. Chrome follows theme, mocks keep the brand paper. */
+  --bg:#ebeae6; --fg:#1b1a18; --muted:#66635d; --line:#d3d0c9; --card:#f8f7f4; --chip:#dedbd4;
+  --paper:#f5f4f0; --ink:#161514; --pencil:#8c887f; --rule:#d8d4cc;
+  --serif:"Instrument Serif", "Iowan Old Style", Georgia, serif;
+  --sans:"Instrument Sans", "Helvetica Neue", Arial, sans-serif;
+  --mono:"IBM Plex Mono", ui-monospace, Menlo, monospace;
+  --kn:"Anek Kannada", "Noto Sans Kannada", "Tunga", sans-serif;
+  --hand:"Caveat", "Bradley Hand", cursive;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#141413;--fg:#ebe9e4;--muted:#9d9a93;--line:#34332f;--card:#1c1c1a;--chip:#2b2a27;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#141413;--fg:#ebe9e4;--muted:#9d9a93;--line:#34332f;--card:#1c1c1a;--chip:#2b2a27;color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--sans);font-size:15px;line-height:1.55;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:28px 64px}
+.wrap{max-width:1080px;margin:0 auto;display:flex;flex-direction:column;gap:56px}
+a{color:inherit;text-underline-offset:3px;text-decoration-thickness:1px}
+a:focus-visible,button:focus-visible{outline:2px solid currentColor;outline-offset:2px}
+header.page{display:grid;gap:14px;border-bottom:1px solid var(--line);padding-bottom:28px}
+.kicker{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+header.page h1{font-family:var(--serif);font-weight:400;font-size:clamp(40px,7vw,76px);line-height:.98;margin:0;letter-spacing:-.01em;text-wrap:balance}
+header.page p{max-width:64ch;margin:0;color:var(--muted)}
+.legend{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:13px;color:var(--muted)}
+.tag{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;
+  padding:3px 8px;border-radius:2px;background:var(--chip);color:var(--fg);white-space:nowrap}
+.tag.rec{background:var(--fg);color:var(--bg)}
+.tag.orig{background:transparent;border:1px dashed var(--muted)}
+section.opt{display:grid;gap:16px}
+.opt-head{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+.opt-letter{font-family:var(--serif);font-size:54px;line-height:.8}
+.opt-name{font-family:var(--serif);font-size:30px;line-height:1.05;margin:0;font-weight:400}
+.opt-tags{display:flex;gap:6px;flex-wrap:wrap}
+.notes{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px;font-size:14px}
+.notes h4{margin:0 0 4px;font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:500}
+.notes p{margin:0}
+.links{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:13.5px;align-items:baseline;border-top:1px solid var(--line);padding-top:12px}
+.links .kicker{margin-right:4px}
+.links a::after{content:" ↗";font-size:11px;color:var(--muted)}
+.aside{background:var(--card);border:1px solid var(--line);border-radius:4px;padding:18px 20px;font-size:14px;display:grid;gap:8px}
+.aside h3{margin:0;font-family:var(--serif);font-weight:400;font-size:24px}
+.aside p,.aside ul{margin:0}
+.aside ul{padding-left:18px}
+@media (max-width:720px){.notes{grid-template-columns:1fr;gap:12px}.opt-letter{font-size:42px}.opt-name{font-size:25px}}
+
+/* ---------- the brand mock ---------- */
+.mock{background:var(--paper);color:var(--ink);border:1px solid var(--line);border-radius:4px;overflow:hidden;position:relative;
+  container-type:inline-size;font-family:var(--sans)}
+.mock .chrome{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 16px;border-bottom:1px solid var(--rule);
+  font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--pencil)}
+.mock .chrome b{color:var(--ink);font-weight:500}
+.mock .eyebrow{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--pencil)}
+.mock .h1{font-family:var(--serif);font-weight:400;font-size:clamp(34px,6.2cqi,64px);line-height:.96;margin:0;letter-spacing:-.01em;text-wrap:balance}
+.mock .h2{font-family:var(--serif);font-weight:400;font-size:clamp(28px,4.6cqi,46px);line-height:1;margin:0}
+.mock .sub{font-size:14px;line-height:1.5;max-width:44ch;margin:0;color:#3d3b37}
+.mock .btn{display:inline-flex;align-items:center;gap:8px;background:var(--ink);color:var(--paper);font-size:13px;font-weight:600;
+  padding:11px 16px;border-radius:999px;border:1px solid var(--ink);white-space:nowrap;cursor:pointer;font-family:var(--sans)}
+.mock .btn.ghost{background:transparent;color:var(--ink)}
+.mock .ctas{display:flex;gap:8px;flex-wrap:wrap}
+.mock .mono{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase}
+.mock .ph{font-family:var(--mono);font-size:10px;letter-spacing:.06em;color:#9a5b2e;background:#f1e6da;padding:1px 5px;border-radius:2px;text-transform:none}
+.mock img{display:block;max-width:100%}
+.duo{background:var(--paper);position:relative;overflow:hidden}
+.duo img{filter:grayscale(1) contrast(1.18) brightness(1.06);mix-blend-mode:multiply;width:100%;height:100%;object-fit:cover}
+.duo.grain::after{content:"";position:absolute;inset:0;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");opacity:.14;mix-blend-mode:multiply;pointer-events:none}
+.clay{width:100%;height:100%;object-fit:cover}
+@media (prefers-reduced-motion: reduce){.mock *,.mock *::before,.mock *::after{animation:none!important;transition:none!important}}
+
+.vis{display:grid;grid-template-columns:1.2fr .8fr;min-height:420px}
+.vis .side{padding:28px;display:grid;gap:12px;align-content:center;border-left:1px solid var(--rule)}
+@container (max-width:620px){.vis{grid-template-columns:1fr}.vis .side{border-left:0;border-top:1px solid var(--rule)}}
+.map{position:relative;background-color:#f0eee7;background-image:linear-gradient(#e0dccf 1px,transparent 1px),linear-gradient(90deg,#e0dccf 1px,transparent 1px);background-size:20px 20px}
+.map svg{width:100%;height:100%;display:block;min-height:340px}
+.map .road{stroke:var(--ink);stroke-width:1.5;stroke-dasharray:8 5;fill:none}
+.map .road.main{stroke-width:2.4;stroke-dasharray:none}
+.map .gl{stroke:var(--ink);stroke-width:1;fill:none;marker-end:url(#arr)}
+.map text{font-family:var(--mono);font-size:9px;letter-spacing:.1em;fill:var(--ink);text-transform:uppercase}
+.map .lbl-s{font-family:var(--serif);font-size:18px;letter-spacing:0;text-transform:none}
+.map .pinhead{fill:var(--ink)}
+.map .pinglow{fill:none;stroke:var(--ink);animation:ping 2s ease-out infinite;transform-origin:center;transform-box:fill-box}
+@keyframes ping{from{opacity:.8;transform:scale(.6)}to{opacity:0;transform:scale(2.2)}}
+.addr{font-family:var(--serif);font-size:24px;line-height:1.15}
+.sel{user-select:all;font-family:var(--mono);font-size:13px}
+
+.hrs{display:grid;grid-template-columns:1fr 1fr;gap:24px;padding:34px 28px;align-items:center}
+.care2{background:#fbfaf6;border:1px solid #cfcabe;padding:24px 22px;position:relative;font-family:var(--mono);font-size:12px;line-height:1.7;text-transform:uppercase;letter-spacing:.05em}
+.care2::before,.care2::after{content:"";position:absolute;left:8px;right:8px;border-top:1.5px dashed var(--ink)}
+.care2::before{top:8px}.care2::after{bottom:8px}
+.care2 h6{font-family:var(--serif);font-size:30px;font-weight:400;text-transform:none;letter-spacing:0;margin:0 0 10px;line-height:1}
+.store{aspect-ratio:4/5;border:1.5px dashed var(--pencil);display:grid;place-content:center;text-align:center;gap:8px;padding:20px;color:var(--pencil)}
+@container (max-width:560px){.hrs{grid-template-columns:1fr}}
+
+.appt{padding:36px 28px;display:flex;justify-content:center}
+.card{width:min(560px,100%);background:#fbfaf6;border:1.5px solid var(--ink);padding:24px;display:grid;gap:16px;position:relative}
+.card::before{content:"";position:absolute;left:-1.5px;right:-1.5px;top:-8px;height:8px;background:radial-gradient(circle at 6px 8px,var(--paper) 4px,transparent 4.5px) 0 0/12px 8px repeat-x}
+.card h6{margin:0;font-family:var(--serif);font-weight:400;font-size:30px;line-height:1}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chips button{all:unset;cursor:pointer;font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;border:1px solid var(--ink);padding:8px 11px;border-radius:999px}
+.chips button[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
+.chips button:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.msg{background:#e6f2df;border-radius:10px 10px 10px 2px;padding:12px 14px;font-size:14px;line-height:1.45;max-width:44ch;color:#1d2b17}
+.msg small{display:block;font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:#4d6343;margin-bottom:4px}
+.row2{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;border-top:1px solid var(--rule);padding-top:12px;font-size:13px}
+
+.walk{position:relative;height:440px}
+.walk .play{position:absolute;inset:0;display:grid;place-content:center;gap:12px;text-align:center}
+.walk .play span:first-child{width:76px;height:76px;border-radius:50%;background:var(--paper);border:1.5px solid var(--ink);display:grid;place-content:center;margin:auto;font-size:22px}
+.walk .lab{position:absolute;left:16px;bottom:16px;background:var(--paper);border:1px solid var(--rule);padding:10px 12px;font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase}
+</style>
+<div class="wrap">
+<header class="page">
+  <span class="kicker">Teaching Threads · Landing page options · 07 / 09</span>
+  <h1>Visit the studio</h1>
+  <p>Most people will want to see the place before paying. These options take away the "where is it, when can I come" doubt without a slow Google Maps embed.</p>
+  <div class="legend"><span><span class="tag rec">Recommended</span> my pick</span><span><span class="tag orig">Original idea</span> no real-world example found, the links are the closest techniques</span><span><span class="ph">orange</span> = placeholder to confirm with Shruti</span></div>
+</header>
+
+<section class="opt" id="opt-a">
+  <div class="opt-head"><span class="opt-letter">A</span><h2 class="opt-name">Map as a pattern sheet</h2><div class="opt-tags"><span class="tag orig">Original idea</span></div></div>
+  <div class="mock"><div class="vis"><div class="map">
+<svg viewBox="0 0 520 380" role="img" aria-label="Illustrative map of the studio">
+<defs><marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#161514"/></marker></defs>
+<path class="road main" d="M0 250 C 140 240, 300 260, 520 220"/>
+<path class="road" d="M180 0 C 190 120, 200 200, 210 380"/><path class="road" d="M360 0 L 380 380"/><path class="road" d="M0 110 C 160 120, 360 90, 520 100"/>
+<path class="gl" d="M40 330 H 140"/><text x="40" y="320">grainline</text>
+<text x="20" y="240">Piece A · main road</text><text x="216" y="40">Piece B</text><text x="388" y="60">Piece C</text>
+<g transform="translate(300 175)"><circle class="pinglow" r="14"/><circle class="pinhead" r="7"/><path d="M0 7 V 40" stroke="#161514" stroke-width="2"/></g>
+<text class="lbl-s" x="316" y="170">Teaching Threads</text><text x="316" y="186">studio · cut here ✂</text>
+</svg></div>
+<div class="side"><span class="eyebrow">Visit the studio</span><p class="addr"><span class="ph">studio address</span><br>Hubballi (Hubli), Karnataka</p>
+<span class="btn">Get directions</span><span class="mono" style="color:var(--pencil)">Opens Google Maps · two-wheeler route</span>
+<span class="sel">93535 62706</span></div></div></div>
+  <div class="notes">
+    <div><h4>What you see</h4><p>A hand-drawn map styled like a pattern sheet: roads as dashed cutting lines, a grainline arrow, streets labelled "Piece A, B, C", and a pulsing dressmaker's pin on the studio. One button opens directions.</p></div>
+    <div><h4>Why it works</h4><p>On brand and costs nothing to load. A real Google Maps embed is heavy and hurts page speed.</p></div>
+    <div><h4>On mobile</h4><p>The drawing scales down; the Get directions button gets big.</p></div>
+  </div>
+  <div class="links"><span class="kicker">Inspiration</span><a href="https://developers.google.com/maps/documentation/urls/get-started" target="_blank" rel="noopener">Google Maps URLs (no API key, two-wheeler mode)</a><a href="https://www.corewebvitals.io/pagespeed/google-maps-100-percent-pagespeed" target="_blank" rel="noopener">CoreWebVitals.io: why map embeds are slow</a></div>
+</section>
+<section class="opt" id="opt-b">
+  <div class="opt-head"><span class="opt-letter">B</span><h2 class="opt-name">Hours as a care label + storefront</h2><div class="opt-tags"><span class="tag">Runner-up</span></div></div>
+  <div class="mock"><div class="hrs"><div class="care2"><h6>Studio hours</h6>
+MON–SAT · <span class="ph">10–1 / 4–7?</span><br>SUNDAY · CLOSED<br>BATCHES · MORNING / EVENING<br>HAND WASH ONLY · DO NOT TUMBLE DRY<br><br>
+<span style="text-transform:none" class="sel">Call 93535 62706</span></div>
+<div class="store"><span class="mono">Storefront photo</span><span style="font-size:13px">A real photo of the door or street helps first-timers find it. We don't have one yet.</span></div></div></div>
+  <div class="notes">
+    <div><h4>What you see</h4><p>Opening hours and batches written like care instructions, next to a real photo of the studio door or street.</p></div>
+    <div><h4>Why it works</h4><p>A storefront photo removes the "will I find it?" fear before the first visit.</p></div>
+    <div><h4>On mobile</h4><p>Label first, photo below.</p></div>
+  </div>
+  <div class="links"><span class="kicker">Inspiration</span><a href="https://packagingoftheworld.com/?p=26130" target="_blank" rel="noopener">Packaging of the World: Derrick Lin labels</a></div>
+</section>
+<section class="opt" id="opt-c">
+  <div class="opt-head"><span class="opt-letter">C</span><h2 class="opt-name">Fitting-appointment card</h2><div class="opt-tags"><span class="tag rec">Recommended</span><span class="tag orig">Original idea</span></div></div>
+  <div class="mock"><div class="appt"><div class="card" id="appt">
+<span class="eyebrow">Book a studio visit</span><h6>Your first fitting at Teaching Threads</h6>
+<div><div class="mono" style="margin-bottom:6px;color:var(--pencil)">Day</div><div class="chips" data-k="day">
+<button type="button" aria-pressed="false">Monday</button><button type="button" aria-pressed="false">Tuesday</button><button type="button" aria-pressed="false">Wednesday</button><button type="button" aria-pressed="true">Thursday</button><button type="button" aria-pressed="false">Friday</button><button type="button" aria-pressed="false">Saturday</button></div></div>
+<div><div class="mono" style="margin-bottom:6px;color:var(--pencil)">Time</div><div class="chips" data-k="time"><button type="button" aria-pressed="false">morning</button><button type="button" aria-pressed="true">evening</button></div></div>
+<div><div class="mono" style="margin-bottom:6px;color:var(--pencil)">Course</div><div class="chips" data-k="course"><button type="button" aria-pressed="true">3-month</button><button type="button" aria-pressed="false">6-month</button><button type="button" aria-pressed="false">not sure yet</button></div></div>
+<div class="msg" id="apptMsg"><small>Your WhatsApp message</small><span></span></div>
+<span class="btn" style="justify-self:start">Send on WhatsApp</span>
+<div class="row2"><span><span class="ph">studio address</span> · Hubballi</span><span class="sel">93535 62706</span></div></div></div></div>
+  <div class="notes">
+    <div><h4>What you see</h4><p>Pick a day, a time and a course, and the card writes the WhatsApp message for you. Address and phone underneath. Try the chips.</p></div>
+    <div><h4>Why it works</h4><p>The highest-intent option: Shruti receives a structured message (day, time, course) with no form or backend.</p></div>
+    <div><h4>On mobile</h4><p>Thumb-sized chips; the best fit for phones.</p></div>
+  </div>
+  <div class="links"><span class="kicker">Inspiration</span><a href="https://pearlacademy.com/programs/certificate-courses/fashion/fashion-design-womenswear" target="_blank" rel="noopener">Pearl Academy: WhatsApp + Call as first-class CTAs</a><a href="https://bird.com/explained/whatsapp/what-is-a-whatsapp-click-to-chat-link" target="_blank" rel="noopener">Bird: WhatsApp click-to-chat links</a></div>
+</section>
+<section class="opt" id="opt-d">
+  <div class="opt-head"><span class="opt-letter">D</span><h2 class="opt-name">POV walk-in</h2><div class="opt-tags"></div></div>
+  <div class="mock"><div class="walk"><img class="clay" src="data:image/jpeg;base64,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" alt="Clay dress form, studio interior">
+<div class="play"><span>▶</span><span class="mono">A short POV walk from the street to the cutting table</span></div>
+<div class="lab">Teaching Threads · <span class="ph">address</span></div></div></div>
+  <div class="notes">
+    <div><h4>What you see</h4><p>A short clay-POV Kling clip from the street, through the door, to the cutting table, ending on the address.</p></div>
+    <div><h4>Why it works</h4><p>Continues the video language of the course section and shows what's inside.</p></div>
+    <div><h4>On mobile</h4><p>A poster frame; tap to play a muted loop.</p></div>
+  </div>
+  <div class="links"><span class="kicker">Inspiration</span><a href="https://codepen.io/GreenSock/pen/RwvrNqN" target="_blank" rel="noopener">GreenSock image-sequence scrub</a></div>
+</section><div class="aside"><h3>Notes</h3><ul><li>My pick is C with A's map beside it.</li>
+<li>Needed from Shruti: exact address, hours, batch timings, and ideally one photo of the door.</li>
+<li>The phone number shown is from her PDFs.</li></ul></div>
+</div>
+<script>
+const ap=document.getElementById('appt'),out=document.querySelector('#apptMsg span');
+function val(k){const b=ap.querySelector('.chips[data-k="'+k+'"] [aria-pressed="true"]');return b?b.textContent:''}
+function upd(){out.textContent='Hi Shruti, I\'d like to visit the studio on '+val('day')+' '+val('time')+'. Course: '+val('course')+'.'}
+ap.querySelectorAll('.chips').forEach(g=>g.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;
+ g.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',x===b));upd()}));upd();
+</script>

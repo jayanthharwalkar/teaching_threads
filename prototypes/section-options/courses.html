@@ -1,0 +1,217 @@
+<title>Course Comparison Options</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wdth,wght@75..100,400..700&family=Instrument+Serif:ital@0;1&family=IBM+Plex+Mono:wght@400;500&family=Anek+Kannada:wdth,wght@75..125,300..700&family=Caveat:wght@500&display=swap">
+<style>
+:root{
+  /* Layout: a spec-sheet page; each option is a live brand mock with notes beneath. Chrome follows theme, mocks keep the brand paper. */
+  --bg:#ebeae6; --fg:#1b1a18; --muted:#66635d; --line:#d3d0c9; --card:#f8f7f4; --chip:#dedbd4;
+  --paper:#f5f4f0; --ink:#161514; --pencil:#8c887f; --rule:#d8d4cc;
+  --serif:"Instrument Serif", "Iowan Old Style", Georgia, serif;
+  --sans:"Instrument Sans", "Helvetica Neue", Arial, sans-serif;
+  --mono:"IBM Plex Mono", ui-monospace, Menlo, monospace;
+  --kn:"Anek Kannada", "Noto Sans Kannada", "Tunga", sans-serif;
+  --hand:"Caveat", "Bradley Hand", cursive;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#141413;--fg:#ebe9e4;--muted:#9d9a93;--line:#34332f;--card:#1c1c1a;--chip:#2b2a27;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#141413;--fg:#ebe9e4;--muted:#9d9a93;--line:#34332f;--card:#1c1c1a;--chip:#2b2a27;color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--sans);font-size:15px;line-height:1.55;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:28px 64px}
+.wrap{max-width:1080px;margin:0 auto;display:flex;flex-direction:column;gap:56px}
+a{color:inherit;text-underline-offset:3px;text-decoration-thickness:1px}
+a:focus-visible,button:focus-visible{outline:2px solid currentColor;outline-offset:2px}
+header.page{display:grid;gap:14px;border-bottom:1px solid var(--line);padding-bottom:28px}
+.kicker{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+header.page h1{font-family:var(--serif);font-weight:400;font-size:clamp(40px,7vw,76px);line-height:.98;margin:0;letter-spacing:-.01em;text-wrap:balance}
+header.page p{max-width:64ch;margin:0;color:var(--muted)}
+.legend{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:13px;color:var(--muted)}
+.tag{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;
+  padding:3px 8px;border-radius:2px;background:var(--chip);color:var(--fg);white-space:nowrap}
+.tag.rec{background:var(--fg);color:var(--bg)}
+.tag.orig{background:transparent;border:1px dashed var(--muted)}
+section.opt{display:grid;gap:16px}
+.opt-head{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+.opt-letter{font-family:var(--serif);font-size:54px;line-height:.8}
+.opt-name{font-family:var(--serif);font-size:30px;line-height:1.05;margin:0;font-weight:400}
+.opt-tags{display:flex;gap:6px;flex-wrap:wrap}
+.notes{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px;font-size:14px}
+.notes h4{margin:0 0 4px;font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:500}
+.notes p{margin:0}
+.links{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:13.5px;align-items:baseline;border-top:1px solid var(--line);padding-top:12px}
+.links .kicker{margin-right:4px}
+.links a::after{content:" ↗";font-size:11px;color:var(--muted)}
+.aside{background:var(--card);border:1px solid var(--line);border-radius:4px;padding:18px 20px;font-size:14px;display:grid;gap:8px}
+.aside h3{margin:0;font-family:var(--serif);font-weight:400;font-size:24px}
+.aside p,.aside ul{margin:0}
+.aside ul{padding-left:18px}
+@media (max-width:720px){.notes{grid-template-columns:1fr;gap:12px}.opt-letter{font-size:42px}.opt-name{font-size:25px}}
+
+/* ---------- the brand mock ---------- */
+.mock{background:var(--paper);color:var(--ink);border:1px solid var(--line);border-radius:4px;overflow:hidden;position:relative;
+  container-type:inline-size;font-family:var(--sans)}
+.mock .chrome{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 16px;border-bottom:1px solid var(--rule);
+  font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--pencil)}
+.mock .chrome b{color:var(--ink);font-weight:500}
+.mock .eyebrow{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--pencil)}
+.mock .h1{font-family:var(--serif);font-weight:400;font-size:clamp(34px,6.2cqi,64px);line-height:.96;margin:0;letter-spacing:-.01em;text-wrap:balance}
+.mock .h2{font-family:var(--serif);font-weight:400;font-size:clamp(28px,4.6cqi,46px);line-height:1;margin:0}
+.mock .sub{font-size:14px;line-height:1.5;max-width:44ch;margin:0;color:#3d3b37}
+.mock .btn{display:inline-flex;align-items:center;gap:8px;background:var(--ink);color:var(--paper);font-size:13px;font-weight:600;
+  padding:11px 16px;border-radius:999px;border:1px solid var(--ink);white-space:nowrap;cursor:pointer;font-family:var(--sans)}
+.mock .btn.ghost{background:transparent;color:var(--ink)}
+.mock .ctas{display:flex;gap:8px;flex-wrap:wrap}
+.mock .mono{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase}
+.mock .ph{font-family:var(--mono);font-size:10px;letter-spacing:.06em;color:#9a5b2e;background:#f1e6da;padding:1px 5px;border-radius:2px;text-transform:none}
+.mock img{display:block;max-width:100%}
+.duo{background:var(--paper);position:relative;overflow:hidden}
+.duo img{filter:grayscale(1) contrast(1.18) brightness(1.06);mix-blend-mode:multiply;width:100%;height:100%;object-fit:cover}
+.duo.grain::after{content:"";position:absolute;inset:0;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");opacity:.14;mix-blend-mode:multiply;pointer-events:none}
+.clay{width:100%;height:100%;object-fit:cover}
+@media (prefers-reduced-motion: reduce){.mock *,.mock *::before,.mock *::after{animation:none!important;transition:none!important}}
+
+.cwrap{padding:32px 28px;display:grid;gap:22px}
+@container (max-width:560px){.cwrap{padding:22px 12px}}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@container (max-width:560px){.pair{gap:8px}}
+
+/* A envelopes */
+.env{perspective:1200px;cursor:pointer;min-height:430px}
+.env .in{position:relative;width:100%;height:100%;min-height:430px;transition:transform .7s;transform-style:preserve-3d}
+.env.flip .in{transform:rotateY(180deg)}
+.env .face{position:absolute;inset:0;backface-visibility:hidden;border:1.5px solid var(--ink);background:#fbfaf6;padding:16px;display:flex;flex-direction:column;gap:10px}
+.env .back{transform:rotateY(180deg);overflow:auto}
+.env .num{font-family:var(--serif);font-size:clamp(64px,14cqi,120px);line-height:.8}
+.env .top{display:flex;justify-content:space-between;font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;border-bottom:1px solid var(--ink);padding-bottom:8px;gap:6px;flex-wrap:wrap}
+.env svg{flex:1;min-height:0;width:100%;stroke:var(--ink);fill:none;stroke-width:1.3}
+.env .facts{font-family:var(--mono);font-size:10.5px;line-height:1.5;text-transform:uppercase;letter-spacing:.05em}
+.env .back h6{margin:0;font-family:var(--serif);font-weight:400;font-size:22px}
+.env .back ul{margin:0;padding-left:16px;font-size:12.5px;line-height:1.45}
+.env .back b{font-weight:700}
+.hint{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--pencil);text-align:center}
+
+/* B care labels */
+.labels{display:flex;justify-content:center;gap:clamp(12px,5cqi,48px);align-items:flex-start}
+.strip{width:min(220px,46%);background:#fbfaf6;border:1px solid #cfcabe;padding:22px 14px 26px;position:relative;
+  background-image:repeating-linear-gradient(0deg,rgba(0,0,0,.025) 0 1px,transparent 1px 3px)}
+.strip::before,.strip::after{content:"";position:absolute;left:8px;right:8px;border-top:1.5px dashed var(--ink)}
+.strip::before{top:8px}.strip::after{bottom:8px}
+.strip h6{margin:0 0 4px;font-family:var(--serif);font-weight:400;font-size:40px;line-height:.9;text-align:center}
+.strip .s{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;text-align:center;margin-bottom:12px;color:var(--pencil)}
+.strip ol{margin:0;padding:0;list-style:none;font-family:var(--mono);font-size:10.5px;line-height:1.3;text-transform:uppercase;letter-spacing:.03em;display:grid;gap:7px}
+.strip ol li{border-top:1px solid var(--rule);padding-top:6px}
+.strip ol li.x{font-weight:700}
+.strip .wa{margin-top:16px;width:100%;justify-content:center}
+
+/* C swing tags */
+.tags{position:relative;padding-top:40px}
+.tags .string{position:absolute;left:4%;right:4%;top:14px;height:2px;background:var(--ink)}
+.swing{display:grid;grid-template-columns:1fr 1fr;gap:16px;justify-items:center}
+.stag{width:min(230px,100%);background:#ece5d6;border:1px solid #c9bfa9;border-radius:6px 6px 4px 4px;clip-path:polygon(50% 0,100% 16%,100% 100%,0 100%,0 16%);
+  padding:46px 16px 18px;text-align:center;transform-origin:50% -26px;animation:sway 4s ease-in-out infinite;position:relative}
+.stag:nth-child(2){animation-delay:-2s}
+.stag::before{content:"";position:absolute;top:18px;left:50%;width:12px;height:12px;border-radius:50%;background:var(--paper);border:1px solid #c9bfa9;transform:translateX(-50%)}
+@keyframes sway{0%,100%{transform:rotate(-2.5deg)}50%{transform:rotate(2.5deg)}}
+.stag .mono{color:#6b6150}
+.stag .size{font-family:var(--serif);font-size:44px;line-height:.9;margin:8px 0}
+.stag .price{font-family:var(--mono);font-size:13px;margin-top:6px}
+.spec{border-top:1px solid var(--ink);display:grid;grid-template-columns:1fr auto auto;font-size:13px}
+.spec div{padding:8px 6px;border-bottom:1px solid var(--rule)}
+.spec .h{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--pencil)}
+
+/* D size chart */
+.chart{width:100%;border-collapse:collapse;font-size:13px}
+.chart th,.chart td{padding:10px 8px;border-bottom:1px solid var(--rule);text-align:left;vertical-align:top}
+.chart td:nth-child(n+2),.chart th:nth-child(n+2){width:28%;font-family:var(--mono);font-size:12px}
+.chart thead th{position:sticky;top:0;background:var(--paper);border-bottom:1.5px solid var(--ink);vertical-align:bottom}
+.chart .envh{display:grid;gap:4px}
+.chart .envh span:first-child{font-family:var(--serif);font-size:clamp(44px,8cqi,72px);line-height:.8;font-weight:400}
+.chart .envh span:last-child{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--pencil);font-weight:400}
+.chart tr.x td{font-weight:600}
+.chart tr.x td:first-child::before{content:"6-month only · ";font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--pencil);font-weight:400}
+.chart small{display:block;font-size:11px;color:var(--pencil);font-weight:400}
+.chart tfoot td{border:0;padding-top:16px}
+@container (max-width:560px){.chart{font-size:12px}.chart td:first-child{width:44%}}
+
+.tapeband{height:30px;position:relative;border:1px solid #cfc9bc;background:#ebe7dc;background-image:repeating-linear-gradient(90deg,var(--ink) 0 1px,transparent 1px 4.1666%);}
+.tapeband i{position:absolute;top:0;bottom:0;left:0;width:50%;background:rgba(22,21,20,.18);animation:grow 5s ease-in-out infinite alternate}
+.tapeband b{position:absolute;top:34px;font-family:var(--mono);font-size:10px;letter-spacing:.1em;font-weight:400}
+@keyframes grow{from{width:50%}to{width:100%}}
+</style>
+<div class="wrap">
+<header class="page">
+  <span class="kicker">Teaching Threads · Landing page options · 04 / 09</span>
+  <h1>Courses, side by side</h1>
+  <p>Four ways to put the 3-month and 6-month courses next to each other. Both teach the same five stages; the 6-month adds Aari work, boutique management, a market visit and more garment variations. All facts are from Shruti's PDFs.</p>
+  <div class="legend"><span><span class="tag rec">Recommended</span> my pick</span><span><span class="tag orig">Original idea</span> no real-world example found, the links are the closest techniques</span><span><span class="ph">orange</span> = placeholder to confirm with Shruti</span></div>
+</header>
+
+<section class="opt" id="opt-a">
+  <div class="opt-head"><span class="opt-letter">A</span><h2 class="opt-name">Two pattern envelopes</h2><div class="opt-tags"></div></div>
+  <div class="mock"><div class="cwrap"><div class="pair">
+<div class="env" tabindex="0" role="button" aria-label="Flip the 03-month pattern envelope"><div class="in">
+<div class="face"><div class="top"><span>Pattern No. TT-03</span><span>Beginner</span></div><div class="num">03</div>
+<div class="mono">Months · fashion design</div><svg viewBox="0 0 120 90"><path d="M30 14 L48 8 Q60 18 72 8 L90 14 L104 34 L90 40 L86 32 L86 80 L34 80 L34 32 L30 40 L16 34 Z"/><path d="M48 8 Q60 30 72 8" stroke-dasharray="3 3"/></svg><div class="facts">Fee <span class="ph">₹ ?</span> · Batches <span class="ph">am / pm ?</span></div>
+<span class="btn" style="justify-content:center">Choose this pattern</span></div>
+<div class="face back"><h6>You will make</h6><ul><li>Measurement &amp; industrial machine practice</li><li>Bodice block, darts, piping</li><li>2 kurtas · 3 sleeves</li><li>6 blouses: one-dart to boat neck</li><li>Lehenga: panel, umbrella, pleated</li><li>Gowns · finishing · branding</li></ul></div></div></div>
+<div class="env" tabindex="0" role="button" aria-label="Flip the 06-month pattern envelope"><div class="in">
+<div class="face"><div class="top"><span>Pattern No. TT-06</span><span>Beginner</span></div><div class="num">06</div>
+<div class="mono">Months · design + Aari + boutique</div><svg viewBox="0 0 120 90"><path d="M42 6 L54 3 Q60 8 66 3 L78 6 L84 18 L76 20 L76 28 L44 28 L44 20 L36 18 Z"/><path d="M44 32 L76 32 L100 86 L20 86 Z"/><path d="M60 32 L60 86 M40 60 Q60 66 80 60" stroke-dasharray="3 3"/><circle cx="92" cy="12" r="5"/><path d="M89 12h6M92 9v6"/></svg><div class="facts">Fee <span class="ph">₹ ?</span> · Batches <span class="ph">am / pm ?</span></div>
+<span class="btn" style="justify-content:center">Choose this pattern</span></div>
+<div class="face back"><h6>You will make</h6><ul><li>Everything in 03, plus:</li><li><b>4 kurtas · 6 sleeves</b></li><li><b>Katori &amp; shirt-collar blouses</b></li><li><b>Fishcut &amp; knot-skirt lehenga · cape</b></li><li><b>Aari: pearl, beads, zardozi, thread</b></li><li><b>Boutique management</b></li><li><b>Fabrics &amp; local market visit</b></li></ul></div></div></div>
+</div><div class="hint">Tap an envelope to flip it to the back</div></div></div>
+  <div class="notes">
+    <div><h4>What you see</h4><p>Two vintage-style sewing-pattern envelopes side by side, "03" and "06", each with a line drawing of what you'll make. Tap to flip to the back, which lists what's inside like a real pattern back.</p></div>
+    <div><h4>Why it works</h4><p>A pattern envelope already is a spec sheet: promise on the front, details on the back. It reads editorial, not SaaS.</p></div>
+    <div><h4>On mobile</h4><p>Two narrow envelopes at half width each. Since flipping hides content, duration, fee and timings stay on the front.</p></div>
+  </div>
+  <div class="links"><span class="kicker">Inspiration</span><a href="https://www.tillyandthebuttons.com/blogs/sewing/sewing-pattern-envelopes" target="_blank" rel="noopener">Tilly and the Buttons: pattern envelope evolution</a><a href="https://olddesignshop.com/2014/11/vintage-skirt-pattern-envelope-free-graphics/" target="_blank" rel="noopener">Old Design Shop: vintage pattern envelopes</a></div>
+</section>
+<section class="opt" id="opt-b">
+  <div class="opt-head"><span class="opt-letter">B</span><h2 class="opt-name">Two care labels</h2><div class="opt-tags"><span class="tag">Runner-up</span><span class="tag orig">Original idea</span></div></div>
+  <div class="mock"><div class="cwrap"><div class="labels">
+<div class="strip"><h6>03</h6><div class="s">months</div><ol><li>Measurement</li><li>Machine practice</li><li>Cutting &amp; piping</li><li>Darts &amp; bodice block</li><li>Kurtas</li><li>Sleeves</li><li>Blouses</li><li>Lehenga</li><li>Gowns</li><li>Design basics</li><li>Finishing</li><li>Branding</li></ol><span class="btn wa">WhatsApp</span></div>
+<div class="strip"><h6>06</h6><div class="s">months</div><ol><li>Measurement</li><li>Machine practice</li><li>Cutting &amp; piping</li><li>Darts &amp; bodice block</li><li>Kurtas</li><li>Sleeves</li><li>Blouses</li><li>Lehenga</li><li>Gowns</li><li>Design basics</li><li>Finishing</li><li>Branding</li><li class="x">+2 kurtas · +3 sleeves</li><li class="x">Katori &amp; shirt collar</li><li class="x">Fishcut · knot skirt · cape</li><li class="x">Aari work</li><li class="x">Boutique management</li><li class="x">Market visit</li></ol><span class="btn wa">WhatsApp</span></div>
+</div></div></div>
+  <div class="notes">
+    <div><h4>What you see</h4><p>Two long woven-label strips listing the modules. The 6-month label is physically longer, and its extra rows are bold.</p></div>
+    <div><h4>Why it works</h4><p>Length = duration, with zero explanation. Small footprint, very on-brand.</p></div>
+    <div><h4>On mobile</h4><p>Two vertical strips fit a 375px phone naturally.</p></div>
+  </div>
+  <div class="links"><span class="kicker">Inspiration</span><a href="https://packagingoftheworld.com/?p=26130" target="_blank" rel="noopener">Packaging of the World: Derrick Lin labels</a><a href="https://www.fontsinuse.com/uses/41898/ahluwalia-e-commerce" target="_blank" rel="noopener">Fonts In Use: Ahluwalia</a></div>
+</section>
+<section class="opt" id="opt-c">
+  <div class="opt-head"><span class="opt-letter">C</span><h2 class="opt-name">Two swing tags + spec panel</h2><div class="opt-tags"><span class="tag orig">Original idea</span></div></div>
+  <div class="mock"><div class="cwrap"><div class="tags"><div class="string"></div><div class="swing">
+<div class="stag"><div class="mono">Style TT-03</div><div class="size">3 months</div><div class="mono">Fashion design</div><div class="price"><span class="ph">₹ ?</span></div></div>
+<div class="stag"><div class="mono">Style TT-06</div><div class="size">6 months</div><div class="mono">Design + Aari + boutique</div><div class="price"><span class="ph">₹ ?</span></div></div>
+</div></div>
+<div class="spec"><div class="h"></div><div class="h">3 mo</div><div class="h">6 mo</div>
+<div>Kurta drafts</div><div>2</div><div>4</div><div>Sleeves</div><div>3</div><div>6</div><div>Blouses</div><div>6</div><div>8</div>
+<div>Aari work</div><div>—</div><div>✓</div><div>Boutique management</div><div>—</div><div>✓</div></div></div></div>
+  <div class="notes">
+    <div><h4>What you see</h4><p>Two kraft price tags swaying on one black thread, with style number, size "3 months" / "6 months" and price. A short shared spec panel underneath.</p></div>
+    <div><h4>Why it works</h4><p>A price tag is the universal "what does it cost" signal, and fees are the top question for Indian course buyers.</p></div>
+    <div><h4>On mobile</h4><p>Tags stay side by side; the panel stacks below.</p></div>
+  </div>
+  <div class="links"><span class="kicker">Inspiration</span><a href="https://www.awwwards.com/inspiration/pricing-page-atwww-studio" target="_blank" rel="noopener">Awwwards: Atwww Studio pricing</a><a href="https://www.awwwards.com/inspiration/pricing-page-artboard-studio" target="_blank" rel="noopener">Awwwards: Artboard Studio pricing</a></div>
+</section>
+<section class="opt" id="opt-d">
+  <div class="opt-head"><span class="opt-letter">D</span><h2 class="opt-name">Size-chart spec sheet</h2><div class="opt-tags"><span class="tag rec">Recommended</span></div></div>
+  <div class="mock"><div class="cwrap">
+<div><div class="tapeband"><i></i><b style="left:0">0</b><b style="left:48%">12 wks</b><b style="right:0">24 wks</b></div></div>
+<div style="overflow-x:auto;margin-top:18px"><table class="chart"><thead><tr><th><span class="eyebrow">Size chart · what you'll learn</span></th>
+<th><div class="envh"><span>03</span><span>months · TT-03</span></div></th><th><div class="envh"><span>06</span><span>months · TT-06</span></div></th></tr></thead>
+<tbody><tr><td>Duration</td><td>3 months</td><td>6 months</td></tr><tr><td>Fee</td><td><span class="ph">₹ to confirm</span></td><td><span class="ph">₹ to confirm</span></td></tr><tr><td>Batch timings</td><td><span class="ph">to confirm</span></td><td><span class="ph">to confirm</span></td></tr><tr><td>Measurement, machine practice, cutting, piping, darts, bodice block</td><td>✓</td><td>✓</td></tr><tr><td>Kurta drafts</td><td>2</td><td>4</td></tr><tr><td>Sleeve types</td><td>3</td><td>6</td></tr><tr><td>Blouses</td><td>6</td><td>8 <small>+ Katori, shirt collar</small></td></tr><tr><td>Lehenga</td><td>Panel, umbrella, pleated</td><td>+ Fishcut, knot skirt</td></tr><tr><td>Gowns</td><td>Panel, umbrella</td><td>Panel, umbrella + cape</td></tr><tr><td>Design basics, finishing, branding</td><td>✓</td><td>✓</td></tr><tr class="x"><td>Aari work <small>pearl, beads, zardozi, thread</small></td><td>—</td><td>✓</td></tr><tr class="x"><td>Boutique management</td><td>—</td><td>✓</td></tr><tr class="x"><td>Fabrics &amp; local market visit</td><td>—</td><td>✓</td></tr></tbody><tfoot><tr><td></td><td><span class="btn">WhatsApp</span></td><td><span class="btn">WhatsApp</span></td></tr></tfoot></table></div></div></div>
+  <div class="notes">
+    <div><h4>What you see</h4><p>A tailor's size chart. Column heads are the two envelope numbers; rows line up every difference straight from the PDFs. A tape across the top grows from 12 to 24 weeks.</p></div>
+    <div><h4>Why it works</h4><p>Row alignment is the most honest comparison, everything is real text Google can read, and it's the only format that stays truly side by side on a phone.</p></div>
+    <div><h4>On mobile</h4><p>Two short columns of values at 375px, with the header row sticky while you scroll.</p></div>
+  </div>
+  <div class="links"><span class="kicker">Inspiration</span><a href="https://pearlacademy.com/programs/certificate-courses/fashion/fashion-design-womenswear" target="_blank" rel="noopener">Pearl Academy: key-facts strip</a><a href="https://www.awwwards.com/inspiration/pricing-page-dora-alpha-2-0" target="_blank" rel="noopener">Awwwards: Dora Alpha 2.0 comparison</a><a href="https://www.framer.com/marketplace/components/scroll-stack/" target="_blank" rel="noopener">Framer: Scroll Stack (tape band)</a></div>
+</section><div class="aside"><h3>Notes</h3><ul>
+<li>My pick is D with A's envelope fronts as the column heads: you get the charm of A and the clarity of D.</li>
+<li>No toggle between 3 and 6 months: with only two options, a toggle hides half the answer.</li>
+<li>Every row comes from Shruti's two PDFs. Fees and batch timings are the only gaps.</li></ul></div>
+</div>
+<script>document.querySelectorAll('.env').forEach(e=>{const f=()=>e.classList.toggle('flip');e.addEventListener('click',f);e.addEventListener('keydown',k=>{if(k.key==='Enter'||k.key===' '){k.preventDefault();f()}})});</script>
