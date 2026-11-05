@@ -1,0 +1,198 @@
+<title>After This Course</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;1,500&family=Jost:wght@300;400;500&display=swap">
+<style>
+/* Layout: one sentence the visitor finishes by tapping; the chosen outcome draws itself as a garment flat on pattern paper. */
+:root{
+  --paper:#F3F1EC; --sheet:#F8F6F2; --grid:#E4E0D7; --ink:#141414; --body:#3B3935; --muted:#8A857C; --line:#D9D5CC;
+  --display:"Cormorant Garamond","Iowan Old Style",Georgia,serif;
+  --sans:"Jost","Avenir Next","Segoe UI",system-ui,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#161514; --sheet:#1D1C1A; --grid:#2A2825; --ink:#EEEBE5; --body:#CFCAC1; --muted:#8F8A81; --line:#34312D; color-scheme:dark}}
+:root[data-theme="dark"]{--paper:#161514; --sheet:#1D1C1A; --grid:#2A2825; --ink:#EEEBE5; --body:#CFCAC1; --muted:#8F8A81; --line:#34312D; color-scheme:dark}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--paper);color:var(--body);font-family:var(--sans);font-weight:300;font-size:16px;line-height:1.55;overflow-x:hidden}
+.wrap{max-width:1180px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.note{padding-block:18px;border-bottom:1px solid var(--line);font-size:13px;color:var(--muted)}
+.out{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:clamp(24px,5vw,72px);align-items:center;padding-block:clamp(40px,9vh,100px)}
+.eyebrow{font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin:0 0 18px}
+.lead{font-family:var(--display);font-weight:500;color:var(--ink);font-size:clamp(34px,4.6vw,58px);line-height:1.02;margin:0 0 18px;text-wrap:balance}
+.list{list-style:none;margin:0;padding:0;display:grid}
+.list button{all:unset;box-sizing:border-box;display:flex;align-items:baseline;gap:14px;width:100%;cursor:pointer;padding:6px 0;
+  font-family:var(--display);font-style:italic;font-size:clamp(26px,3.3vw,42px);line-height:1.1;color:var(--muted);transition:color .25s}
+.list button::before{content:"";flex:0 0 auto;width:22px;height:1px;background:currentColor;transform:translateY(-.3em) scaleX(.35);transform-origin:left;transition:transform .35s}
+.list button:hover,.list button[aria-pressed="true"]{color:var(--ink)}
+.list button[aria-pressed="true"]::before{transform:translateY(-.3em) scaleX(1)}
+.list button:focus-visible{outline:2px solid var(--ink);outline-offset:4px}
+.detail{margin:22px 0 0;display:grid;gap:10px;min-height:5.2em}
+.detail p{margin:0;max-width:40ch;color:var(--body)}
+.tag{justify-self:start;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink);border:1px solid var(--line);border-radius:999px;padding:4px 12px}
+.sheet{position:relative;aspect-ratio:5/6;max-width:100%;background:var(--sheet);border:1px solid var(--line);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:24px 24px;background-position:-1px -1px}
+.sheet svg{position:absolute;inset:0;width:100%;height:100%}
+.pc{position:absolute;left:16px;top:14px;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+.fig{opacity:0;transition:opacity .3s}
+.fig.on{opacity:1}
+.ln{fill:none;stroke:var(--ink);stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:1 1;stroke-dashoffset:1}
+.fig.on .ln{transition:stroke-dashoffset 1.5s cubic-bezier(.55,.1,.3,1);stroke-dashoffset:0}
+.st{fill:none;stroke:var(--ink);stroke-width:1;stroke-dasharray:4 5;opacity:0}
+.dot{fill:var(--ink);opacity:0}
+.sign{fill:var(--ink);font-family:var(--display);font-style:italic;opacity:0}
+.sign.s{font-family:var(--sans);font-style:normal;letter-spacing:.2em}
+.fig.on .st,.fig.on .dot,.fig.on .sign{transition:opacity .6s 1.1s;opacity:.85}
+.grain{stroke:var(--muted);stroke-width:1;fill:none}
+.name{display:flex;gap:10px;align-items:center;margin-top:14px}
+.name label{font-size:13px;color:var(--muted)}
+.name input{font:inherit;color:var(--ink);background:var(--sheet);border:1px solid var(--line);border-radius:999px;padding:7px 14px;width:12em}
+.name input:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+@media (max-width:760px){
+  .out{grid-template-columns:minmax(0,1fr);gap:20px}
+  .text{display:contents}
+  .head{order:1}.sheet{order:2}.pick{order:3;min-width:0}
+  .list{grid-auto-flow:column;grid-auto-columns:max-content;gap:8px;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:6px;scrollbar-width:none}
+  .list::-webkit-scrollbar{display:none}
+  .list button{scroll-snap-align:start;font-style:normal;font-family:var(--sans);font-size:14px;padding:8px 14px;border:1px solid var(--line);border-radius:999px}
+  .list button::before{display:none}
+  .list button[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+  .detail{margin-top:14px}
+}
+@media (prefers-reduced-motion:reduce){.fig.on .ln,.fig.on .st,.fig.on .dot,.fig.on .sign{transition:none}}
+</style>
+
+<div class="wrap note">Test · outcomes section. Tap an outcome, or let it cycle on its own.</div>
+
+<section class="wrap out" aria-labelledby="o-h">
+  <div class="text">
+    <div class="head">
+      <p class="eyebrow">Teaching Threads · Hubli-Dharwad</p>
+      <h2 class="lead" id="o-h">After this course, you can</h2>
+    </div>
+    <div class="pick">
+      <ul class="list" id="list" aria-label="Choose an outcome"></ul>
+      <div class="detail" aria-live="polite">
+        <p id="dText"></p>
+        <span class="tag" id="dTag"></span>
+        <div class="name" id="nameRow" hidden>
+          <label for="shopName">Your name</label>
+          <input id="shopName" maxlength="14" placeholder="Priya" autocomplete="off">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sheet" id="sheet">
+    <span class="pc" id="pc"></span>
+    <svg viewBox="0 0 400 480" aria-hidden="true">
+      <!-- grainline arrow, as on a paper pattern piece -->
+      <path class="grain" d="M376 170 V310 M370 180 L376 170 L382 180 M370 300 L376 310 L382 300"/>
+
+      <g class="fig" id="f-blouse" transform="translate(200 240) scale(1.28) translate(-200 -200)">
+        <path class="ln" pathLength="1" d="M160 100 L122 112 L80 186 L114 204 L134 162 L140 290 Q200 302 260 290 L266 162 L286 204 L320 186 L278 112 L240 100"/>
+        <path class="ln" pathLength="1" d="M160 100 C165 172 235 172 240 100"/>
+        <path class="ln" pathLength="1" d="M200 166 V298"/>
+        <path class="ln" pathLength="1" d="M152 128 C160 190 162 240 165 294 M248 128 C240 190 238 240 235 294"/>
+        <path class="ln" pathLength="1" d="M122 112 C132 130 136 146 134 162 M278 112 C268 130 264 146 266 162"/>
+        <path class="st" d="M167 104 C172 160 228 160 233 104 M88 194 L116 209 M312 194 L284 209 M146 284 Q200 294 254 284"/>
+        <g class="dot"><circle cx="200" cy="190" r="2.4"/><circle cx="200" cy="215" r="2.4"/><circle cx="200" cy="240" r="2.4"/><circle cx="200" cy="265" r="2.4"/></g>
+      </g>
+
+      <g class="fig" id="f-lehenga">
+        <path class="ln" pathLength="1" d="M140 88 L260 88 L262 112 L138 112 Z"/>
+        <path class="ln" pathLength="1" d="M138 112 C112 250 76 370 42 438 Q200 470 358 438 C324 370 288 250 262 112"/>
+        <path class="ln" pathLength="1" d="M160 112 L104 452 M180 112 L152 460 M200 112 L200 463 M220 112 L248 460 M240 112 L296 452"/>
+        <path class="ln" pathLength="1" d="M254 100 C268 140 258 182 270 220"/>
+        <path class="st" d="M50 424 Q200 454 350 424 M142 106 H258"/>
+        <g class="dot"><path d="M266 220 L274 220 L278 246 L262 246 Z"/></g>
+      </g>
+
+      <g class="fig" id="f-kurta">
+        <path class="ln" pathLength="1" d="M178 78 L138 92 L96 214 L124 224 L150 150 L146 360 L132 430 L268 430 L254 360 L250 150 L276 224 L304 214 L262 92 L222 78"/>
+        <path class="ln" pathLength="1" d="M178 78 C186 100 214 100 222 78"/>
+        <path class="ln" pathLength="1" d="M192 96 V176 H208 V96"/>
+        <path class="ln" pathLength="1" d="M146 360 L150 430 M254 360 L250 430"/>
+        <path class="st" d="M138 422 H262 M100 206 L126 216 M300 206 L274 216"/>
+        <g class="dot"><circle cx="200" cy="114" r="2.6"/><circle cx="200" cy="136" r="2.6"/><circle cx="200" cy="158" r="2.6"/></g>
+      </g>
+
+      <g class="fig" id="f-aari">
+        <circle class="ln" pathLength="1" cx="200" cy="260" r="150"/>
+        <circle class="ln" pathLength="1" cx="200" cy="260" r="139"/>
+        <path class="ln" pathLength="1" d="M188 106 V94 H212 V106 M200 94 V80"/>
+        <path class="ln" pathLength="1" d="M196 340 C128 338 126 236 184 216 C232 200 246 160 222 136 C282 156 292 256 252 304 C236 324 218 340 196 340 Z"/>
+        <path class="ln" pathLength="1" d="M200 312 C160 308 158 252 194 240 C222 232 236 214 232 196 C262 222 262 274 240 296 C230 306 216 312 200 312 Z"/>
+        <path class="ln" pathLength="1" d="M318 92 L232 228 M232 228 C226 238 236 242 240 234"/>
+        <path class="ln" pathLength="1" d="M310 76 L332 90 L322 106 L300 92 Z"/>
+        <path class="st" d="M184 300 C176 280 186 262 202 258"/>
+        <g class="dot"><circle cx="160" cy="300" r="3.6"/><circle cx="152" cy="276" r="3.6"/><circle cx="156" cy="252" r="3.6"/><circle cx="170" cy="232" r="3.6"/><circle cx="252" cy="228" r="3.6"/><circle cx="262" cy="252" r="3.6"/><circle cx="260" cy="278" r="3.6"/><circle cx="244" cy="166" r="3.6"/><circle cx="210" cy="276" r="5"/></g>
+      </g>
+
+      <g class="fig" id="f-boutique">
+        <path class="ln" pathLength="1" d="M60 150 V430 H340 V150"/>
+        <path class="ln" pathLength="1" d="M48 80 H352 V150 H48 Z"/>
+        <path class="ln" pathLength="1" d="M48 150 Q68 176 88 150 Q108 176 128 150 Q148 176 168 150 Q188 176 208 150 Q228 176 248 150 Q268 176 288 150 Q308 176 328 150 Q340 166 352 150"/>
+        <path class="ln" pathLength="1" d="M90 210 H220 V430 M90 210 V430 M250 210 H310 V430"/>
+        <path class="ln" pathLength="1" d="M155 250 C140 250 138 268 146 276 C136 300 138 330 146 350 H164 C172 330 174 300 164 276 C172 268 170 250 155 250 Z M155 350 V410 M140 412 H170"/>
+        <circle class="ln" pathLength="1" cx="262" cy="330" r="3"/>
+        <text class="sign" id="signName" x="200" y="120" text-anchor="middle" font-size="34">Priya</text>
+        <text class="sign s" x="200" y="140" text-anchor="middle" font-size="10">BOUTIQUE · HUBBALLI</text>
+      </g>
+
+      <g class="fig" id="f-studio">
+        <path class="ln" pathLength="1" d="M60 90 H340 M80 90 V440 M320 90 V440 M64 440 H96 M304 440 H336"/>
+        <path class="ln" pathLength="1" d="M130 90 V104 M130 104 L102 122 H158 Z"/>
+        <path class="ln" pathLength="1" d="M108 122 L98 300 Q130 310 162 300 L152 122"/>
+        <path class="ln" pathLength="1" d="M200 90 V104 M200 104 L172 122 H228 Z"/>
+        <path class="ln" pathLength="1" d="M178 122 C170 250 162 330 152 384 Q200 396 248 384 C238 330 230 250 222 122"/>
+        <path class="ln" pathLength="1" d="M270 90 V104 M270 104 L242 122 H298 Z"/>
+        <path class="ln" pathLength="1" d="M248 122 L242 210 Q270 218 298 210 L292 122"/>
+        <path class="ln" pathLength="1" d="M222 128 L238 148 M232 148 H256 V178 H232 Z"/>
+        <circle class="ln" pathLength="1" cx="244" cy="155" r="2.5"/>
+        <path class="st" d="M158 376 Q200 386 242 376 M104 292 Q130 300 156 292"/>
+      </g>
+    </svg>
+  </div>
+</section>
+
+<script>
+const OUT=[
+  {id:"blouse",say:"stitch your own blouse",pc:"Blouse · front",tag:"3 & 6 months",
+   text:"Princess cut, boat neck, collar and katori blouses, finished with padding, zip or hooks."},
+  {id:"lehenga",say:"make a lehenga",pc:"Lehenga · panel flare",tag:"3 & 6 months",
+   text:"Panel, umbrella and pleated flares. Fishcut and knot skirts in the 6-month course."},
+  {id:"kurta",say:"draft any kurta",pc:"Kurta · placket front",tag:"3 & 6 months",
+   text:"Straight, A-line, placket kurta and designer tunic, with puff, petal or waterfall sleeves."},
+  {id:"aari",say:"do aari and zardozi work",pc:"Aari · on the frame",tag:"6 months",
+   text:"Pearl, bead, zardozi and thread work with the aari needle."},
+  {id:"boutique",say:"open your own boutique",pc:"Your shop",tag:"6 months",
+   text:"Branding, selling, running a boutique, and where to buy fabric in the local market."},
+  {id:"studio",say:"work at a boutique or studio",pc:"Studio rail",tag:"3 & 6 months",
+   text:"Measure, draft, cut and finish garments the way working designers do."},
+];
+const list=document.getElementById("list"),dText=document.getElementById("dText"),dTag=document.getElementById("dTag"),
+  pc=document.getElementById("pc"),nameRow=document.getElementById("nameRow");
+let cur=-1,auto=true,timer=null,seen=false;
+const btns=OUT.map((o,i)=>{const li=document.createElement("li"),b=document.createElement("button");
+  b.type="button";b.textContent=o.say;b.setAttribute("aria-pressed","false");
+  b.onclick=()=>{auto=false;clearInterval(timer);show(i)};li.appendChild(b);list.appendChild(li);return b});
+
+function show(i){
+  if(i===cur)return;
+  if(cur>=0){document.getElementById("f-"+OUT[cur].id).classList.remove("on");btns[cur].setAttribute("aria-pressed","false")}
+  cur=i;const o=OUT[i],f=document.getElementById("f-"+o.id);
+  // restart the drawing: force the hidden state to apply before turning it on
+  f.getBoundingClientRect();requestAnimationFrame(()=>f.classList.add("on"));
+  btns[i].setAttribute("aria-pressed","true");
+  if(!auto)btns[i].scrollIntoView({block:"nearest",inline:"nearest",behavior:"smooth"});
+  dText.textContent=o.text;dTag.textContent=o.tag;pc.textContent=o.pc;nameRow.hidden=o.id!=="boutique";
+}
+const sign=document.getElementById("signName");
+document.getElementById("shopName").addEventListener("input",e=>{sign.textContent=e.target.value.trim()||"Priya"});
+
+function cycle(){if(auto&&seen&&!document.hidden)show((cur+1)%OUT.length)}
+new IntersectionObserver(es=>{seen=es[0].isIntersecting},{threshold:.4}).observe(document.getElementById("sheet"));
+show(0);
+if(!matchMedia("(prefers-reduced-motion: reduce)").matches)timer=setInterval(cycle,4200);
+</script>

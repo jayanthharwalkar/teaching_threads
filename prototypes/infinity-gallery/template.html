@@ -1,0 +1,186 @@
+<title>Infinity Gallery Test</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;1,500&family=Jost:wght@300;400;500&display=swap">
+<style>
+/* Layout: one quiet heading, then a full-bleed stage where Shruti's photos move; the stage is the only bold thing. */
+:root{
+  --paper:#F3F1EC; --ink:#141414; --body:#3B3935; --muted:#77736B; --line:#D9D5CC; --card:#E6E2DA;
+  --display:"Cormorant Garamond","Iowan Old Style",Georgia,serif;
+  --sans:"Jost","Avenir Next","Segoe UI",system-ui,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#161514; --ink:#EEEBE5; --body:#CFCAC1; --muted:#8F8A81; --line:#34312D; --card:#24221F; color-scheme:dark}}
+:root[data-theme="dark"]{--paper:#161514; --ink:#EEEBE5; --body:#CFCAC1; --muted:#8F8A81; --line:#34312D; --card:#24221F; color-scheme:dark}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--paper);color:var(--body);font-family:var(--sans);font-weight:300;font-size:16px;line-height:1.55;overflow-x:hidden}
+.wrap{max-width:1180px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.eyebrow{font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin:0}
+h1,h2{font-family:var(--display);font-weight:500;color:var(--ink);text-wrap:balance;margin:0;line-height:1.02}
+h2{font-size:clamp(40px,7vw,84px)}
+h2 em{font-style:italic}
+.note{display:flex;flex-wrap:wrap;gap:8px 20px;align-items:center;justify-content:space-between;padding-block:18px;border-bottom:1px solid var(--line);font-size:13px;color:var(--muted)}
+.tabs{display:flex;gap:6px}
+.tabs button{font:inherit;font-size:13px;letter-spacing:.04em;color:var(--ink);background:none;border:1px solid var(--line);border-radius:999px;padding:7px 16px;cursor:pointer}
+.tabs button[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.tabs button:focus-visible,.stage:focus-visible,.lb button:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
+.spacer{padding-block:clamp(48px,10vh,110px);display:grid;gap:10px}
+.spacer p{max-width:46ch;margin:0}
+.head{display:flex;flex-wrap:wrap;gap:12px 40px;align-items:end;justify-content:space-between;padding-block:clamp(40px,8vh,90px) 10px}
+.head>div{display:grid;gap:14px}
+.hint{font-size:13px;color:var(--muted);margin:0}
+.stage{position:relative;height:min(82vh,780px);min-height:440px;overflow:hidden;touch-action:pan-y;cursor:grab;user-select:none;-webkit-user-select:none}
+.stage.drag{cursor:grabbing}
+.ph{position:absolute;left:0;top:0;margin:0;border-radius:3px;overflow:hidden;background:var(--card);will-change:transform;transform-origin:50% 50%}
+.ph img{display:block;width:100%;height:100%;object-fit:cover;pointer-events:none}
+.loop .ph{box-shadow:0 10px 30px -18px rgba(0,0,0,.45)}
+.caption{position:absolute;left:50%;bottom:18px;transform:translateX(-50%);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);pointer-events:none;white-space:nowrap}
+.inf{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-family:var(--display);font-style:italic;font-size:clamp(28px,4vw,46px);color:var(--ink);pointer-events:none;z-index:150;text-align:center;line-height:1}
+.inf small{display:block;font-family:var(--sans);font-style:normal;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-top:8px}
+.wall .ph{transition:box-shadow .2s}
+.wall .fade{position:absolute;inset:0;pointer-events:none;z-index:5;background:
+  linear-gradient(var(--paper),transparent 14%,transparent 86%,var(--paper)),
+  linear-gradient(90deg,var(--paper),transparent 10%,transparent 90%,var(--paper))}
+.lb{position:fixed;inset:0;z-index:1000;background:color-mix(in srgb,var(--paper) 94%,transparent);display:grid;place-items:center;
+  padding:calc(24px + env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) calc(24px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+.lb img{max-width:min(92vw,720px);max-height:86vh;border-radius:3px;box-shadow:0 30px 80px -40px rgba(0,0,0,.6)}
+.lb button{position:absolute;top:calc(14px + env(safe-area-inset-top,0px));right:calc(14px + env(safe-area-inset-right,0px));font:inherit;font-size:28px;line-height:1;width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:var(--paper);color:var(--ink);cursor:pointer}
+@media (max-width:640px){.stage{height:72vh;min-height:420px}}
+</style>
+
+<div class="wrap note">
+  <span>Test · only 8 photos so far, so each one repeats. Swap in the owner's full set later.</span>
+  <div class="tabs" role="group" aria-label="Layout">
+    <button type="button" id="tabLoop" aria-pressed="true">A · ∞ loop</button>
+    <button type="button" id="tabWall" aria-pressed="false">B · Endless wall</button>
+  </div>
+</div>
+
+<div class="wrap spacer">
+  <p class="eyebrow">Above this section</p>
+  <p>Scroll down. The photos move as you scroll past, and you can drag them too.</p>
+</div>
+
+<section aria-labelledby="g-h">
+  <div class="wrap head">
+    <div><p class="eyebrow">Shruti's work</p><h2 id="g-h">Worn by <em>real people.</em></h2></div>
+    <p class="hint">Drag or scroll · tap a photo</p>
+  </div>
+  <div class="stage loop" id="loop" tabindex="0" aria-label="Photos moving on a figure-eight loop. Use left and right arrows to turn it.">
+  </div>
+  <div class="stage wall" id="wall" tabindex="0" hidden aria-label="Endless wall of photos. Drag sideways or scroll to move it.">
+    <div class="fade"></div>
+  </div>
+</section>
+
+<div class="wrap spacer">
+  <p class="eyebrow">Below this section</p>
+  <p>The next section of the page would start here.</p>
+</div>
+
+<div class="lb" id="lb" hidden role="dialog" aria-modal="true" aria-label="Photo">
+  <button type="button" id="lbX" aria-label="Close">×</button>
+  <img id="lbImg" alt="Garment by Shruti Mahajan">
+</div>
+
+<script>
+const PHOTOS=[
+/*PHOTOS*/
+];
+const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
+const lb=document.getElementById("lb"),lbImg=document.getElementById("lbImg");
+function openPhoto(src){lbImg.src=src;lb.hidden=false;document.getElementById("lbX").focus()}
+function closePhoto(){lb.hidden=true}
+document.getElementById("lbX").onclick=closePhoto;
+lb.addEventListener("click",e=>{if(e.target===lb)closePhoto()});
+addEventListener("keydown",e=>{if(e.key==="Escape")closePhoto()});
+
+/* Shared drag: horizontal drag feeds velocity, a still press counts as a tap. */
+function dragger(el,onMove,onTap){
+  let down=null;
+  el.addEventListener("pointerdown",e=>{down={x:e.clientX,y:e.clientY,lx:e.clientX,moved:false,t:e.target};el.classList.add("drag")});
+  addEventListener("pointermove",e=>{if(!down)return;const dx=e.clientX-down.lx;down.lx=e.clientX;
+    if(Math.abs(e.clientX-down.x)+Math.abs(e.clientY-down.y)>6)down.moved=true;onMove(dx)});
+  addEventListener("pointerup",()=>{if(!down)return;el.classList.remove("drag");
+    if(!down.moved){const f=down.t.closest&&down.t.closest(".ph");if(f)onTap(f)}down=null});
+  addEventListener("pointercancel",()=>{down=null;el.classList.remove("drag")});
+}
+function visible(el,cb){new IntersectionObserver(es=>cb(es[0].isIntersecting)).observe(el)}
+
+/* A · figure-eight. Lemniscate of Bernoulli; depth = sin t, so the two passes cross one in front of the other. */
+(function(){
+  const st=document.getElementById("loop");
+  let N,cards=[],off=0,vel=0,on=false,lastY=scrollY,W,H;
+  function build(){
+    cards.forEach(c=>c.remove());cards=[];
+    N=innerWidth<640?18:26;
+    for(let i=0;i<N;i++){const f=document.createElement("figure");f.className="ph";
+      const im=new Image();im.src=PHOTOS[i%PHOTOS.length];im.alt="";im.draggable=false;f.appendChild(im);
+      f.dataset.src=im.src;st.appendChild(f);cards.push(f)}
+    size();
+  }
+  function size(){W=st.clientWidth;H=st.clientHeight;
+    const w=Math.max(84,Math.min(180,W*.12));cards.forEach(c=>{c.style.width=w+"px";c.style.height=w*1.33+"px";c.dataset.w=w})}
+  function draw(){
+    const w0=+cards[0].dataset.w,h0=w0*1.33,cx=W/2,cy=H/2,tall=H>W*1.2;
+    // Portrait screens get the ∞ stood upright, as an 8.
+    const ax=tall?Math.min(H*.36,(W/2-w0/2-8)/.354):W*.4,ay=tall?H/2-h0/2-12:Math.min(W*.4*2.1*.354,H/2-h0/2-12);
+    cards.forEach((c,i)=>{
+      const t=((i/N+off)%1+1)%1*Math.PI*2,s=Math.sin(t),co=Math.cos(t),d=1+s*s;
+      const u=co/d,v=s*co/d,z=s,k=(z+1)/2,w=w0;
+      const X=tall?v/.354*(W/2-w0/2-8):u*ax,Y=tall?u*ay:v/.354*ay,x=tall?v/.354:u;
+      const sc=.58+.42*k;
+      c.style.transform=`translate(${cx+X-w/2}px,${cy+Y-w*.665}px) scale(${sc}) rotateY(${-x*18}deg)`;
+      c.style.zIndex=Math.round(k*200);c.style.opacity=(.35+.65*k).toFixed(3);
+    });
+  }
+  function tick(){if(!on)return;
+    const dy=scrollY-lastY;lastY=scrollY;
+    off+=(reduce?0:.00018)+vel+dy*.00035;vel*=.93;draw();requestAnimationFrame(tick)}
+  dragger(st,dx=>{vel=dx/(W*3)},f=>openPhoto(f.dataset.src));
+  st.addEventListener("keydown",e=>{if(e.key==="ArrowRight")vel=.01;if(e.key==="ArrowLeft")vel=-.01});
+  visible(st,v=>{if(v&&!on){on=true;lastY=scrollY;requestAnimationFrame(tick)}else if(!v)on=false});
+  addEventListener("resize",()=>{size();draw()});
+  build();draw();
+  window.loopStage={size,draw,build};
+})();
+
+/* B · endless wall. A pool of cells reused as the wall pans; which photo sits in a cell comes from its virtual column and row. */
+(function(){
+  const st=document.getElementById("wall");
+  let pool=[],cw,ch,g,cols,rows,px=0,py=0,vel=0,on=false,lastY=scrollY,W,H;
+  function build(){
+    pool.forEach(c=>c.remove());pool=[];W=st.clientWidth;H=st.clientHeight;
+    cw=Math.max(118,Math.min(230,W*.17));ch=cw*1.34;g=Math.round(cw*.09);
+    cols=Math.ceil(W/(cw+g))+2;rows=Math.ceil(H/(ch+g))+2;
+    for(let i=0;i<cols*rows;i++){const f=document.createElement("figure");f.className="ph";f.style.width=cw+"px";f.style.height=ch+"px";
+      const im=new Image();im.alt="";im.draggable=false;f.appendChild(im);st.appendChild(f);pool.push(f)}
+  }
+  const pick=(c,r)=>{let h=Math.imul(c,73856093)^Math.imul(r,19349663);h=Math.imul(h^(h>>>13),1274126177);return ((h>>>0)%PHOTOS.length)};
+  function draw(){
+    const sx=cw+g,sy=ch+g,c0=Math.floor(-px/sx)-1,cx=W/2,cy=H/2;let n=0;
+    for(let c=0;c<cols;c++){const vc=c0+c,stag=(vc&1)?sy*.5:0,x=vc*sx+px,r0=Math.floor(-(py+stag)/sy)-1;
+      for(let r=0;r<rows;r++){const vr=r0+r,y=vr*sy+py+stag,f=pool[n++];
+        const src=PHOTOS[pick(vc,vr)];if(f.dataset.src!==src){f.dataset.src=src;f.firstChild.src=src}
+        const dx=(x+cw/2-cx)/W,dy=(y+ch/2-cy)/H,sc=1-Math.min(.16,(dx*dx+dy*dy)*.32);
+        f.style.transform=`translate(${x}px,${y}px) scale(${sc.toFixed(3)})`}}
+  }
+  function tick(){if(!on)return;
+    const dy=scrollY-lastY;lastY=scrollY;
+    px+=(reduce?0:-.25)+vel;py+=(reduce?0:-.12)-dy*.6;vel*=.93;draw();requestAnimationFrame(tick)}
+  dragger(st,dx=>{vel=dx},f=>openPhoto(f.dataset.src));
+  st.addEventListener("keydown",e=>{if(e.key==="ArrowRight")vel=-12;if(e.key==="ArrowLeft")vel=12});
+  visible(st,v=>{if(v&&!on){on=true;lastY=scrollY;requestAnimationFrame(tick)}else if(!v)on=false});
+  addEventListener("resize",()=>{if(!st.hidden){build();draw()}});
+  window.wallStage={build,draw,st};
+})();
+
+const tabs={loop:document.getElementById("tabLoop"),wall:document.getElementById("tabWall")};
+function show(which){
+  document.getElementById("loop").hidden=which!=="loop";document.getElementById("wall").hidden=which!=="wall";
+  tabs.loop.setAttribute("aria-pressed",which==="loop");tabs.wall.setAttribute("aria-pressed",which==="wall");
+  if(which==="wall"){wallStage.build();wallStage.draw()}else{loopStage.size();loopStage.draw()}
+}
+tabs.loop.onclick=()=>show("loop");tabs.wall.onclick=()=>show("wall");
+</script>

@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Numbers test B: the thread draws the numbers</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;1,500&family=Jost:wght@300;400;500&display=swap">
+<style>
+:root{--paper:#F3F1EC;--panel:#E7E3D9;--ink:#141414;--muted:#77736B;--serif:"Cormorant Garamond",Georgia,serif;--sans:"Jost",system-ui,sans-serif}
+*{box-sizing:border-box;margin:0}
+html,body{background:var(--panel);color:var(--ink);font-family:var(--sans);font-weight:300}
+.lead{height:70vh;display:grid;place-items:center;text-align:center;background:var(--paper)}
+.lead small,.after small{display:block;font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);margin-bottom:12px}
+.lead b,.after b{font-family:var(--serif);font-weight:500;font-size:clamp(28px,3vw,40px)}
+.s{position:relative;height:640vh}
+.pin{position:sticky;top:0;height:100vh;height:100svh;overflow:hidden}
+#c{position:absolute;inset:0;width:100%;height:100%;display:block}
+.line{position:absolute;left:0;right:0;bottom:17%;text-align:center;padding:0 24px;pointer-events:none}
+.bt{position:absolute;left:0;right:0;opacity:0;font-size:clamp(20px,2vw,28px);line-height:1.3}
+.bt .cta{pointer-events:auto;display:inline-block;margin-top:18px;padding:12px 22px;background:var(--ink);color:var(--paper);text-decoration:none;font-size:15px;font-weight:400}
+.sample{position:absolute;right:22px;top:20px;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
+.after{height:70vh;display:grid;place-items:center;text-align:center;background:var(--paper)}
+.switch{position:fixed;left:50%;bottom:14px;transform:translateX(-50%);z-index:20;display:flex;gap:4px;align-items:center;background:rgba(20,20,20,.9);color:#f3f1ec;padding:5px;border-radius:999px;font-size:12px}
+.switch span{padding:0 6px 0 10px;opacity:.6;letter-spacing:.08em;text-transform:uppercase;font-size:10px}
+.switch button{background:none;border:0;color:inherit;font:inherit;padding:7px 12px;border-radius:999px;cursor:pointer}
+.switch button.on{background:#f3f1ec;color:#141414}
+@media (max-width:700px){.line{bottom:17%}.sample{left:20px;right:auto}}
+</style>
+</head>
+<body>
+<section class="lead"><div><small>Numbers section · test B</small><b>The thread draws the numbers</b><br><small style="margin-top:18px">Scroll</small></div></section>
+<section class="s" id="s"><div class="pin"><canvas id="c"></canvas>
+ <div class="line">
+  <div class="bt">students have learned with Shruti.</div>
+  <div class="bt">had never touched a sewing machine.</div>
+  <div class="bt">now run their own boutique.</div>
+  <div class="bt">work in fashion jobs.</div>
+  <div class="bt">The next one is you.<br><a class="cta" href="#">Connect on WhatsApp</a></div>
+ </div>
+ <span class="sample">Sample numbers · to be confirmed by Shruti</span>
+</div></section>
+<section class="after"><div><small>Next section</small><b>What you will learn</b></div></section>
+<div class="switch"><span>Thread</span><button data-c="ink">Ink</button><button data-c="red">Red</button><button data-c="zari">Zari gold</button></div>
+
+<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js"></script>
+<script>
+(()=>{
+const $=id=>document.getElementById(id),clamp=(x,a=0,b=1)=>Math.min(b,Math.max(a,x)),lerp=(a,b,t)=>a+(b-a)*t,
+ sstep=(a,b,x)=>{const t=clamp((x-a)/(b-a));return t*t*(3-2*t)},V=(x,y,z=0)=>new THREE.Vector3(x,y,z);
+const RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const cv=$('c'),sec=$('s'),beats=[...document.querySelectorAll('.bt')];
+const R=new THREE.WebGLRenderer({canvas:cv,antialias:true,alpha:true});R.setPixelRatio(Math.min(devicePixelRatio,2));R.outputEncoding=THREE.sRGBEncoding;
+R.shadowMap.enabled=true;R.shadowMap.type=THREE.PCFSoftShadowMap;
+const S=new THREE.Scene(),C=new THREE.PerspectiveCamera(32,1,.1,60);
+S.add(new THREE.HemisphereLight(0xffffff,0x9d968a,.55));
+const key=new THREE.DirectionalLight(0xffffff,.85);key.position.set(-2.5,3.5,6);key.castShadow=true;key.shadow.mapSize.set(2048,2048);
+Object.assign(key.shadow.camera,{left:-6,right:6,top:4,bottom:-4,near:1,far:20});key.shadow.radius=6;key.shadow.bias=-.0005;S.add(key);
+const fill=new THREE.DirectionalLight(0xffffff,.25);fill.position.set(4,-1,3);S.add(fill);
+// backdrop: catches the thread's soft shadow so it floats off the page
+const back=new THREE.Mesh(new THREE.PlaneGeometry(40,24),new THREE.ShadowMaterial({opacity:.16}));back.receiveShadow=true;S.add(back);
+const cloth=new THREE.Mesh(new THREE.PlaneGeometry(40,24),new THREE.MeshBasicMaterial({color:new THREE.Color(0xE7E3D9).convertSRGBToLinear()}));cloth.position.z=-.03;S.add(cloth);
+
+/* thread look: a twisted cord. Stripes along the length, at an angle, read as plied thread. */
+function cordTex(){const c=document.createElement('canvas');c.width=64;c.height=256;const x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,64,256);
+ for(let i=-256;i<256;i+=22){x.strokeStyle='rgba(0,0,0,.28)';x.lineWidth=7;x.beginPath();x.moveTo(0,i);x.lineTo(64,i+64);x.stroke();
+  x.strokeStyle='rgba(255,255,255,.5)';x.lineWidth=2;x.beginPath();x.moveTo(0,i+9);x.lineTo(64,i+73);x.stroke()}
+ const t=new THREE.CanvasTexture(c);t.wrapS=t.wrapT=THREE.RepeatWrapping;t.anisotropy=8;return t}
+const tex=cordTex();
+const mat=new THREE.MeshStandardMaterial({color:0x1d1c1a,roughness:.55,metalness:0,map:tex});
+const COLS={ink:[0x0f0e0d,.55,0],red:[0x7e1512,.5,0],zari:[0xb8892e,.32,.65]};
+function setC(n){const [c,r,m]=COLS[n];mat.color.setHex(c);mat.roughness=r;mat.metalness=m;document.querySelectorAll('[data-c]').forEach(b=>b.classList.toggle('on',b.dataset.c===n))}
+document.querySelectorAll('[data-c]').forEach(b=>b.onclick=()=>setC(b.dataset.c));setC('ink');
+
+/* single-stroke digits (unit box: width ~.62, height 1), drawn the way a hand would */
+const ell=(cx,cy,rx,ry,a0,a1,n)=>{const o=[];for(let i=0;i<=n;i++){const a=lerp(a0,a1,i/n);o.push([cx+Math.cos(a)*rx,cy+Math.sin(a)*ry])}return o};
+const D={
+ '0':ell(.31,.5,.29,.5,Math.PI/2+.2,Math.PI/2+.2+Math.PI*2.05,28),
+ '1':[[.08,.74],[.22,.86],[.36,1],[.36,.5],[.36,0]],
+ '2':[[.05,.76],[.14,.93],[.32,1],[.5,.94],[.58,.77],[.52,.56],[.32,.32],[.06,.02],[.3,0],[.62,0]],
+ '4':[[.47,0],[.47,.55],[.47,1],[.22,.62],[0,.3],[.32,.3],[.64,.3]],
+ '5':[[.57,1],[.3,1],[.1,1],[.07,.55],[.3,.63],[.52,.52],[.58,.27],[.44,.05],[.22,0],[.02,.12]],
+ '7':[[.0,1],[.32,1],[.62,1],[.45,.6],[.27,0]],
+};
+const NUMS=['20','17','15','4','21'];
+let pathsN=[];const NP=900;
+// the thread stays on top of the cloth to write each digit, and dives under it in between (like a stitch)
+const UP=.3,DOWN=-.4;
+function numPath(str,ph){const H=ph?1.8:2.2,Wd=.62*H,G=.32*H,tot=str.length*Wd+(str.length-1)*G,x0=-tot/2,y0=ph?.15:.25;
+ const P=[],L=ph?-2.6:-7,Rr=ph?2.6:7;
+ P.push(V(L,-.5,UP),V(L*.6,.05,UP),V(x0-.55*H,y0-.2*H,UP),V(x0-.4*H,y0-.2*H,DOWN));
+ [...str].forEach((ch,k)=>{const ox=x0+k*(Wd+G),pts=D[ch].map(([u,v])=>[ox+u*H,y0+(v-.5)*H]);
+  P.push(V(pts[0][0],pts[0][1],DOWN));pts.forEach(([x,y])=>P.push(V(x,y,UP)));const e=pts[pts.length-1];P.push(V(e[0],e[1],DOWN))});
+ const e=P[P.length-1];P.push(V(e.x+.3*H,y0-.25*H,DOWN),V(e.x+.45*H,y0-.25*H,UP),V(Rr*.6,-.1,UP),V(Rr,.4,UP));
+ return new THREE.CatmullRomCurve3(P,false,'centripetal').getSpacedPoints(NP)}
+let phone=false,W=1,H=1;
+function size(){W=cv.clientWidth;H=cv.clientHeight;phone=W<700;R.setSize(W,H,false);C.aspect=W/H;C.fov=phone?52:32;C.updateProjectionMatrix();
+ pathsN=NUMS.map(n=>numPath(n,phone))}
+addEventListener('resize',size);size();
+const tube=new THREE.Mesh(new THREE.BufferGeometry(),mat);tube.castShadow=true;S.add(tube);
+// a small knot at the free end while it is still drawing in
+const tipM=new THREE.Mesh(new THREE.SphereGeometry(.035,16,12),mat);tipM.castShadow=true;S.add(tipM);
+let q=0,tq=0;function rs(){const r=sec.getBoundingClientRect();tq=clamp(-r.top/(r.height-innerHeight))}addEventListener('scroll',rs,{passive:true});rs();
+// beat k holds number k; between beats the thread pulls loose and re-forms
+const B=[[0,.17],[.23,.37],[.43,.57],[.63,.77],[.83,1]];
+const tmp=[];for(let i=0;i<=NP;i++)tmp.push(V(0,0,0));
+let lastKey='';
+function frame(now){requestAnimationFrame(frame);const r=sec.getBoundingClientRect();if(r.bottom<0||r.top>innerHeight)return;
+ q+=(tq-q)*(RM?1:.18);const t=now/1000,mo=RM?0:1;
+ // which shapes are we between?
+ let a=0,b=0,m=0;
+ for(let k=0;k<B.length;k++){if(q>=B[k][0]&&q<=B[k][1]){a=b=k;m=0;break}
+  if(k<B.length-1&&q>B[k][1]&&q<B[k+1][0]){a=k;b=k+1;m=sstep(B[k][1],B[k+1][0],q);break}}
+ const PA=pathsN[a],PB=pathsN[b];
+ for(let i=0;i<=NP;i++){const f=i/NP,pa=PA[i],pb=PB[i];
+  // mid-morph the thread lifts and swirls, then settles: reads as being pulled through the air
+  const lift=Math.sin(Math.PI*m);
+  tmp[i].set(lerp(pa.x,pb.x,m)+Math.sin(f*18+t*.8)*.12*lift,lerp(pa.y,pb.y,m)+Math.cos(f*14+t*.6)*.16*lift,lerp(pa.z,pb.z,m)+lift*(.5+Math.sin(f*22)*.35)+Math.sin(f*30+t*1.2)*.012*mo*(pa.z>0?1:0))}
+ // draw-in for the very first number, from the left
+ const din=RM?1:sstep(.0,.12,q)*.97+ .03;
+ const n=Math.max(4,Math.round(NP*din));
+ const crv=new THREE.CatmullRomCurve3(tmp.slice(0,n+1));
+ const g=new THREE.TubeGeometry(crv,n*2,phone?.03:.036,10,false);
+ // uv.x runs along the thread: repeat the twist pattern by length
+ const uv=g.attributes.uv;const len=crv.getLength();for(let i=0;i<uv.count;i++)uv.setX(i,uv.getX(i)*len*7);
+ tube.geometry.dispose();tube.geometry=g;tex.repeat.set(1,1);
+ tipM.position.copy(tmp[n]);tipM.visible=din<.995;
+ // camera: slow drift, a little closer while a number is held
+ const hold=1-Math.sin(Math.PI*m);
+ C.position.set(Math.sin(t*.15)*.25*mo+(q-.5)*.6,-.25+Math.cos(t*.12)*.12*mo,(phone?9.5:8.2)-hold*.5);C.lookAt(0,phone?.05:.1,0);
+ key.position.x=-2.5+Math.sin(t*.1)*.6*mo;
+ beats.forEach((el,k)=>{const [a0,a1]=B[k],o=sstep(a0+.02,a0+.06,q)*(1-sstep(a1-.03,a1+.02,q))*(k===4?1/(1-sstep(a1-.03,a1+.02,q)+1e-6)*(1-sstep(a1-.03,a1+.02,q)):1);
+  const oo=k===4?sstep(a0+.02,a0+.06,q):o;el.style.opacity=oo;el.style.transform=`translateY(${(1-oo)*14}px)`});
+ R.render(S,C)}
+requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>

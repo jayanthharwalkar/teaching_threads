@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Hero test: thread and floating tools</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;1,500&family=Jost:wght@300;400;500&display=swap">
+<style>
+:root{--paper:#F3F1EC;--panel:#E7E3D9;--ink:#141414;--body:#3B3935;--muted:#77736B;--line:#D9D5CC;
+ --serif:"Cormorant Garamond",Georgia,serif;--sans:"Jost",system-ui,sans-serif}
+*{box-sizing:border-box;margin:0}
+html,body{background:var(--paper);color:var(--ink);font-family:var(--sans);font-weight:300}
+.hero{position:relative;height:360vh}
+.pin{position:sticky;top:0;height:100vh;height:100svh;overflow:hidden}
+.panel{position:absolute;background-color:var(--panel);
+ background-image:radial-gradient(circle,rgba(20,20,20,.12) 1px,transparent 1.2px);background-size:26px 26px;background-position:center}
+#gl{position:absolute;inset:0;width:100%;height:100%;display:block;opacity:0;transition:opacity .9s}
+#gl.ready{opacity:1}
+nav{position:absolute;left:0;right:0;top:0;display:flex;align-items:center;justify-content:space-between;padding:24px 36px;z-index:3}
+.logo{font-family:var(--serif);font-size:24px;color:var(--ink);text-decoration:none}
+nav .links{display:flex;gap:30px;align-items:center;font-size:14px;font-weight:400}
+nav .links a{color:var(--ink);text-decoration:none}
+.cta{display:inline-block;padding:11px 20px;border:1px solid var(--ink);color:var(--ink);text-decoration:none;font-size:14px;font-weight:400}
+.cta.fill{background:var(--ink);color:var(--paper)}
+.menu{font-size:14px;font-weight:400;color:var(--ink);text-decoration:none;border-bottom:1px solid var(--ink);padding-bottom:2px}
+#thr{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:1}
+.band{position:absolute;z-index:2}
+.band h1{font-family:var(--serif);font-weight:500;font-size:clamp(40px,5vw,76px);line-height:1;letter-spacing:-.01em;white-space:nowrap}
+.band h1 em{font-style:italic}
+.next{position:relative;overflow:hidden}
+.s2{position:relative;height:520vh;background:var(--panel)}
+.pin2{position:sticky;top:0;height:100vh;height:100svh;overflow:hidden;background-image:radial-gradient(circle,rgba(20,20,20,.12) 1px,transparent 1.2px);background-size:26px 26px;background-position:center}
+#gl2{position:absolute;inset:0;width:100%;height:100%;display:block}
+.beats{position:absolute;left:10%;top:44%;width:min(34vw,440px);height:50%}
+.bt{position:absolute;left:0;top:0;opacity:0}
+.bt b{display:block;font-variant-numeric:lining-nums;font-feature-settings:'lnum' 1;font-family:var(--serif);font-weight:500;font-size:clamp(110px,13vw,200px);line-height:.85;letter-spacing:-.02em}
+.bt p{font-size:clamp(18px,1.6vw,24px);line-height:1.35;margin-top:14px;color:var(--ink);font-weight:300}
+.bt .cta{margin-top:22px}
+.sample{position:absolute;right:24px;bottom:22px;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
+.side{position:absolute;z-index:2}
+.side h1{font-family:var(--serif);font-weight:500;font-size:clamp(36px,3.9vw,60px);line-height:.98;letter-spacing:-.01em}
+.side h1 em{font-style:italic}
+.side p{font-size:15px;line-height:1.55;color:var(--body);max-width:30ch;margin-bottom:22px}
+.side small{display:block;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:14px}
+.side ul{list-style:none;padding:0;margin:0 0 24px;font-size:14px;line-height:1.9;color:var(--body)}
+.side ul li{border-top:1px solid var(--line);padding:5px 0}
+.hint{display:flex;align-items:center;gap:10px;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
+.hint i{display:block;width:34px;height:1px;background:var(--muted);transform-origin:left;animation:drop 2.2s ease-in-out infinite}
+@keyframes drop{0%{transform:scaleX(0)}50%{transform:scaleX(1)}100%{transform:scaleX(1);opacity:0}}
+.end{position:absolute;left:0;right:0;bottom:11%;text-align:center;opacity:0;z-index:2;padding:0 20px}
+.end small{display:block;font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);margin-bottom:12px}
+.end b{font-family:var(--serif);font-weight:500;font-size:clamp(30px,3.6vw,50px);line-height:1.05}
+.loading{position:absolute;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);transform:translate(-50%,-50%);z-index:2;text-align:center}
+.next{min-height:80vh;display:grid;place-items:center;text-align:center;padding:60px 24px;border-top:1px solid var(--line)}
+.next small{display:block;font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);margin-bottom:14px}
+.next b{font-family:var(--serif);font-weight:500;font-size:36px}
+.switch{position:fixed;left:50%;bottom:14px;transform:translateX(-50%);z-index:20;display:flex;gap:4px;align-items:center;
+ background:rgba(20,20,20,.9);color:#f3f1ec;padding:5px;border-radius:999px;font-size:12px;box-shadow:0 6px 24px rgba(0,0,0,.15)}
+.switch span{padding:0 6px 0 10px;opacity:.6;letter-spacing:.08em;text-transform:uppercase;font-size:10px}
+.switch button{background:none;border:0;color:inherit;font:inherit;padding:7px 12px;border-radius:999px;cursor:pointer;white-space:nowrap}
+.switch button.on{background:#f3f1ec;color:#141414}
+@media (max-width:700px){
+ nav{padding:16px 20px}
+ nav .links a:not(.cta){display:none}
+ .logo{font-size:21px}
+ .side h1{font-size:34px}
+ .band h1{white-space:normal;font-size:34px}
+ .beats{left:22px;right:22px;width:auto;top:auto;bottom:70px;height:auto;min-height:200px}.bt{top:auto;bottom:0}.bt b{font-size:96px}.sample{right:auto;left:22px;top:18px;bottom:auto}nav .cta{padding:9px 13px;font-size:13px}
+}
+@media (prefers-reduced-motion:reduce){.hint i{animation:none}}
+</style>
+</head>
+<body>
+<section class="hero" id="hero">
+ <div class="pin" id="pin">
+  <div class="panel" id="panel"></div>
+  <canvas id="gl"></canvas>
+  <div class="loading" id="loading">Loading the dress form…</div>
+  <canvas id="thr"></canvas>
+  <nav><a class="logo" href="#">Teaching Threads</a><a class="cta fill" href="#">Connect on WhatsApp</a></nav>
+  <div class="band" id="band"><h1>Learn to <em>make</em> your own clothes.</h1></div>
+  <div class="end" id="end"><b>Every garment starts with a measurement.</b></div>
+ </div>
+</section>
+<section class="s2" id="s2"><div class="pin2"><canvas id="gl2"></canvas>
+ <div class="beats">
+  <div class="bt"><b id="cnt">20</b><p>students have learned with Shruti.</p></div>
+  <div class="bt"><b>17</b><p>had never touched a sewing machine.</p></div>
+  <div class="bt"><b>15</b><p>now run their own boutique.</p></div>
+  <div class="bt"><b>4</b><p>work in fashion jobs.</p></div>
+  <div class="bt"><b>21</b><p>The next button is yours.</p><a class="cta fill" href="#">Connect on WhatsApp</a></div>
+ </div>
+ <span class="sample">Sample numbers · to be confirmed by Shruti</span>
+</div></section>
+<section class="next"><div><small>Next section</small><b>What you will learn</b></div></section>
+
+<div class="switch"><span>Tape</span><button data-tape="paper">White</button><button data-tape="ink">Black</button></div>
+
+<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/loaders/GLTFLoader.js"></script>
+<script>
+(()=>{
+const $=id=>document.getElementById(id);
+const pin=$('pin'),cv=$('gl'),panel=$('panel'),band=$('band'),end=$('end');
+const RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const clamp=(x,a=0,b=1)=>Math.min(b,Math.max(a,x)),lerp=(a,b,t)=>a+(b-a)*t,sstep=(a,b,x)=>{const t=clamp((x-a)/(b-a));return t*t*(3-2*t)};
+const V=(x,y,z)=>new THREE.Vector3(x,y,z);
+
+/* ---------- renderer ---------- */
+const R=new THREE.WebGLRenderer({canvas:cv,antialias:true,alpha:true});R.setPixelRatio(Math.min(devicePixelRatio,2));R.outputEncoding=THREE.sRGBEncoding;
+const S=new THREE.Scene(),C=new THREE.PerspectiveCamera(24,1,.1,60);
+S.add(new THREE.HemisphereLight(0xffffff,0xa9a294,.62));
+const key=new THREE.DirectionalLight(0xffffff,.62);key.position.set(-3,3,4);S.add(key);
+const rim=new THREE.DirectionalLight(0xffffff,.28);rim.position.set(4,1,-3);S.add(rim);
+const clay=new THREE.MeshStandardMaterial({color:0xece7dd,roughness:.88,metalness:0});
+function canvasTex(w,h,draw){const c=document.createElement('canvas');c.width=w;c.height=h;draw(c.getContext('2d'),w,h);
+ const t=new THREE.CanvasTexture(c);t.encoding=THREE.sRGBEncoding;t.anisotropy=R.capabilities.getMaxAnisotropy();t.wrapS=t.wrapT=THREE.RepeatWrapping;return t}
+const woundTex=canvasTex(512,256,(x,w,h)=>{x.fillStyle='#8a8a8a';x.fillRect(0,0,w,h);
+ for(let i=0;i<h;i+=3){x.fillStyle='rgba(0,0,0,.18)';x.fillRect(0,i,w,1)}
+ x.lineWidth=2;for(let k=-h;k<w;k+=46){x.strokeStyle='rgba(255,255,255,.28)';x.beginPath();x.moveTo(k,0);x.lineTo(k+h*.7,h);x.stroke();
+  x.strokeStyle='rgba(0,0,0,.22)';x.beginPath();x.moveTo(k+23,h);x.lineTo(k+23+h*.7,0);x.stroke()}
+ x.fillStyle='rgba(255,255,255,.35)';x.fillRect(w*.62,0,5,h)});
+const spoolMat=new THREE.MeshStandardMaterial({color:0x5c5853,roughness:.75,map:woundTex});
+
+/* ---------- measuring tape: 50 cm of print, cm numbers, mm ticks on both edges ---------- */
+const CM=50,TPX=4096;
+function tapePrint(bg,fg){return canvasTex(TPX,128,(x,w,h)=>{x.fillStyle=bg;x.fillRect(0,0,w,h);x.fillStyle=fg;const pc=w/CM;
+ for(let mm=0;mm<CM*10;mm++){const X=mm*pc/10,l=mm%10===0?34:mm%5===0?24:14,lw=mm%10===0?3:2;x.fillRect(X,0,lw,l);x.fillRect(X,h-l,lw,l)}
+ x.font='500 40px Jost, system-ui, sans-serif';x.textAlign='center';x.textBaseline='middle';
+ for(let c=1;c<=CM;c++)x.fillText(String(c),c*pc-pc/2,h/2+2)})}
+const TAPES={paper:{tex:tapePrint('#F1EDE4','#1b1a18'),edge:0xe2ddd2},ink:{tex:tapePrint('#1a1918','#EFEBE2'),edge:0x1a1918}};
+const tapeFace=new THREE.MeshStandardMaterial({roughness:.62,side:THREE.DoubleSide});
+const tapeEdge=new THREE.MeshStandardMaterial({roughness:.7,side:THREE.DoubleSide});
+const rollSide=new THREE.MeshStandardMaterial({roughness:.66});
+function setTape(n){const t=TAPES[n];tapeFace.map=t.tex;tapeEdge.color.setHex(t.edge);
+ const rt=t.tex.clone();rt.needsUpdate=true;rt.repeat.set(.45,1);rollSide.map=rt;rollSide.userData.tex=rt;
+ tapeFace.needsUpdate=rollSide.needsUpdate=true;document.querySelectorAll('[data-tape]').forEach(b=>b.classList.toggle('on',b.dataset.tape===n))}
+document.querySelectorAll('[data-tape]').forEach(b=>b.onclick=()=>setTape(b.dataset.tape));
+
+/* ---------- tools (clay, built in code) ---------- */
+const tools=[];
+function addTool(obj,pos,rot,o={}){obj.position.copy(pos);obj.rotation.set(rot[0],rot[1],rot[2]);S.add(obj);
+ tools.push(Object.assign({obj,base:pos.clone(),rot0:obj.rotation.clone(),spin:o.spin||[.2,.3,.1],bob:o.bob??.05,ph:Math.random()*6.28,anim:o.anim},o));return obj}
+const ext=(shape,depth,bev=.012)=>{const g=new THREE.ExtrudeGeometry(shape,{depth,bevelEnabled:true,bevelThickness:bev,bevelSize:bev,bevelSegments:3,curveSegments:28});g.center();return g};
+function kainchi(){const g=new THREE.Group(),halves=[];
+ for(const side of [1,-1]){const h=new THREE.Group();
+  const b=new THREE.Shape();b.moveTo(-.06,.035*side);b.quadraticCurveTo(.5,.05*side,1.02,.004*side);b.lineTo(1.02,-.006*side);b.quadraticCurveTo(.5,-.012*side,-.06,-.03*side);b.closePath();
+  const blade=new THREE.Mesh(ext(b,.022,.008),clay);blade.geometry.translate(.48,0,0);h.add(blade);
+  const big=side>0,rx=big?.2:.15,ry=big?.11:.095,cx=-.36,cy=-.07*side;
+  const loop=new THREE.Shape();loop.absellipse(cx,cy,rx,ry,0,Math.PI*2);const hole=new THREE.Path();hole.absellipse(cx,cy,rx-.045,ry-.04,0,Math.PI*2,true);loop.holes.push(hole);
+  const lg=new THREE.ExtrudeGeometry(loop,{depth:.03,bevelEnabled:true,bevelThickness:.012,bevelSize:.012,bevelSegments:3,curveSegments:40});lg.translate(0,0,-.015);h.add(new THREE.Mesh(lg,clay));
+  const neck=new THREE.Shape();neck.moveTo(-.2,-.0*side);neck.lineTo(-.02,.025*side);neck.lineTo(-.02,-.03*side);neck.lineTo(-.2,-.06*side);neck.closePath();
+  const ng=new THREE.ExtrudeGeometry(neck,{depth:.03,bevelEnabled:true,bevelThickness:.01,bevelSize:.01,bevelSegments:2});ng.translate(0,0,-.015);h.add(new THREE.Mesh(ng,clay));
+  h.position.z=side*.02;g.add(h);halves.push([h,side])}
+ const screw=new THREE.Mesh(new THREE.CylinderGeometry(.035,.035,.09,24),clay);screw.rotation.x=Math.PI/2;g.add(screw);
+ g.userData.open=a=>halves.forEach(([h,s])=>h.rotation.z=s*a);g.userData.open(.15);g.scale.setScalar(.95);return g}
+
+// measuring tape roll with a loose tail
+function spool(){const g=new THREE.Group();
+ const fl=new THREE.LatheGeometry([[0,0],[.15,0],[.165,.012],[.165,.03],[.15,.04],[.06,.04],[0,.04]].map(p=>new THREE.Vector2(p[0],p[1])),48);
+ const top=new THREE.Mesh(fl,clay);top.position.y=.15;g.add(top);const bot=new THREE.Mesh(fl,clay);bot.rotation.x=Math.PI;bot.position.y=-.15;g.add(bot);
+ const body=new THREE.Mesh(new THREE.CylinderGeometry(.13,.13,.3,48,1,true),spoolMat);g.add(body);
+ const dark=new THREE.MeshStandardMaterial({color:0x9e978a,roughness:1});
+ const hole=new THREE.Mesh(new THREE.CylinderGeometry(.03,.03,.39,16),dark);g.add(hole);
+ for(let i=0;i<3;i++){const a=i/3*Math.PI*2,hh=new THREE.Mesh(new THREE.CylinderGeometry(.016,.016,.006,16),new THREE.MeshStandardMaterial({color:0x6f695f,roughness:1}));
+  hh.position.set(Math.sin(a)*.1,.192,Math.cos(a)*.1);g.add(hh)}
+ return g}
+
+function thimble(){const p=[];for(let i=0;i<=20;i++){const t=i/20;p.push(new THREE.Vector2(.085-.012*t,t*.15))}
+ for(let i=1;i<=10;i++){const a=i/10*Math.PI/2;p.push(new THREE.Vector2(Math.cos(a)*.073,.15+Math.sin(a)*.05))}
+ const g=new THREE.Group();g.add(new THREE.Mesh(new THREE.LatheGeometry(p,48),clay));
+ const rimg=new THREE.Mesh(new THREE.TorusGeometry(.087,.01,8,48),clay);rimg.rotation.x=Math.PI/2;g.add(rimg);
+ for(let r=0;r<4;r++){const ring=new THREE.Mesh(new THREE.TorusGeometry(.083-.003*r,.003,6,48),clay);ring.rotation.x=Math.PI/2;ring.position.y=.04+r*.03;g.add(ring)}
+ return g}
+
+function pinT(len=.24){const g=new THREE.Group();const s=new THREE.Mesh(new THREE.CylinderGeometry(.0055,.002,len,8),clay);s.position.y=-len/2;g.add(s);
+ g.add(new THREE.Mesh(new THREE.SphereGeometry(.026,20,14),clay));return g}
+
+// tomato pincushion with pins
+function cushion(){const g=new THREE.Group();const geo=new THREE.SphereGeometry(.19,48,32),v=geo.attributes.position,q=new THREE.Vector3();
+ for(let i=0;i<v.count;i++){q.fromBufferAttribute(v,i);const az=Math.atan2(q.x,q.z),k=1-.07*Math.pow(Math.abs(Math.cos(az*4)),.5);q.x*=k;q.z*=k;q.y*=.72;v.setXYZ(i,q.x,q.y,q.z)}
+ geo.computeVertexNormals();g.add(new THREE.Mesh(geo,clay));
+ const cap=new THREE.Mesh(new THREE.ConeGeometry(.05,.04,6),clay);cap.position.y=.14;g.add(cap);
+ [[.3,.4],[1.4,.6],[2.6,.35],[3.9,.55],[5.1,.45]].forEach(([az,el])=>{const p=pinT(.22),d=new THREE.Vector3(Math.sin(az)*Math.cos(el),Math.sin(el)*.72,Math.cos(az)*Math.cos(el)).normalize();
+  p.position.copy(d.clone().multiplyScalar(.2));p.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),d);p.position.add(d.clone().multiplyScalar(.04));g.add(p)});return g}
+
+// tailor's chalk: rounded triangle slab
+function chalk(){const s=new THREE.Shape(),r=.03,P=[[0,.2],[-.19,-.12],[.19,-.12]];
+ s.moveTo(0,.17);s.quadraticCurveTo(0,.2,-.02,.17);s.lineTo(-.165,-.09);s.quadraticCurveTo(-.19,-.12,-.15,-.12);s.lineTo(.15,-.12);s.quadraticCurveTo(.19,-.12,.165,-.09);s.lineTo(.02,.17);s.quadraticCurveTo(0,.2,0,.17);
+ return new THREE.Mesh(ext(s,.035,.015),clay)}
+
+function button(r=.08){const s=new THREE.Shape();s.absarc(0,0,r,0,Math.PI*2);for(const [x,y] of [[1,1],[-1,1],[1,-1],[-1,-1]]){const h=new THREE.Path();h.absarc(x*r*.27,y*r*.27,r*.13,0,Math.PI*2,true);s.holes.push(h)}
+ const g=new THREE.Group();g.add(new THREE.Mesh(ext(s,.018,.007),clay));const rim=new THREE.Mesh(new THREE.TorusGeometry(r*.92,r*.07,8,40),clay);rim.position.z=.012;g.add(rim);return g}
+
+// needle: the thread runs through its eye
+function needle(){const g=new THREE.Group(),L=.62;
+ const shaft=new THREE.Mesh(new THREE.CylinderGeometry(.014,.002,L,12),clay);shaft.position.y=-L/2-.02;g.add(shaft);
+ const eye=new THREE.Mesh(new THREE.TorusGeometry(.03,.011,10,28),clay);eye.scale.set(.6,1.5,1);g.add(eye);return g}
+
+
+// the tape roll the measuring tape comes off: axis upright so the tape leaves flat
+const RR=.19,TW=.06,TT=.007;
+const roll=new THREE.Group();{const body=new THREE.Mesh(new THREE.CylinderGeometry(RR,RR,TW+.004,72,1,true),rollSide);roll.add(body);
+ for(const s of [1,-1]){const cap=new THREE.Mesh(new THREE.CylinderGeometry(RR+.008,RR+.008,.012,72),clay);cap.position.y=s*(TW/2+.008);roll.add(cap);
+  const knob=new THREE.Mesh(new THREE.CylinderGeometry(.06,.07,.02,40),clay);knob.position.y=s*(TW/2+.022);roll.add(knob)}}
+S.add(roll);const ROLL0=V(1.15,.2,.55);
+
+// tools packed close around the form; they spread out as the frame opens
+// bigger tailoring pieces, built in code
+const inkMat=new THREE.MeshStandardMaterial({color:0x2a2826,roughness:.7});
+function lSquare(){const g=new THREE.Group(),s=new THREE.Shape(),A=1.05,B=.62,w=.085;
+ s.moveTo(0,0);s.lineTo(A,0);s.lineTo(A,w);s.lineTo(w,w);s.lineTo(w,B);s.lineTo(0,B);s.closePath();
+ const m=new THREE.Mesh(new THREE.ExtrudeGeometry(s,{depth:.018,bevelEnabled:true,bevelThickness:.005,bevelSize:.005,bevelSegments:2}),clay);g.add(m);
+ const tk=new THREE.InstancedMesh(new THREE.BoxGeometry(1,1,1),inkMat,60);let k=0;const M=new THREE.Matrix4();
+ for(let i=1;i<=40&&k<60;i++){const x=.09+i*.024;if(x>A-.02)break;const l=i%5?.018:.034;M.compose(V(x,l/2+.004,.025),new THREE.Quaternion(),V(.0035,l,.004));tk.setMatrixAt(k++,M)}
+ for(let i=1;i<=22&&k<60;i++){const y=.09+i*.024;if(y>B-.02)break;const l=i%5?.018:.034;M.compose(V(l/2+.004,y,.025),new THREE.Quaternion(),V(l,.0035,.004));tk.setMatrixAt(k++,M)}
+ tk.count=k;g.add(tk);g.children.forEach(c=>c.position.add(V(-.35,-.2,0)));return g}
+function frenchCurve(){const s=new THREE.Shape();
+ s.moveTo(0,0);s.bezierCurveTo(.25,-.12,.6,-.05,.85,.18);s.bezierCurveTo(.95,.28,.9,.38,.78,.33);s.bezierCurveTo(.6,.22,.42,.2,.28,.3);s.bezierCurveTo(.15,.38,.02,.3,0,.18);s.closePath();
+ const h=new THREE.Path();h.absellipse(.3,.1,.11,.05,0,Math.PI*2,true);s.holes.push(h);const h2=new THREE.Path();h2.absellipse(.62,.12,.07,.035,0,Math.PI*2,true);s.holes.push(h2);
+ return new THREE.Mesh(ext(s,.014,.006),clay)}
+function swatch(){const geo=new THREE.PlaneGeometry(.95,.68,60,44),v=geo.attributes.position;
+ for(let i=0;i<v.count;i++){const x=v.getX(i),y=v.getY(i);v.setZ(i,Math.sin(x*5.5+y*1.5)*.05+Math.cos(y*6)*.03+x*x*.12);
+  // pinked edge: zigzag along the bottom
+  if(Math.abs(y+.34)<.001)v.setY(i,y+((i%2)?.018:0))}
+ geo.computeVertexNormals();
+ const tex=canvasTex(256,256,(x,w,h)=>{x.fillStyle='#fff';x.fillRect(0,0,w,h);x.fillStyle='rgba(0,0,0,.07)';for(let i=0;i<w;i+=4){x.fillRect(i,0,1,h);x.fillRect(0,i,w,1)}});tex.repeat.set(6,4);
+ return new THREE.Mesh(geo,new THREE.MeshStandardMaterial({color:0xe9e3d6,roughness:.95,side:THREE.DoubleSide,map:tex}))}
+function hanger(){const pts=[V(-.46,-.02,0),V(-.05,.2,0),V(0,.24,0),V(.05,.2,0),V(.46,-.02,0),V(.47,-.06,0),V(.42,-.07,0),V(-.42,-.07,0),V(-.47,-.06,0),V(-.46,-.02,0)];
+ const g=new THREE.Group();g.add(new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts,true,'catmullrom',.05),160,.012,10,true),clay));
+ const hk=new THREE.CatmullRomCurve3([V(0,.24,0),V(0,.31,0),V(.05,.37,0),V(.0,.42,0),V(-.04,.38,0)]);g.add(new THREE.Mesh(new THREE.TubeGeometry(hk,40,.011,8,false),clay));return g}
+function ripper(){const g=new THREE.Group(),pr=[];for(let i=0;i<=24;i++){const t=i/24;pr.push(new THREE.Vector2(.03+.012*Math.sin(t*Math.PI)-.012*t,t*.32))}
+ const h=new THREE.Mesh(new THREE.LatheGeometry(pr,32),clay);g.add(h);
+ const sh=new THREE.Mesh(new THREE.CylinderGeometry(.006,.008,.16,12),clay);sh.position.y=.4;g.add(sh);
+ const f1=new THREE.Mesh(new THREE.CylinderGeometry(.004,.006,.05,8),clay);f1.position.set(.012,.5,0);f1.rotation.z=-.4;g.add(f1);
+ const f2=new THREE.Mesh(new THREE.CylinderGeometry(.005,.006,.04,8),clay);f2.position.set(-.008,.495,0);g.add(f2);
+ const ball=new THREE.Mesh(new THREE.SphereGeometry(.011,12,10),inkMat);ball.position.set(-.008,.52,0);g.add(ball);
+ g.children.forEach(c=>c.position.y-=.26);return g}
+
+const spl=spool();S.add(spl);
+// placement: big pieces fill the gaps either side of the form; small ones sit in front
+addTool(hanger(),V(-.95,.42,-.9),[.05,.35,.12],{spin:[.02,.08,.02],bob:.04}).scale.setScalar(1.25);
+addTool(swatch(),V(-.95,-.6,-.6),[.12,-.25,.15],{spin:[.03,.06,.03],bob:.04});
+addTool(lSquare(),V(.95,-.7,-.5),[.15,-.45,.35],{spin:[.03,.07,.04],bob:.04});
+addTool(frenchCurve(),V(.95,.62,-.7),[.4,-.3,-.25],{spin:[.04,.1,.05]}).scale.setScalar(.85);
+addTool(kainchi(),V(-1.05,.15,.2),[.3,-.5,.55],{spin:[.04,.14,.03],anim:'snip'}).scale.setScalar(.68);
+addTool(ripper(),V(.6,-.2,.45),[.3,.2,-.8],{spin:[.1,.15,.12]});
+addTool(cushion(),V(1.3,-.1,-.5),[.2,0,-.1],{spin:[.03,.25,.02]});
+addTool(chalk(),V(-.45,-.9,.35),[.6,.5,.3],{spin:[.2,.16,.12]});
+addTool(button(.12),V(.5,.55,.4),[.5,.4,0],{spin:[.2,.3,.08]});
+addTool(button(.08),V(-.45,.5,.5),[-.9,.2,0],{spin:[.3,.25,.15]});
+addTool(thimble(),V(.45,-.95,.4),[-.4,0,.5],{spin:[.2,.3,.1]});
+addTool(pinT(.3),V(1.05,-.45,.5),[.4,0,1.1],{spin:[.1,.2,.3]});
+addTool(pinT(.26),V(-1.3,-.2,.4),[.2,0,-.9],{spin:[.15,.1,.25]});
+addTool(needle(),V(-.6,.3,.45),[.3,.2,-.9],{spin:[.1,.15,.2]});
+
+/* ---------- dress form ---------- */
+const form=new THREE.Group();S.add(form);
+const pole=new THREE.Mesh(new THREE.CylinderGeometry(.034,.034,.95,32),clay);pole.position.y=-1.4;form.add(pole);
+const base=new THREE.Mesh(new THREE.CylinderGeometry(.3,.31,.05,72),clay);base.position.y=-1.87;form.add(base);
+const edge=new THREE.Mesh(new THREE.TorusGeometry(.305,.012,8,72),clay);edge.rotation.x=Math.PI/2;edge.position.y=-1.845;form.add(edge);
+const BUST=.27,PITCH=TW+.012,NA=128,YS=[.31,.27,.23,.19,.15,.11,.07,.03];let rtab=null,rBust=.3;
+function buildTable(torso){const rc=new THREE.Raycaster();rtab=YS.map(y=>{const row=[];for(let a=0;a<NA;a++){const t=a/NA*Math.PI*2,d=V(Math.sin(t),0,Math.cos(t));
+  rc.set(V(0,y,0).addScaledVector(d,3),d.clone().negate());const h=rc.intersectObject(torso,true);row.push(h.length?Math.hypot(h[0].point.x,h[0].point.z):.28)}return row});
+ // a tape pulled round a body bridges the hollows: take a running max so it stays taut
+ rtab=rtab.map(row=>row.map((r,i)=>Math.max(r,row[(i+NA-3)%NA]*.995,row[(i+3)%NA]*.995)));
+ rBust=rtab[1].reduce((a,b)=>a+b)/NA}
+function rAt(th,y){th=((th%(2*Math.PI))+2*Math.PI)%(2*Math.PI);const fa=th/(2*Math.PI)*NA,a0=Math.floor(fa)%NA,a1=(a0+1)%NA,ta=fa-Math.floor(fa);
+ const fy=clamp((YS[0]-y)/(YS[0]-YS[1]),0,YS.length-1),y0=Math.floor(fy),y1=Math.min(YS.length-1,y0+1),ty=fy-y0;
+ const r=row=>lerp(rtab[row][a0],rtab[row][a1],ta);return lerp(r(y0),r(y1),ty)}
+
+/* ---------- the tape ribbon: a flat strip with thickness, rebuilt every frame ---------- */
+const tapeMesh=new THREE.Mesh(new THREE.BufferGeometry(),[tapeFace,tapeEdge]);S.add(tapeMesh);
+const tip=new THREE.Mesh(new THREE.BoxGeometry(.016,TW+.012,.05),new THREE.MeshStandardMaterial({color:0x2a2826,roughness:.5,metalness:.2}));S.add(tip);
+const UPW=1/0.45/ (CM/100) / 100; // world units -> texture repeats (1 world unit ≈ 45 cm)
+function ribbon(P,N){const n=P.length,pos=new Float32Array(n*24),nor=new Float32Array(n*24),uv=new Float32Array(n*16);
+ const t=V(0,0,0),b=V(0,0,0),q=V(0,0,0);let u=0;
+ for(let i=0;i<n;i++){if(i)u+=P[i].distanceTo(P[i-1]);t.subVectors(P[Math.min(i+1,n-1)],P[Math.max(i-1,0)]).normalize();b.crossVectors(t,N[i]).normalize();
+  const c=P[i],m=N[i],hw=TW/2,ht=TT/2,U=u*.9;
+  const cs=[[hw,ht],[-hw,ht],[hw,-ht],[-hw,-ht],[hw,ht],[hw,-ht],[-hw,ht],[-hw,-ht]],ns=[m,m,m,m,b,b,b,b],sg=[1,1,-1,-1,1,1,-1,-1],vv=[1,0,1,0,.5,.5,.5,.5];
+  for(let k=0;k<8;k++){q.copy(c).addScaledVector(b,cs[k][0]).addScaledVector(m,cs[k][1]);pos.set([q.x,q.y,q.z],(i*8+k)*3);
+   nor.set([ns[k].x*sg[k],ns[k].y*sg[k],ns[k].z*sg[k]],(i*8+k)*3);uv.set([U,vv[k]],(i*8+k)*2)}}
+ const face=[],edge=[];
+ for(let i=0;i<n-1;i++)for(let f=0;f<4;f++){const a=i*8+f*2,c=a+8,arr=f<2?face:edge;arr.push(a,c,a+1,a+1,c,c+1)}
+ const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.BufferAttribute(pos,3));g.setAttribute('normal',new THREE.BufferAttribute(nor,3));
+ g.setAttribute('uv',new THREE.BufferAttribute(uv,2));g.setIndex([...face,...edge]);g.addGroup(0,face.length,0);g.addGroup(face.length,edge.length,1);return [g,u]}
+const tng=th=>V(Math.cos(th),0,-Math.sin(th)),rad=th=>V(Math.sin(th),0,Math.cos(th));
+function buildTape(Rot,R0,intro,rc,t){
+ const w=Math.max(0,Rot-R0)*(intro>=1?1:0);
+ // where the tape leaves the form: the tangent point seen from the roll
+ const d=Math.hypot(rc.x,rc.z),phi=Math.atan2(rc.x,rc.z),off=Math.acos(clamp(rBust/d));
+ let phiL=phi-off;if(rc.clone().sub(rad(phiL).multiplyScalar(rBust)).dot(tng(phiL).negate())<0)phiL=phi+off;
+ const yL=BUST-PITCH*w/(2*Math.PI);
+ const P=[],N=[];
+ // wound part: from the tip (first wrap, at the bust line) down to the leaving point
+ const steps=Math.ceil(w/(2*Math.PI)*NA);
+ for(let i=steps;i>=0&&steps>0;i--){const s=w*i/steps,y=yL+PITCH*s/(2*Math.PI),wa=phiL+s,r=(rtab?rAt(wa-Rot,y):.3)+TT;P.push(rad(wa).multiplyScalar(r).setY(y));N.push(rad(wa))}
+ const Lp=rad(phiL).multiplyScalar((rtab?rAt(phiL-Rot,yL):.3)+TT).setY(yL);
+ // where it leaves the roll: tangent point on the roll's circle
+ const rl=V(Lp.x-rc.x,0,Lp.z-rc.z),dl=rl.length(),ps=Math.atan2(rl.x,rl.z),o2=Math.acos(clamp(RR/dl));
+ let ang=ps+o2;let X=rad(ang).multiplyScalar(RR).add(rc).setY(rc.y);let dX=tng(ang);if(dX.dot(X.clone().sub(Lp))<0)dX.negate();
+ const tL=tng(phiL).negate(),k=Math.max(.25,Lp.distanceTo(X)*.42);
+ const B0=Lp,B1=Lp.clone().addScaledVector(tL,k),B2=X.clone().addScaledVector(dX,-k),B3=X;
+ const NF=80,f0=intro>=1?0:1-intro,free=[];
+ for(let i=0;i<=NF;i++){const f=lerp(f0,1,i/NF),a=1-f;
+  const p=V(0,0,0).addScaledVector(B0,a*a*a).addScaledVector(B1,3*a*a*f).addScaledVector(B2,3*a*f*f).addScaledVector(B3,f*f*f);
+  p.y-=Math.sin(Math.PI*f)*(.09+.02*Math.sin(t*1.3));free.push(p)}
+ // normals: carried along the curve, then turned so the tape lies flat on the form at one end and on the roll at the other, with one lazy full twist
+ const n0=intro>=1?rad(phiL):V(-1,0,0),n1=X.clone().sub(rc).setY(0).normalize(),FN=[];let cur=n0.clone();
+ const tans=free.map((p,i)=>V(0,0,0).subVectors(free[Math.min(i+1,NF)],free[Math.max(i-1,0)]).normalize());
+ for(let i=0;i<=NF;i++){cur.addScaledVector(tans[i],-cur.dot(tans[i])).normalize();FN.push(cur.clone())}
+ const last=FN[NF],tz=tans[NF],err=Math.atan2(V(0,0,0).crossVectors(last,n1).dot(tz),last.dot(n1)),TWIST=2*Math.PI;
+ for(let i=0;i<=NF;i++){const f=sstep(0,1,i/NF);FN[i].applyAxisAngle(tans[i],(err+TWIST)*f)}
+ const start=P.length?1:0;for(let i=start;i<=NF;i++){P.push(free[i]);N.push(FN[i])}
+ const [g,len]=ribbon(P,N);tapeMesh.geometry.dispose();tapeMesh.geometry=g;
+ // metal tip at the free end
+ tip.position.copy(P[0]);const tt=V(0,0,0).subVectors(P[1],P[0]).normalize();
+ const mtx=new THREE.Matrix4().makeBasis(N[0],V(0,0,0).crossVectors(tt,N[0]).normalize(),tt.clone());tip.quaternion.setFromRotationMatrix(mtx);
+ return len}
+
+/* ---------- the thread: comes off the spool at the bottom and leaves the screen on the left.
+   Drawn by a second, unclipped canvas so it can cross the frame's edge. ---------- */
+const R2=new THREE.WebGLRenderer({canvas:$('thr'),antialias:true,alpha:true});R2.setPixelRatio(Math.min(devicePixelRatio,2));R2.outputEncoding=THREE.sRGBEncoding;
+const S2=new THREE.Scene(),thrMat=new THREE.MeshBasicMaterial({color:0x141414}),thread=new THREE.Mesh(new THREE.BufferGeometry(),thrMat);S2.add(thread);
+function buildThread(sp,phase,show){const ss=spl.scale.x,s0=V(sp.x-.13*ss,sp.y+.02,sp.z+.02),pts=[s0.clone()];
+ for(let d=.06;d<=15;d+=.06){const a=.24*Math.min(1,d/.8)*(1+d*.04),e=Math.min(1,d/.5);
+  pts.push(V(s0.x-d,s0.y+d*.07*e+a*Math.sin(d*1.15-phase),s0.z+d*.13+a*.6*Math.cos(d*1.1-phase*.8)))}
+ const n=Math.max(2,Math.round(pts.length*show));const crv=new THREE.CatmullRomCurve3(pts.slice(0,n));
+ const g=new THREE.TubeGeometry(crv,Math.max(8,n*2),.0062,6,false);thread.geometry.dispose();thread.geometry=g}
+/* ================= Section 2: numbers, shown with buttons on the thread =================
+   One button = one student. Beats, one line at a time:
+   20 arrive on the thread → 17 turn ink (never touched a machine) → 15 are sewn onto a
+   "boutique" button card → 4 onto a "fashion jobs" card → a 21st button arrives: yours.   */
+const s2=$('s2'),cv3=$('gl2'),beats=[...document.querySelectorAll('#s2 .bt')],cnt=$('cnt');
+const R3=new THREE.WebGLRenderer({canvas:cv3,antialias:true,alpha:true});R3.setPixelRatio(Math.min(devicePixelRatio,2));R3.outputEncoding=THREE.sRGBEncoding;
+const S3=new THREE.Scene(),C3=new THREE.PerspectiveCamera(30,1,.1,50);C3.position.set(0,0,6);
+S3.add(new THREE.HemisphereLight(0xffffff,0xa9a294,.62));{const k=new THREE.DirectionalLight(0xffffff,.62);k.position.set(-3,3,4);S3.add(k);const r=new THREE.DirectionalLight(0xffffff,.28);r.position.set(4,1,-3);S3.add(r)}
+const N=20,BOUT=[0,1,3,4,5,7,8,10,11,12,14,15,16,18,19],JOBS=[2,9,13,17],NEW_=[3,12,18];// NEW_: the 3 who had sewn before
+const INK=new THREE.Color(0x2b2927),CLAY=new THREE.Color(0xece7dd);
+const btns=[];for(let i=0;i<=N;i++){const b=button(.1);const m=clay.clone();b.traverse(c=>{if(c.isMesh)c.material=m});b.userData.m=m;S3.add(b);btns.push(b)}
+// the 21st button (yours) has an ink ring so it reads as "different"
+const ring=new THREE.Mesh(new THREE.TorusGeometry(.135,.006,8,60),new THREE.MeshBasicMaterial({color:0x141414}));btns[N].add(ring);
+function cardMesh(w,h,label){const s=new THREE.Shape(),r=.05;s.moveTo(-w/2+r,-h/2);s.lineTo(w/2-r,-h/2);s.quadraticCurveTo(w/2,-h/2,w/2,-h/2+r);s.lineTo(w/2,h/2-r);s.quadraticCurveTo(w/2,h/2,w/2-r,h/2);
+ s.lineTo(-w/2+r,h/2);s.quadraticCurveTo(-w/2,h/2,-w/2,h/2-r);s.lineTo(-w/2,-h/2+r);s.quadraticCurveTo(-w/2,-h/2,-w/2+r,-h/2);
+ const g=new THREE.ExtrudeGeometry(s,{depth:.03,bevelEnabled:true,bevelThickness:.008,bevelSize:.008,bevelSegments:2,curveSegments:8});g.translate(0,0,-.05);
+ const W2=1024,H2=Math.round(1024*h/w),tex=canvasTex(W2,H2,(x)=>{x.fillStyle='#ECE7DD';x.fillRect(0,0,W2,H2);x.strokeStyle='rgba(20,20,20,.35)';x.setLineDash([14,10]);x.lineWidth=3;x.strokeRect(26,26,W2-52,H2-52);
+  x.setLineDash([]);x.fillStyle='#2b2927';x.font=`500 ${Math.round(.068*W2/w)}px Jost, sans-serif`;x.textBaseline='top';x.fillText(label,52,50)});
+ tex.wrapS=tex.wrapT=THREE.ClampToEdgeWrapping;tex.repeat.set(1/w,1/h);tex.offset.set(.5,.5);
+ const m=new THREE.Mesh(g,[new THREE.MeshStandardMaterial({map:tex,roughness:.9}),clay]);S3.add(m);return m}
+const cardA=cardMesh(1.5,1.02,'OPENED THEIR OWN BOUTIQUE'),cardB=cardMesh(.66,1.02,'FASHION JOBS');
+const thrMat3=new THREE.MeshBasicMaterial({color:0x141414});let thr3=null,L3={};
+function layout2(){const w=cv3.clientWidth,h=cv3.clientHeight;R3.setSize(w,h,false);C3.aspect=w/h;const ph=w<700;C3.fov=ph?44:30;C3.updateProjectionMatrix();
+ const hh=Math.tan(C3.fov*Math.PI/360)*6,hw=hh*C3.aspect;
+ L3=ph?{x0:-hw*.92,x1:hw*.92,ty:hh*.62,amp:.08,sc:.62,A:V(-.3,.15,0),B:V(.66,.15,0),gap:.21,Bcols:2}
+      :{x0:-hw*.86,x1:hw*.86,ty:hh*.5,amp:.12,sc:1,A:V(.8,-.62,0),B:V(2.05,-.62,0),gap:.26,Bcols:2};
+ cardA.scale.setScalar(L3.sc);cardB.scale.setScalar(L3.sc);
+ btns.forEach(b=>b.scale.setScalar(L3.sc));
+ // the thread: in from the left edge, across the top, out to the right
+ const pts=[];for(let x=-hw*1.3;x<=hw*1.3;x+=.05)pts.push(V(x,thY(x),0));
+ const g=new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts),pts.length*2,.0065,6,false);if(thr3){thr3.geometry.dispose();thr3.geometry=g}else{thr3=new THREE.Mesh(g,thrMat3);S3.add(thr3)}}
+const thY=x=>L3.ty+Math.sin(x*1.3+.6)*L3.amp;
+const slot=i=>{const x=i<N?lerp(L3.x0,L3.x1,i/N):lerp(L3.x0,L3.x1,.5);return V(x,thY(x),0)};// i 0..N (N = your button)
+const onCard=(c,j,cols,rows)=>V(c.position.x+((j%cols)-(cols-1)/2)*L3.gap*L3.sc,c.position.y+(((rows-1)/2)-Math.floor(j/cols))*L3.gap*L3.sc-.06*L3.sc,.03);
+let q2=0,tq2=0;
+function s2Scroll(){const r=s2.getBoundingClientRect();tq2=clamp(-r.top/(r.height-innerHeight))}
+addEventListener('scroll',s2Scroll,{passive:true});
+const WIN=[[0,.22],[.27,.42],[.47,.62],[.67,.8],[.85,1.5]];
+function frame2(){requestAnimationFrame(frame2);const r=s2.getBoundingClientRect();if(r.bottom<0||r.top>innerHeight)return;
+ q2+=(tq2-q2)*(RM?1:.2);const q=q2,t=performance.now()/1000,mo=RM?0:1;
+ // thread draws in from the left as the section arrives
+ const tin=clamp((innerHeight-r.top)/innerHeight);thr3.geometry.setDrawRange(0,Math.floor(thr3.geometry.index.count/6*sstep(.2,1,tin))*6);
+ cardA.position.copy(L3.A);cardB.position.copy(L3.B);
+ const ca=sstep(.42,.5,q),cb=sstep(.62,.68,q);cardA.visible=ca>.01;cardB.visible=cb>.01;
+ cardA.scale.setScalar(L3.sc*(.85+.15*ca));cardA.position.y=L3.A.y-(1-ca)*.25;
+ cardB.position.y=L3.B.y-(1-cb)*.25;
+ let arrived=0;
+ btns.forEach((b,i)=>{
+  // arrival: slide in along the thread from the left, one after another (yours comes last, at the end)
+  const a=i<N?sstep(.02+i*.0085,.06+i*.0085,q):sstep(.85,.93,q);if(i<N&&a>.98)arrived++;
+  const s=slot(i),xa=lerp(L3.x0-1.2,s.x,a),p=V(xa,thY(xa),0);
+  let ry=(1-a)*Math.PI*2,rz=0;
+  const bi=BOUT.indexOf(i),ji=JOBS.indexOf(i);
+  if(bi>=0){const m=sstep(.47+bi*.006,.56+bi*.006,q);p.lerp(onCard(cardA,bi,5,3),m);p.y+=Math.sin(Math.PI*m)*.35;p.z+=Math.sin(Math.PI*m)*.4;ry+=m*Math.PI*2}
+  if(ji>=0){const m=sstep(.67+ji*.012,.75+ji*.012,q);p.lerp(onCard(cardB,ji,L3.Bcols,4/L3.Bcols),m);p.y+=Math.sin(Math.PI*m)*.35;p.z+=Math.sin(Math.PI*m)*.4;ry+=m*Math.PI*2}
+  p.y+=Math.sin(t*1.1+i*.7)*.012*mo*(a>.98?1:0);
+  b.position.copy(p);b.rotation.set(0,ry+Math.sin(t*.7+i)*.08*mo,rz);b.visible=a>.001;
+  // beginners turn ink, one after another
+  const k=i<N&&!NEW_.includes(i)?sstep(.27+i*.005,.31+i*.005,q):0;b.userData.m.color.copy(CLAY).lerp(INK,k)});
+ ring.visible=q>.86;
+ cnt.textContent=Math.max(1,arrived);
+ beats.forEach((el,k)=>{const [a0,a1]=WIN[k],o=sstep(a0,a0+.04,q)*(1-sstep(a1-.04,a1,q));el.style.opacity=o;el.style.transform=`translateY(${(1-o)*18}px)`;el.style.pointerEvents=o>.5?'auto':'none'});
+ R3.render(S3,C3)}
+
+
+/* ---------- layout ---------- */
+let W=1,H=1,phone=false,F0={x:0,y:0,w:1,h:1};
+function size(){W=pin.clientWidth;H=pin.clientHeight;phone=W<700;R.setSize(W,H,false);R2.setSize(W,H,false);
+ const m=phone?12:Math.round(Math.max(24,W*.1)),top=phone?70:96;band.style.cssText=`left:${phone?20:m}px;right:${phone?20:m}px;top:${top}px`;
+ const fy=top+band.offsetHeight+(phone?18:28);F0={x:m,y:fy,w:W-2*m,h:H-fy-(phone?66:24)};
+ $('loading')&&($('loading').style.cssText+=`;left:${F0.x+F0.w/2}px;top:${F0.y+F0.h/2}px`);layout2()}
+addEventListener('resize',size);size();s2Scroll();requestAnimationFrame(frame2);document.fonts&&document.fonts.ready.then(size);
+
+let mx=0,my=0,tmx=0,tmy=0;addEventListener('pointermove',e=>{if(e.pointerType==='mouse'){tmx=e.clientX/innerWidth*2-1;tmy=e.clientY/innerHeight*2-1}});
+let target=0,pp=0;
+function readScroll(){const r=$('hero').getBoundingClientRect();target=clamp(-r.top/(r.height-innerHeight))}
+addEventListener('scroll',readScroll,{passive:true});readScroll();pp=target;
+
+/* ---------- load the form (parsed in place: the page can't fetch) ---------- */
+let ready=false,t0=0;setTape('paper');
+const glbBin=Uint8Array.from(atob('__GLB__'.split(',')[1]),c=>c.charCodeAt(0));
+new THREE.GLTFLoader().parse(glbBin.buffer,'',g=>{const torso=g.scene;torso.traverse(c=>{if(c.isMesh)c.material=clay});form.add(torso);
+ const r0=form.rotation.y;form.rotation.y=0;form.updateMatrixWorld(true);buildTable(torso);form.rotation.y=r0;
+ ready=true;t0=performance.now();cv.classList.add('ready');$('loading').remove()},
+ e=>{$('loading').textContent='Could not load the dress form: '+(e&&e.message||e);cv.classList.add('ready')});
+
+/* ---------- frame loop ---------- */
+let lastP=0,spin=0,spinV=0;const qs=new THREE.Quaternion(),qt=new THREE.Quaternion();const CZ0=()=>phone?4.0:4.25,R0=.55,TURN=Math.PI*2*1.15,rc=V(0,0,0);
+function frame(now){requestAnimationFrame(frame);
+ pp+=(target-pp)*(RM?1:.2);if(Math.abs(target-pp)<1e-4)pp=target;const p=pp,t=now/1000,mo=RM?0:1;
+ mx+=(tmx-mx)*.05;my+=(tmy-my)*.05;
+ // the frame grows from a small window to the full screen
+ const o=sstep(.0,.36,p),fx=lerp(F0.x,0,o),fy=lerp(F0.y,0,o),fw=lerp(F0.w,W,o),fh=lerp(F0.h,H,o),r=lerp(phone?16:22,0,o);
+ panel.style.cssText=`left:${fx}px;top:${fy}px;width:${fw}px;height:${fh}px;border-radius:${r}px`;
+ cv.style.clipPath=`inset(${fy}px ${W-fx-fw}px ${H-fy-fh}px ${fx}px round ${r}px)`;
+ // camera looks through the frame: the frame is the lens, so objects stay packed inside it
+ const dz=sstep(.3,1,p);C.aspect=fw/fh;C.fov=phone?30:24;
+ C.setViewOffset(fw,fh,-fx,-fy,W,H);
+ C.position.set(mx*.12,lerp(-.2,.15,dz)-my*.06,lerp(CZ0(),phone?3.6:3.4,dz));C.lookAt(0,lerp(phone?-.3:-.3,.1,dz),0);
+ // text is pushed aside as the frame opens
+ const so=sstep(0,.16,p);band.style.opacity=1-so;band.style.transform=`translateY(${so*50}px)`;
+ end.style.opacity=sstep(.74,.88,p);end.style.transform=`translateY(${(1-sstep(.74,.88,p))*20}px)`;
+ form.rotation.y=R0+p*TURN;
+ const wide=phone?.72:1.12,spread=wide+o*(phone?.3:.12)+p*.2;
+ tools.forEach(T=>{const b=T.base;T.obj.position.set(b.x*spread+mx*.1*(b.z+2)/3,b.y*(1+o*.25)+Math.sin(t*.9+T.ph)*T.bob*mo-my*.06*(b.z+2)/3,b.z+p*1.4);
+  T.obj.rotation.set(T.rot0.x+T.spin[0]*(t*.25*mo+p*4),T.rot0.y+T.spin[1]*(t*.25*mo+p*4),T.rot0.z+T.spin[2]*(t*.25*mo+p*4));
+  if(T.anim==='snip')T.obj.userData.open(.04+.2*(.5+.5*Math.sin(p*18+t*.6*mo)))});
+ rc.set(ROLL0.x*wide*(1+o*.12)+mx*.08,ROLL0.y+Math.sin(t*.7)*.035*mo-my*.05,ROLL0.z);roll.position.copy(rc);
+ roll.rotation.set(Math.sin(t*.5)*.04*mo,0,Math.sin(t*.6)*.05*mo);
+ if(ready){const intro=RM?1:clamp((now-t0)/1700);const ie=1-Math.pow(1-intro,3);
+  const len=buildTape(form.rotation.y,R0,ie,rc,t*mo);roll.rotation.y=-len/RR}
+ // spool sits at the bottom and turns as it pays out thread
+ // pin the spool to the frame's lower right, whatever the camera does, so the thread is always on screen
+ C.updateMatrixWorld();const ax=phone?.3:lerp(.3,.27,o),ay=phone?.8:lerp(.76,.7,o),nx=(fx+fw*ax)/W*2-1,ny=-((fy+fh*ay)/H*2-1);
+ const dir=V(nx,ny,.5).unproject(C).sub(C.position).normalize(),SPZ=.9,sp=C.position.clone().addScaledVector(dir,(SPZ-C.position.z)/dir.z);
+ sp.y+=Math.sin(t*.8)*.02*mo;spl.position.copy(sp);spl.scale.setScalar((phone?.75:.85)*(C.position.z-SPZ)/(CZ0()-SPZ));
+  const dp=p-lastP;lastP=p;spin+=dp*40;spinV+=(Math.abs(dp)*40-spinV)*.12;
+ const tilt=Math.min(.2,spinV*2.2)+.012*mo;
+ qs.setFromAxisAngle(V(0,1,0),-spin);qt.setFromAxisAngle(V(Math.cos(spin*1.0),0,Math.sin(spin*1.0)),tilt);spl.quaternion.copy(qt).multiply(qs);
+ const phase=p*20+t*.12*mo;
+ if(ready){const ti=RM?1:clamp((now-t0-500)/2600);buildThread(sp,phase,1-Math.pow(1-ti,2))}
+ if($('hero').getBoundingClientRect().bottom>0){R.render(S,C);R2.render(S2,C)}}
+requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>

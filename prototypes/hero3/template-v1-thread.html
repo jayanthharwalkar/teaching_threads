@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Hero test: thread and floating tools</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;1,500&family=Jost:wght@300;400;500&display=swap">
+<style>
+:root{--paper:#F3F1EC;--panel:#E9E5DC;--ink:#141414;--body:#3B3935;--muted:#77736B;--line:#D9D5CC;--thread:#141414;
+ --serif:"Cormorant Garamond",Georgia,serif;--sans:"Jost",system-ui,sans-serif}
+*{box-sizing:border-box;margin:0}
+html,body{background:var(--paper);color:var(--ink);font-family:var(--sans);font-weight:300}
+.hero{position:relative;height:360vh}
+.pin{position:sticky;top:0;height:100vh;height:100svh;overflow:hidden}
+.panel{position:absolute;inset:0;background-color:var(--panel);
+ background-image:radial-gradient(circle,rgba(20,20,20,.13) 1px,transparent 1.2px);background-size:28px 28px;background-position:center}
+#gl{position:absolute;inset:0;width:100%;height:100%;display:block;opacity:0;transition:opacity .9s}
+#gl.ready{opacity:1}
+#thread2d{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible}
+#thread2d path{fill:none;stroke:var(--thread);stroke-linecap:round}
+.ui{position:absolute;inset:0;pointer-events:none}
+.ui a,.ui button{pointer-events:auto}
+nav{position:absolute;left:0;right:0;top:0;display:flex;align-items:center;justify-content:space-between;padding:26px 36px}
+.logo{font-family:var(--serif);font-size:24px;letter-spacing:.01em;color:var(--ink);text-decoration:none}
+nav .links{display:flex;gap:30px;align-items:center;font-size:14px;font-weight:400}
+nav .links a{color:var(--ink);text-decoration:none}
+.cta{display:inline-block;padding:11px 20px;border:1px solid var(--ink);color:var(--ink);text-decoration:none;font-size:14px;font-weight:400;background:transparent}
+.cta.fill{background:var(--ink);color:var(--paper)}
+.words{position:absolute;left:36px;bottom:40px;max-width:560px}
+.words h1{font-family:var(--serif);font-weight:500;font-size:clamp(40px,5vw,70px);line-height:.98;letter-spacing:-.01em}
+.words h1 em{font-style:italic}
+.words p{margin:18px 0 24px;font-size:16px;line-height:1.55;color:var(--body);max-width:40ch}
+.hint{position:absolute;right:36px;bottom:40px;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:12px}
+.hint i{display:block;width:1px;height:46px;background:var(--muted);transform-origin:top;animation:drop 2.2s ease-in-out infinite}
+@keyframes drop{0%{transform:scaleY(0)}50%{transform:scaleY(1)}100%{transform:scaleY(1);opacity:0}}
+.end{position:absolute;left:0;right:0;bottom:12%;text-align:center;opacity:0}
+.end small{display:block;font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);margin-bottom:12px}
+.end b{font-family:var(--serif);font-weight:500;font-size:clamp(30px,3.6vw,50px);line-height:1.05}
+.loading{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
+.next{min-height:80vh;display:grid;place-items:center;text-align:center;padding:60px 24px;border-top:1px solid var(--line)}
+.next small{display:block;font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);margin-bottom:14px}
+.next b{font-family:var(--serif);font-weight:500;font-size:36px}
+/* test switcher */
+.switch{flex-wrap:nowrap;position:fixed;left:50%;bottom:16px;transform:translateX(-50%);z-index:20;display:flex;gap:4px;align-items:center;justify-content:center;
+ background:rgba(20,20,20,.9);color:#f3f1ec;padding:5px;border-radius:999px;font-size:12px;box-shadow:0 6px 24px rgba(0,0,0,.15);max-width:calc(100% - 20px)}
+.switch span{padding:0 8px 0 10px;opacity:.6;letter-spacing:.08em;text-transform:uppercase;font-size:10px}
+.switch button{background:none;border:0;color:inherit;font:inherit;padding:7px 12px;border-radius:999px;cursor:pointer;white-space:nowrap}
+.switch em{font-style:normal}
+.switch button.on{background:#f3f1ec;color:#141414}
+.switch .sep{width:1px;height:18px;background:rgba(255,255,255,.25);margin:0 4px}
+.dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;vertical-align:-1px}
+@media (max-width:700px){
+ nav{padding:18px 20px}
+ nav .links a:not(.cta){display:none}
+ .logo{font-size:21px}
+ .words{left:20px;right:20px;top:84px;bottom:auto}
+ .words h1{font-size:40px}
+ .words p{font-size:15px;margin:12px 0 0}
+ .words .cta{position:fixed;left:20px;right:20px;bottom:76px;text-align:center;display:none}
+ .hint{display:none}
+ .end{bottom:20%;padding:0 20px}
+ .switch span,.switch em{display:none}.switch button{padding:7px 10px}
+}
+@media (prefers-reduced-motion:reduce){.hint i{animation:none}}
+</style>
+</head>
+<body>
+<section class="hero" id="hero">
+ <div class="pin" id="pin">
+  <div class="panel" id="panel"></div>
+  <canvas id="gl"></canvas>
+  <div class="loading" id="loading">Loading the dress form…</div>
+  <svg id="thread2d"><path id="tpath"/></svg>
+  <div class="ui" id="ui">
+   <nav><a class="logo" href="#">Teaching Threads</a>
+    <div class="links"><a href="#">Courses</a><a href="#">Founder</a><a href="#">Visit</a><a class="cta" href="#">Enquire</a></div></nav>
+   <div class="words" id="words">
+    <h1>Make your own clothes, from the first <em>measurement</em> to a lehenga.</h1>
+    <p>3 and 6 month tailoring courses in Hubballi, taught by designer Shruti Mahajan.</p>
+    <a class="cta fill" href="#">Enquire on WhatsApp</a>
+   </div>
+   <div class="hint" id="hint">Scroll <i></i></div>
+   <div class="end" id="end"><small>Stage 01 · Measure</small><b>Every garment starts with a measurement.</b></div>
+  </div>
+ </div>
+</section>
+<section class="next"><div><small>Next section</small><b>Numbers and outcomes</b></div></section>
+
+<div class="switch" id="switch">
+ <span>Hero</span><button data-mode="framed">A · Framed<em>, opens up</em></button><button data-mode="full">B · Full<em> screen</em></button>
+ <i class="sep"></i>
+ <span>Thread</span><button data-thread="ink"><i class="dot" style="background:#141414;box-shadow:0 0 0 1px #777"></i>Ink</button><button data-thread="red"><i class="dot" style="background:#B3261E"></i>Red</button>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/loaders/GLTFLoader.js"></script>
+<script>
+(()=>{
+const $=id=>document.getElementById(id);
+const pin=$('pin'),cv=$('gl'),panel=$('panel'),tpath=$('tpath'),words=$('words'),hint=$('hint'),end=$('end');
+const RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const clamp=(x,a=0,b=1)=>Math.min(b,Math.max(a,x)),lerp=(a,b,t)=>a+(b-a)*t,sstep=(a,b,x)=>{const t=clamp((x-a)/(b-a));return t*t*(3-2*t)};
+
+/* ---------- test switches ---------- */
+let mode='framed';const THREADS={ink:0x141414,red:0xB3261E};let threadName='ink';
+function readHash(){const h=location.hash.slice(1);mode=h==='full'?'full':'framed';
+ document.querySelectorAll('[data-mode]').forEach(b=>b.classList.toggle('on',b.dataset.mode===mode))}
+document.querySelectorAll('[data-mode]').forEach(b=>b.onclick=()=>{location.hash=b.dataset.mode;readHash()});
+addEventListener('hashchange',readHash);readHash();
+function setThread(n){threadName=n;document.querySelectorAll('[data-thread]').forEach(b=>b.classList.toggle('on',b.dataset.thread===n));
+ const c='#'+THREADS[n].toString(16).padStart(6,'0');document.documentElement.style.setProperty('--thread',c);
+ threadMat.color.setHex(THREADS[n]);spoolMat.color.setHex(n==='ink'?0x2a2826:0xB3261E)}
+document.querySelectorAll('[data-thread]').forEach(b=>b.onclick=()=>setThread(b.dataset.thread));
+
+/* ---------- renderer ---------- */
+const R=new THREE.WebGLRenderer({canvas:cv,antialias:true,alpha:true});R.setPixelRatio(Math.min(devicePixelRatio,2));R.outputEncoding=THREE.sRGBEncoding;
+const S=new THREE.Scene(),C=new THREE.PerspectiveCamera(24,1,.1,60);
+S.add(new THREE.HemisphereLight(0xffffff,0xa9a294,.62));
+const key=new THREE.DirectionalLight(0xffffff,.62);key.position.set(-3,3,4);S.add(key);
+const rim=new THREE.DirectionalLight(0xffffff,.28);rim.position.set(4,1,-3);S.add(rim);
+const clay=new THREE.MeshStandardMaterial({color:0xece7dd,roughness:.88,metalness:0});
+const threadMat=new THREE.MeshBasicMaterial({color:0x141414});
+
+// small canvas textures
+function canvasTex(w,h,draw){const c=document.createElement('canvas');c.width=w;c.height=h;draw(c.getContext('2d'),w,h);
+ const t=new THREE.CanvasTexture(c);t.encoding=THREE.sRGBEncoding;t.anisotropy=4;t.wrapS=t.wrapT=THREE.RepeatWrapping;return t}
+const tapeTex=canvasTex(2048,64,(x,w,h)=>{x.fillStyle='#ece7dd';x.fillRect(0,0,w,h);x.fillStyle='#1d1c1a';
+ for(let i=0;i<w;i+=8)x.fillRect(i,0,1.6,i%80?11:(i%40?16:22));x.font='500 19px Jost, sans-serif';for(let i=80;i<w;i+=80)x.fillText(i/80|0,i+4,50)});
+const woundTex=canvasTex(16,256,(x,w,h)=>{for(let i=0;i<h;i+=4){x.fillStyle='#fff';x.fillRect(0,i,w,3);x.fillStyle='#bbb';x.fillRect(0,i+3,w,1)}});
+const spoolMat=new THREE.MeshStandardMaterial({color:0x2a2826,roughness:.75,map:woundTex});
+
+/* ---------- tools (clay, built in code) ---------- */
+const tools=[];
+function addTool(obj,pos,rot,o={}){obj.position.copy(pos);obj.rotation.set(rot[0],rot[1],rot[2]);S.add(obj);
+ tools.push(Object.assign({obj,base:pos.clone(),rot0:obj.rotation.clone(),spin:o.spin||[.2,.3,.1],bob:o.bob??.06,ph:Math.random()*6.28,out:o.out??1,anim:o.anim}, o));return obj}
+const ext=(shape,depth,bev=.012)=>{const g=new THREE.ExtrudeGeometry(shape,{depth,bevelEnabled:true,bevelThickness:bev,bevelSize:bev,bevelSegments:3,curveSegments:28});g.center();return g};
+
+// kainchi: tailor's shears, two blades on a pivot, one bigger finger loop
+function kainchi(){const g=new THREE.Group(),halves=[];
+ for(const side of [1,-1]){const h=new THREE.Group();
+  const b=new THREE.Shape();b.moveTo(-.06,.035*side);b.quadraticCurveTo(.5,.05*side,1.02,.004*side);b.lineTo(1.02,-.006*side);b.quadraticCurveTo(.5,-.012*side,-.06,-.03*side);b.closePath();
+  const blade=new THREE.Mesh(ext(b,.022,.008),clay);blade.geometry.translate(.48,0,0);h.add(blade);
+  const big=side>0,rx=big?.2:.15,ry=big?.11:.095,cx=-.36,cy=-.07*side;
+  const loop=new THREE.Shape();loop.absellipse(cx,cy,rx,ry,0,Math.PI*2);const hole=new THREE.Path();hole.absellipse(cx,cy,rx-.045,ry-.04,0,Math.PI*2,true);loop.holes.push(hole);
+  const lg=new THREE.ExtrudeGeometry(loop,{depth:.03,bevelEnabled:true,bevelThickness:.012,bevelSize:.012,bevelSegments:3,curveSegments:40});lg.translate(0,0,-.015);h.add(new THREE.Mesh(lg,clay));
+  const neck=new THREE.Shape();neck.moveTo(-.2,-.0*side);neck.lineTo(-.02,.025*side);neck.lineTo(-.02,-.03*side);neck.lineTo(-.2,-.06*side);neck.closePath();
+  const ng=new THREE.ExtrudeGeometry(neck,{depth:.03,bevelEnabled:true,bevelThickness:.01,bevelSize:.01,bevelSegments:2});ng.translate(0,0,-.015);h.add(new THREE.Mesh(ng,clay));
+  h.position.z=side*.02;g.add(h);halves.push([h,side])}
+ const screw=new THREE.Mesh(new THREE.CylinderGeometry(.035,.035,.09,24),clay);screw.rotation.x=Math.PI/2;g.add(screw);
+ g.userData.open=a=>halves.forEach(([h,s])=>h.rotation.z=s*a);g.userData.open(.15);g.scale.setScalar(.95);return g}
+
+// measuring tape roll with a loose tail
+function tapeRoll(){const g=new THREE.Group();const side=new THREE.MeshStandardMaterial({color:0xffffff,roughness:.85,map:tapeTex.clone()});side.map.repeat.set(1.6,1);side.map.needsUpdate=true;
+ const roll=new THREE.Mesh(new THREE.CylinderGeometry(.22,.22,.075,64,1),[side,clay,clay]);g.add(roll);
+ const spiral=new THREE.Mesh(new THREE.TorusGeometry(.12,.01,8,48),clay);spiral.rotation.x=Math.PI/2;spiral.position.y=.04;g.add(spiral);
+ const pts=[];for(let i=0;i<=40;i++){const t=i/40;pts.push(new THREE.Vector3(.22+t*.9,Math.sin(t*3.2)*.18*t,-.0+Math.sin(t*2)*.25*t-.02))}
+ const crv=new THREE.CatmullRomCurve3([new THREE.Vector3(0,0,.22),...pts.map(p=>new THREE.Vector3(p.z+.0,p.y,.22+(p.x-.22)))]);
+ const N=120,pos=[],uv=[],idx=[];let L=0,prev;const up=new THREE.Vector3(0,1,0);
+ for(let i=0;i<=N;i++){const p=crv.getPoint(i/N);if(prev)L+=p.distanceTo(prev);prev=p;const tw=up.clone().applyAxisAngle(crv.getTangent(i/N),Math.sin(i/N*3)*.6).multiplyScalar(.0375);
+  pos.push(p.x-tw.x,p.y-tw.y,p.z-tw.z,p.x+tw.x,p.y+tw.y,p.z+tw.z);uv.push(L*1.15,0,L*1.15,1)}
+ for(let i=0;i<N;i++){const a=i*2;idx.push(a,a+2,a+1,a+1,a+2,a+3)}
+ const tg=new THREE.BufferGeometry();tg.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));tg.setAttribute('uv',new THREE.Float32BufferAttribute(uv,2));tg.setIndex(idx);tg.computeVertexNormals();
+ g.add(new THREE.Mesh(tg,new THREE.MeshStandardMaterial({map:tapeTex,roughness:.85,side:THREE.DoubleSide})));return g}
+
+// spool: wooden-style flanges with thread wound on it (thread colour)
+function spool(){const g=new THREE.Group();
+ const fl=new THREE.LatheGeometry([[0,0],[.15,0],[.165,.012],[.165,.03],[.15,.04],[.06,.04],[0,.04]].map(p=>new THREE.Vector2(p[0],p[1])),48);
+ const top=new THREE.Mesh(fl,clay);top.position.y=.15;g.add(top);const bot=new THREE.Mesh(fl,clay);bot.rotation.x=Math.PI;bot.position.y=-.15;g.add(bot);
+ const body=new THREE.Mesh(new THREE.CylinderGeometry(.13,.13,.3,48,1,true),spoolMat);g.add(body);
+ const hole=new THREE.Mesh(new THREE.CylinderGeometry(.03,.03,.39,16),new THREE.MeshStandardMaterial({color:0x9e978a,roughness:1}));g.add(hole);return g}
+
+function thimble(){const p=[];for(let i=0;i<=20;i++){const t=i/20;p.push(new THREE.Vector2(.085-.012*t,t*.15))}
+ for(let i=1;i<=10;i++){const a=i/10*Math.PI/2;p.push(new THREE.Vector2(Math.cos(a)*.073,.15+Math.sin(a)*.05))}
+ const g=new THREE.Group();g.add(new THREE.Mesh(new THREE.LatheGeometry(p,48),clay));
+ const rimg=new THREE.Mesh(new THREE.TorusGeometry(.087,.01,8,48),clay);rimg.rotation.x=Math.PI/2;g.add(rimg);
+ for(let r=0;r<4;r++){const ring=new THREE.Mesh(new THREE.TorusGeometry(.083-.003*r,.003,6,48),clay);ring.rotation.x=Math.PI/2;ring.position.y=.04+r*.03;g.add(ring)}
+ return g}
+
+function pinT(len=.24){const g=new THREE.Group();const s=new THREE.Mesh(new THREE.CylinderGeometry(.0055,.002,len,8),clay);s.position.y=-len/2;g.add(s);
+ g.add(new THREE.Mesh(new THREE.SphereGeometry(.026,20,14),clay));return g}
+
+// tomato pincushion with pins
+function cushion(){const g=new THREE.Group();const geo=new THREE.SphereGeometry(.19,48,32),v=geo.attributes.position,q=new THREE.Vector3();
+ for(let i=0;i<v.count;i++){q.fromBufferAttribute(v,i);const az=Math.atan2(q.x,q.z),k=1-.07*Math.pow(Math.abs(Math.cos(az*4)),.5);q.x*=k;q.z*=k;q.y*=.72;v.setXYZ(i,q.x,q.y,q.z)}
+ geo.computeVertexNormals();g.add(new THREE.Mesh(geo,clay));
+ const cap=new THREE.Mesh(new THREE.ConeGeometry(.05,.04,6),clay);cap.position.y=.14;g.add(cap);
+ [[.3,.4],[1.4,.6],[2.6,.35],[3.9,.55],[5.1,.45]].forEach(([az,el])=>{const p=pinT(.22),d=new THREE.Vector3(Math.sin(az)*Math.cos(el),Math.sin(el)*.72,Math.cos(az)*Math.cos(el)).normalize();
+  p.position.copy(d.clone().multiplyScalar(.2));p.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),d);p.position.add(d.clone().multiplyScalar(.04));g.add(p)});return g}
+
+// tailor's chalk: rounded triangle slab
+function chalk(){const s=new THREE.Shape(),r=.03,P=[[0,.2],[-.19,-.12],[.19,-.12]];
+ s.moveTo(0,.17);s.quadraticCurveTo(0,.2,-.02,.17);s.lineTo(-.165,-.09);s.quadraticCurveTo(-.19,-.12,-.15,-.12);s.lineTo(.15,-.12);s.quadraticCurveTo(.19,-.12,.165,-.09);s.lineTo(.02,.17);s.quadraticCurveTo(0,.2,0,.17);
+ return new THREE.Mesh(ext(s,.035,.015),clay)}
+
+function button(r=.08){const s=new THREE.Shape();s.absarc(0,0,r,0,Math.PI*2);for(const [x,y] of [[1,1],[-1,1],[1,-1],[-1,-1]]){const h=new THREE.Path();h.absarc(x*r*.27,y*r*.27,r*.13,0,Math.PI*2,true);s.holes.push(h)}
+ const g=new THREE.Group();g.add(new THREE.Mesh(ext(s,.018,.007),clay));const rim=new THREE.Mesh(new THREE.TorusGeometry(r*.92,r*.07,8,40),clay);rim.position.z=.012;g.add(rim);return g}
+
+// needle: the thread runs through its eye
+function needle(){const g=new THREE.Group(),L=.62;
+ const shaft=new THREE.Mesh(new THREE.CylinderGeometry(.014,.002,L,12),clay);shaft.position.y=-L/2-.02;g.add(shaft);
+ const eye=new THREE.Mesh(new THREE.TorusGeometry(.03,.011,10,28),clay);eye.scale.set(.6,1.5,1);g.add(eye);return g}
+
+const V=(x,y,z)=>new THREE.Vector3(x,y,z);
+const shears=addTool(kainchi(),V(1.85,.55,.4),[.3,-.5,.55],{spin:[.05,.18,.04],anim:'snip'});
+addTool(tapeRoll(),V(2.05,-1.05,-.5),[1.1,.3,-.3],{spin:[.12,.22,.05]});
+addTool(spool(),V(-2.25,.95,-1.3),[.35,0,.45],{spin:[.04,.5,.03]});
+addTool(thimble(),V(1.05,-1.75,1.4),[-.4,0,.5],{spin:[.2,.3,.1]});
+addTool(cushion(),V(2.95,-.1,-2.2),[.2,0,-.1],{spin:[.03,.25,.02]});
+addTool(chalk(),V(-1.05,1.0,-.4),[.6,.5,.3],{spin:[.25,.2,.15]});
+addTool(button(),V(.8,1.05,1.9),[.5,.4,0],{spin:[.3,.4,.1]});
+addTool(button(.065),V(-.55,-1.95,2.1),[-.9,.2,0],{spin:[.35,.3,.2]});
+addTool(pinT(.3),V(1.55,-.35,2.3),[.4,0,1.1],{spin:[.1,.2,.4]});
+addTool(pinT(.26),V(-1.6,-.1,1.7),[.2,0,-.9],{spin:[.2,.1,.3]});
+const ndl=needle();S.add(ndl);
+
+/* ---------- dress form ---------- */
+const form=new THREE.Group();S.add(form);
+const pole=new THREE.Mesh(new THREE.CylinderGeometry(.034,.034,.95,32),clay);pole.position.y=-1.4;form.add(pole);
+const base=new THREE.Mesh(new THREE.CylinderGeometry(.3,.31,.05,72),clay);base.position.y=-1.87;form.add(base);
+const edge=new THREE.Mesh(new THREE.TorusGeometry(.305,.012,8,72),clay);edge.rotation.x=Math.PI/2;edge.position.y=-1.845;form.add(edge);
+
+// radius table around the torso, so the thread can wind on its surface
+const BUST=.27,PITCH=.045,NA=128,YS=[.31,.27,.23,.19,.15,.11,.07,.03];let rtab=null,rBust=.3;
+function buildTable(torso){const rc=new THREE.Raycaster();rtab=YS.map(y=>{const row=[];for(let a=0;a<NA;a++){const t=a/NA*Math.PI*2,d=V(Math.sin(t),0,Math.cos(t));
+  rc.set(V(0,y,0).addScaledVector(d,3),d.clone().negate());const h=rc.intersectObject(torso,true);row.push(h.length?Math.hypot(h[0].point.x,h[0].point.z):.28)}return row});
+ rBust=rtab[1].reduce((a,b)=>a+b)/NA}
+function rAt(th,y){th=((th%(2*Math.PI))+2*Math.PI)%(2*Math.PI);const fa=th/(2*Math.PI)*NA,a0=Math.floor(fa)%NA,a1=(a0+1)%NA,ta=fa-Math.floor(fa);
+ const fy=clamp((YS[0]-y)/(YS[0]-YS[1]),0,YS.length-1),y0=Math.floor(fy),y1=Math.min(YS.length-1,y0+1),ty=fy-y0;
+ const r=(row,)=>lerp(rtab[row][a0],rtab[row][a1],ta);return lerp(r(y0),r(y1),ty)}
+
+/* ---------- the thread ---------- */
+class Poly extends THREE.Curve{constructor(p){super();this.p=p;this.c=[0];for(let i=1;i<p.length;i++)this.c.push(this.c[i-1]+p[i].distanceTo(p[i-1]));this.L=this.c[this.c.length-1]||1}
+ getPoint(t,o=new THREE.Vector3()){const d=t*this.L;let i=1;while(i<this.c.length-1&&this.c[i]<d)i++;const s=this.c[i]-this.c[i-1]||1;return o.copy(this.p[i-1]).lerp(this.p[i],(d-this.c[i-1])/s)}}
+const TR=.0075;let tube=null;const START=V(-2.75,-.05,1.15),EYE0=V(-1.5,.42,1.0);
+
+function buildThread(eye,Rot,R0,intro){
+ const w=Math.max(0,Rot-R0),ex=eye.x,ez=eye.z,d=Math.hypot(ex,ez),phi=Math.atan2(ex,ez),off=Math.acos(clamp(rBust/d));
+ let phiL=phi+off;{const L=V(Math.sin(phiL),0,Math.cos(phiL)),t=V(Math.cos(phiL),0,-Math.sin(phiL));if(L.multiplyScalar(rBust).sub(V(ex,0,ez)).dot(t)<0)phiL=phi-off}
+ const pts=[START.clone()];
+ // slight sag between start and eye
+ for(let i=1;i<10;i++){const t=i/10;pts.push(START.clone().lerp(eye,t).add(V(0,-Math.sin(t*Math.PI)*.07,0)))}
+ pts.push(eye.clone());
+ const yL=BUST-PITCH*w/(2*Math.PI),steps=Math.max(1,Math.ceil(w/(2*Math.PI)*NA));
+ for(let i=0;i<=steps;i++){const s=w*i/steps,y=yL+PITCH*s/(2*Math.PI),wa=phiL+s,r=(rtab?rAt(wa-Rot,y):.3)+TR*1.2;pts.push(V(Math.sin(wa)*r,y,Math.cos(wa)*r))}
+ const curve=new Poly(pts),seg=Math.min(900,Math.max(60,pts.length*2));
+ const g=new THREE.TubeGeometry(curve,seg,TR,6,false);
+ if(intro<1){g.setDrawRange(0,Math.floor(seg*clamp(intro))*6*6)}
+ if(tube){tube.geometry.dispose();tube.geometry=g}else{tube=new THREE.Mesh(g,threadMat);S.add(tube)}}
+
+/* ---------- layout + input ---------- */
+let W=1,H=1,phone=false;
+function size(){W=pin.clientWidth;H=pin.clientHeight;phone=W<700;R.setSize(W,H,false);C.aspect=W/H;C.fov=phone?36:24;C.updateProjectionMatrix();
+ START.set(phone?-1.6:-2.75,phone?-.15:-.05,1.15);EYE0.set(phone?-.95:-1.5,phone?.5:.42,1.0);
+ const svg=$('thread2d');svg.setAttribute('viewBox',`0 0 ${W} ${H}`)}
+addEventListener('resize',size);size();
+let mx=0,my=0,tmx=0,tmy=0;addEventListener('pointermove',e=>{if(e.pointerType==='mouse'){tmx=e.clientX/innerWidth*2-1;tmy=e.clientY/innerHeight*2-1}});
+let target=0,pp=0;
+function readScroll(){const r=$('hero').getBoundingClientRect();target=clamp(-r.top/(r.height-innerHeight))}
+addEventListener('scroll',readScroll,{passive:true});readScroll();pp=target;
+
+/* ---------- load the form ---------- */
+let ready=false,t0=0;
+const glbB64='__GLB__'.split(',')[1],glbBin=Uint8Array.from(atob(glbB64),c=>c.charCodeAt(0));
+new THREE.GLTFLoader().parse(glbBin.buffer,'',g=>{const torso=g.scene;torso.traverse(c=>{if(c.isMesh)c.material=clay});form.add(torso);const r0=form.rotation.y;form.rotation.y=0;form.updateMatrixWorld(true);
+ buildTable(torso);form.rotation.y=r0;ready=true;t0=performance.now();cv.classList.add('ready');$('loading').remove()},e=>{$('loading').textContent='Could not load the dress form: '+(e&&e.message||e);cv.classList.add('ready')});
+setThread('ink');
+
+/* ---------- frame loop ---------- */
+const v=new THREE.Vector3(),eye=new THREE.Vector3(),R0=.55,TURN=Math.PI*2*1.35;
+function proj(p){v.copy(p).project(C);return[(v.x+1)/2*W,(1-v.y)/2*H]}
+function frame(now){requestAnimationFrame(frame);
+ pp+=(target-pp)*(RM?1:.2);if(Math.abs(target-pp)<1e-4)pp=target;const p=pp,t=now/1000;
+ mx+=(tmx-mx)*.05;my+=(tmy-my)*.05;
+ // frame: A starts inset with rounded corners and opens to full bleed
+ let m=0,rad=0;if(mode==='framed'){const o=sstep(.02,.38,p);m=lerp(phone?8:16,0,o);rad=lerp(phone?18:26,0,o)}
+ const clip=`inset(${m}px round ${rad}px)`;panel.style.clipPath=clip;cv.style.clipPath=clip;
+ const ui=$('ui');ui.style.inset=m+'px';
+ // camera: dolly in towards the bust while the form turns
+ const dz=sstep(.15,1,p),camZ=lerp(phone?9.4:9.2,phone?7.2:6.4,dz);
+ C.position.set(mx*.18,lerp(-.3,.15,dz)-my*.1,camZ);C.lookAt(0,lerp(phone?.05:-.5,phone?.25:.05,dz),0);
+ form.rotation.y=R0+p*TURN;
+ // tools float, spin, drift out and past the camera as you scroll
+ const bobOn=RM?0:1;
+ tools.forEach((o,i)=>{const b=o.base,k=1+p*.55,sx=phone?.5:1,sy=phone?1.25:1;o.obj.position.set(b.x*k*sx+mx*.12*(b.z+2)/3,b.y*k*sy+Math.sin(t*.9+o.ph)*o.bob*bobOn-my*.08*(b.z+2)/3,b.z+p*1.6);
+  o.obj.rotation.set(o.rot0.x+o.spin[0]*(t*.25*bobOn+p*4),o.rot0.y+o.spin[1]*(t*.25*bobOn+p*4),o.rot0.z+o.spin[2]*(t*.25*bobOn+p*4));
+  if(o.anim==='snip')o.obj.userData.open(.04+.2*(.5+.5*Math.sin(p*18+t*.6*bobOn)))});
+ // needle bobs; the thread passes through its eye
+ eye.copy(EYE0).add(V(mx*.1,Math.sin(t*.8)*.04*bobOn-my*.06,0));
+ const dir=eye.clone().sub(START).normalize(),ax=new THREE.Vector3().crossVectors(dir,V(0,0,1)).normalize();if(ax.y<0)ax.negate();
+ ndl.position.copy(eye);const q=new THREE.Quaternion().setFromUnitVectors(V(0,1,0),ax);ndl.quaternion.copy(q);
+ // turn the eye so the thread goes through it
+ const nrm=V(0,0,1).applyQuaternion(q),want=new THREE.Vector3().crossVectors(ax,dir).normalize();ndl.rotateOnWorldAxis(ax,Math.atan2(new THREE.Vector3().crossVectors(nrm,want).dot(ax),nrm.dot(want)));
+ if(!ready){R.render(S,C);return}
+ // thread draws in on load: 2D part from the page edge, then the 3D part through the needle to the form
+ const intro=RM?1:clamp((now-t0)/1900);const i2=sstep(0,.42,intro),i3=clamp((intro-.38)/.62);
+ buildThread(eye,form.rotation.y,R0,i3<1?i3:1);
+ C.updateMatrixWorld();const [sx,sy]=proj(START),[ex,ey]=proj(eye);
+ let dx=ex-sx,dy=ey-sy;const dl=Math.hypot(dx,dy)||1;dx/=dl;dy/=dl;
+ const y0=sy+H*.16,k=Math.max(60,sx*.45),x0=-12;
+ tpath.setAttribute('d',`M${x0} ${y0} C${x0+sx*.45} ${y0} ${sx-dx*k} ${sy-dy*k} ${sx} ${sy}`);
+ const px=(2*TR)/(2*START.distanceTo(C.position)*Math.tan(C.fov*Math.PI/360))*H;tpath.style.strokeWidth=Math.max(1.2,px).toFixed(2);
+ const len=tpath.getTotalLength();tpath.style.strokeDasharray=len;tpath.style.strokeDashoffset=len*(1-i2);
+ // words out, closing line in
+ words.style.opacity=1-sstep(.02,.22,p);words.style.transform=`translateY(${-p*60}px)`;hint.style.opacity=1-sstep(0,.08,p);
+ end.style.opacity=sstep(.72,.86,p);end.style.transform=`translateY(${(1-sstep(.72,.86,p))*20}px)`;
+ R.render(S,C)}
+requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>

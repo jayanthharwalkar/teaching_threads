@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Numbers test A: the number is embroidered</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;1,500&family=Jost:wght@300;400;500;600&display=swap">
+<style>
+:root{--paper:#F3F1EC;--panel:#E7E3D9;--ink:#141414;--muted:#77736B;--serif:"Cormorant Garamond",Georgia,serif;--sans:"Jost",system-ui,sans-serif}
+*{box-sizing:border-box;margin:0}
+html,body{background:var(--panel);color:var(--ink);font-family:var(--sans);font-weight:300}
+.lead{height:70vh;display:grid;place-items:center;text-align:center;background:var(--paper)}
+.lead small,.after small{display:block;font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);margin-bottom:12px}
+.lead b,.after b{font-family:var(--serif);font-weight:500;font-size:clamp(28px,3vw,40px)}
+.s{position:relative;height:700vh}
+.pin{position:sticky;top:0;height:100vh;height:100svh;overflow:hidden}
+#c{position:absolute;inset:0;width:100%;height:100%;display:block}
+.line{position:absolute;right:7%;top:50%;width:min(30vw,380px);transform:translateY(-50%);pointer-events:none}
+.bt{position:absolute;left:0;right:0;top:0;transform:translateY(-50%);opacity:0;font-size:clamp(22px,2.1vw,30px);line-height:1.3}
+.bt small{display:block;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:14px}
+.bt .cta{pointer-events:auto;display:inline-block;margin-top:20px;padding:12px 22px;background:var(--ink);color:var(--paper);text-decoration:none;font-size:15px;font-weight:400}
+.sample{position:absolute;right:22px;top:20px;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
+.loading{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
+.after{height:70vh;display:grid;place-items:center;text-align:center;background:var(--paper)}
+.switch{position:fixed;left:50%;bottom:14px;transform:translateX(-50%);z-index:20;display:flex;gap:4px;align-items:center;background:rgba(20,20,20,.9);color:#f3f1ec;padding:5px;border-radius:999px;font-size:12px}
+.switch span{padding:0 6px 0 10px;opacity:.6;letter-spacing:.08em;text-transform:uppercase;font-size:10px}
+.switch button{background:none;border:0;color:inherit;font:inherit;padding:7px 12px;border-radius:999px;cursor:pointer;white-space:nowrap}
+.switch button.on{background:#f3f1ec;color:#141414}
+@media (max-width:700px){.line{left:24px;right:24px;width:auto;top:auto;bottom:22%;transform:none}.bt{top:auto;bottom:0;transform:none;text-align:center}.sample{left:20px;right:auto}}
+</style>
+</head>
+<body>
+<section class="lead"><div><small>Numbers section · test A</small><b>The number is embroidered</b><br><small style="margin-top:18px">Scroll</small></div></section>
+<section class="s" id="s"><div class="pin"><canvas id="c"></canvas><div class="loading" id="loading">Threading the needle…</div>
+ <div class="line">
+  <div class="bt"><small>Students so far</small>have learned with Shruti.</div>
+  <div class="bt"><small>Complete beginners</small>had never touched a sewing machine.</div>
+  <div class="bt"><small>Boutique owners</small>now run their own boutique.</div>
+  <div class="bt"><small>In the industry</small>work in fashion jobs.</div>
+  <div class="bt"><small>Next</small>The next one is you.<br><a class="cta" href="#">Connect on WhatsApp</a></div>
+ </div>
+ <span class="sample">Sample numbers · to be confirmed by Shruti</span>
+</div></section>
+<section class="after"><div><small>Next section</small><b>What you will learn</b></div></section>
+<div class="switch"><span>Thread</span><button data-c="ink">Ink</button><button data-c="red">Red</button><button data-c="zari">Zari gold</button></div>
+
+<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js"></script>
+<script>
+(async()=>{
+const $=id=>document.getElementById(id),clamp=(x,a=0,b=1)=>Math.min(b,Math.max(a,x)),lerp=(a,b,t)=>a+(b-a)*t,
+ sstep=(a,b,x)=>{const t=clamp((x-a)/(b-a));return t*t*(3-2*t)},V=(x,y,z=0)=>new THREE.Vector3(x,y,z);
+const RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const cv=$('c'),sec=$('s'),beats=[...document.querySelectorAll('.bt')];
+const R=new THREE.WebGLRenderer({canvas:cv,antialias:true,alpha:true});R.setPixelRatio(Math.min(devicePixelRatio,2));R.outputEncoding=THREE.sRGBEncoding;
+R.shadowMap.enabled=true;R.shadowMap.type=THREE.PCFSoftShadowMap;
+const S=new THREE.Scene(),C=new THREE.PerspectiveCamera(30,1,.1,80);
+S.add(new THREE.HemisphereLight(0xffffff,0x9d968a,.5));
+const key=new THREE.DirectionalLight(0xffffff,.85);key.position.set(-3,4,6);key.castShadow=true;key.shadow.mapSize.set(2048,2048);
+Object.assign(key.shadow.camera,{left:-4,right:4,top:4,bottom:-4,near:1,far:25});key.shadow.radius=5;key.shadow.bias=-.0006;S.add(key);S.add(key.target);
+const fill=new THREE.DirectionalLight(0xffffff,.22);fill.position.set(4,-2,3);S.add(fill);
+const shadowCatch=new THREE.Mesh(new THREE.PlaneGeometry(80,30),new THREE.ShadowMaterial({opacity:.14}));shadowCatch.position.z=-.25;shadowCatch.receiveShadow=true;S.add(shadowCatch);
+
+function canvasTex(w,h,draw){const c=document.createElement('canvas');c.width=w;c.height=h;draw(c.getContext('2d'),w,h);const t=new THREE.CanvasTexture(c);t.encoding=THREE.sRGBEncoding;t.anisotropy=8;t.wrapS=t.wrapT=THREE.RepeatWrapping;return t}
+// linen: fine warp and weft with slubs
+const linen=canvasTex(512,512,(x,w,h)=>{x.fillStyle='#F6F2EA';x.fillRect(0,0,w,h);
+ for(let i=0;i<w;i+=3){x.fillStyle=`rgba(120,105,85,${.05+Math.random()*.06})`;x.fillRect(i,0,1,h);x.fillRect(0,i,w,1)}
+ for(let k=0;k<160;k++){x.fillStyle='rgba(120,105,85,.10)';const y=Math.random()*h;x.fillRect(Math.random()*w,y,20+Math.random()*60,1.4)}});linen.repeat.set(3,3);
+const wood=new THREE.MeshStandardMaterial({color:0xE9E1D2,roughness:.7});
+const threadMat=new THREE.MeshStandardMaterial({color:0x111010,roughness:.38,metalness:0});
+const COLS={ink:[0x111010,.38,0],red:[0x7e1512,.36,0],zari:[0xb8892e,.3,.65]};
+function setC(n){const [c,r,m]=COLS[n];threadMat.color.setHex(c);threadMat.roughness=r;threadMat.metalness=m;document.querySelectorAll('[data-c]').forEach(b=>b.classList.toggle('on',b.dataset.c===n))}
+document.querySelectorAll('[data-c]').forEach(b=>b.onclick=()=>setC(b.dataset.c));setC('ink');
+
+/* ---------- the hoop ---------- */
+const HR=1.3;
+function hoop(){const g=new THREE.Group();
+ const band=(r,h,th)=>{const m=new THREE.Mesh(new THREE.CylinderGeometry(r,r,h,120,1,true),wood);m.rotation.x=Math.PI/2;m.material.side=THREE.DoubleSide;
+  const lip1=new THREE.Mesh(new THREE.TorusGeometry(r,th,10,120),wood);lip1.position.z=h/2;const lip2=lip1.clone();lip2.position.z=-h/2;g.add(m,lip1,lip2);m.castShadow=lip1.castShadow=lip2.castShadow=true};
+ band(HR+.05,.13,.018);band(HR,.11,.014);
+ // the brass-less clay screw clamp at the top
+ const blk=new THREE.Mesh(new THREE.BoxGeometry(.2,.12,.12),wood);blk.position.set(0,HR+.12,0);blk.castShadow=true;g.add(blk);
+ const scr=new THREE.Mesh(new THREE.CylinderGeometry(.025,.025,.34,16),wood);scr.rotation.z=Math.PI/2;scr.position.set(0,HR+.14,0);g.add(scr);
+ const knob=new THREE.Mesh(new THREE.CylinderGeometry(.07,.07,.06,24),wood);knob.rotation.z=Math.PI/2;knob.position.set(.2,HR+.14,0);knob.castShadow=true;g.add(knob);
+ // fabric, slightly larger than the hoop and drawn tight
+ const fab=new THREE.Mesh(new THREE.CircleGeometry(HR-.005,120),new THREE.MeshStandardMaterial({map:linen,roughness:.95,color:0xe2ddd3}));fab.receiveShadow=true;g.add(fab);
+ return g}
+
+/* ---------- satin stitches from the number's shape ---------- */
+await document.fonts.load('600 600px Jost');
+function satin(str){const N=1024,c=document.createElement('canvas');c.width=c.height=N;const x=c.getContext('2d');
+ const size=str.length>1?560:640;x.font=`600 ${size}px Jost`;x.textBaseline='alphabetic';
+ const w0=x.measureText(str[0]).width,wt=x.measureText(str).width,sx=(N-wt)/2,base=N/2+size*.36;x.fillStyle='#000';x.fillText(str,sx,base);
+ const split=sx+w0,img=x.getImageData(0,0,N,N).data,inside=(px,py)=>px>=0&&py>=0&&px<N&&py<N&&img[((py|0)*N+(px|0))*4+3]>127;
+ const ang=58*Math.PI/180,d=[Math.cos(ang),-Math.sin(ang)],n=[-d[1],d[0]],sp=4.2,out=[];
+ for(let s=-N;s<N;s+=sp){let run=null;
+  for(let t=-N;t<=N;t+=1){const px=N/2+n[0]*s+d[0]*t,py=N/2+n[1]*s+d[1]*t,ins=inside(px,py);
+   if(ins&&!run)run=[t];else if(!ins&&run){run.push(t);const L=run[1]-run[0];if(L>2){const pieces=Math.ceil(L/110);
+     for(let k=0;k<pieces;k++){const a=run[0]+L*k/pieces,b=run[0]+L*(k+1)/pieces,mx=(a+b)/2;
+      const p0=[N/2+n[0]*s+d[0]*a,N/2+n[1]*s+d[1]*a],p1=[N/2+n[0]*s+d[0]*b,N/2+n[1]*s+d[1]*b];
+      out.push({p0,p1,dg:(p0[0]+p1[0])/2<split?0:1,s,mx})}}run=null}}}
+ out.sort((a,b)=>a.dg-b.dg||a.s-b.s||a.mx-b.mx);
+ const k=2.15/N;// canvas px -> world
+ return out.map(o=>({a:V((o.p0[0]-N/2)*k,-(o.p0[1]-N/2)*k,0),b:V((o.p1[0]-N/2)*k,-(o.p1[1]-N/2)*k,0)}))}
+
+const NUMS=['20','17','15','4','21'],GAP=3.6,hoops=[];
+const cyl=new THREE.CylinderGeometry(1,1,1,8,1);cyl.translate(0,.5,0);
+const M=new THREE.Matrix4(),Q=new THREE.Quaternion(),Y=V(0,1,0),SC=V(1,1,1),TMP=V();
+NUMS.forEach((num,i)=>{const g=hoop();g.position.x=i*GAP;S.add(g);
+ const st=satin(num),im=new THREE.InstancedMesh(cyl,threadMat,st.length);im.castShadow=true;
+ st.forEach((o,j)=>{const dir=TMP.subVectors(o.b,o.a),L=dir.length();Q.setFromUnitVectors(Y,dir.clone().normalize());
+  const p=o.a.clone();p.z=.012+Math.random()*.004;M.compose(p,Q,SC.set(.0115,L*1.02,.0115));im.setMatrixAt(j,M)});
+ im.count=0;g.add(im);hoops.push({g,im,st})});
+$('loading').remove();
+
+// needle + the short length of thread back to the last stitch
+const needle=new THREE.Group();{const sh=new THREE.Mesh(new THREE.CylinderGeometry(.012,.0015,.62,12),new THREE.MeshStandardMaterial({color:0xd9d4ca,roughness:.25,metalness:.6}));sh.position.y=-.31;needle.add(sh);
+ const eye=new THREE.Mesh(new THREE.TorusGeometry(.016,.005,8,20),sh.material);eye.scale.set(.6,1.6,1);needle.add(eye);needle.traverse(c=>c.castShadow=true)}S.add(needle);
+const tail=new THREE.Mesh(cyl,threadMat);tail.castShadow=true;S.add(tail);
+
+let W=1,H=1,phone=false;function size(){W=cv.clientWidth;H=cv.clientHeight;phone=W<700;R.setSize(W,H,false);C.aspect=W/H;C.fov=phone?46:30;C.updateProjectionMatrix()}
+addEventListener('resize',size);size();
+let q=0,tq=0;function rs(){const r=sec.getBoundingClientRect();tq=clamp(-r.top/(r.height-innerHeight))}addEventListener('scroll',rs,{passive:true});rs();
+let mx=0,tmx=0;addEventListener('pointermove',e=>{if(e.pointerType==='mouse')tmx=e.clientX/innerWidth*2-1});
+const seg=1/NUMS.length;
+function frame(now){requestAnimationFrame(frame);const r=sec.getBoundingClientRect();if(r.bottom<0||r.top>innerHeight)return;
+ q+=(tq-q)*(RM?1:.18);const t=now/1000,mo=RM?0:1;mx+=(tmx-mx)*.05;
+ const k=Math.min(NUMS.length-1,Math.floor(q/seg)),u=(q-k*seg)/seg;
+ // camera glides from hoop to hoop; each hoop is stitched while it is centred
+ const travel=k===0?1:sstep(0,.16,u),hx=lerp((k-1)*GAP,k*GAP,travel)*(k===0?1:1);
+ const ox=phone?0:1.15;
+ C.position.set(hx+ox+mx*.25,phone?-2.2:-2.1,phone?6.8:5.3);C.lookAt(hx+ox*.7,phone?-.45:-.1,0);
+ key.position.set(hx-3,4,6);key.target.position.set(hx,0,0);
+ hoops.forEach((h,i)=>{const done=i<k?1:i>k?0:sstep(.16,.78,u);const n=Math.floor(h.st.length*done);h.im.count=n;
+  h.g.rotation.set(Math.sin(t*.4+i)*.03*mo,Math.sin(t*.3+i)*.04*mo+(i-k)*.18,0)});
+ // needle rides the current stitch: up through the cloth, down at the far end
+ const h=hoops[k],n=h.im.count;
+ if(n>0&&n<h.st.length){const o=h.st[n-1],ph=(h.st.length*sstep(.16,.78,u))%1;
+  const p=o.a.clone().lerp(o.b,ph).applyMatrix4(h.g.matrixWorld);const lift=Math.sin(ph*Math.PI)*.22+.04;
+  needle.visible=tail.visible=true;needle.position.set(p.x,p.y,p.z+lift+.31*.0);needle.position.z=lift+.3;needle.rotation.set(.5,0,-.35);
+  const end=o.b.clone().applyMatrix4(h.g.matrixWorld);end.z=.02;const eye=needle.position.clone();const dir=eye.clone().sub(end);
+  Q.setFromUnitVectors(Y,dir.clone().normalize());M.compose(end,Q,SC.set(.006,dir.length(),.006));tail.matrixAutoUpdate=false;tail.matrix.copy(M)}
+ else{needle.visible=tail.visible=false}
+ beats.forEach((el,i)=>{const a0=i*seg,o=sstep(a0+seg*.18,a0+seg*.3,q)*(i===NUMS.length-1?1:1-sstep(a0+seg*.92,a0+seg*1.02,q));
+  el.style.opacity=o;el.style.marginTop=((1-o)*14)+'px';el.style.pointerEvents=o>.5?'auto':'none'});
+ R.render(S,C)}
+requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
