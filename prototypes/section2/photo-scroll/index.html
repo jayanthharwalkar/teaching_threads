@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Numbers section: four ways to move the photos</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;1,500&family=Jost:wght@300;400;500&display=swap">
+<style>
+:root{--paper:#F3F1EC;--panel:#E7E3D9;--ink:#141414;--muted:#77736B;--serif:"Cormorant Garamond",Georgia,serif;--sans:"Jost",system-ui,sans-serif;
+ --fl:48vw;--ft:10vh;--fw:34vw;--fh:64vh}
+*{box-sizing:border-box;margin:0}
+html,body{background:var(--panel);color:var(--ink);font-family:var(--sans);font-weight:300}
+.lead,.after{height:80vh;display:grid;place-items:center;text-align:center;padding:0 24px;background:var(--paper)}
+.lead small,.after small{display:block;font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);margin-bottom:12px}
+.lead b,.after b{font-family:var(--serif);font-weight:500;font-size:clamp(28px,3vw,40px)}
+.lead p{max-width:52ch;margin:14px auto 0;font-size:15px;line-height:1.55;color:#3b3935}
+.s{position:relative;height:640vh}
+.pin{position:sticky;top:0;height:100vh;height:100svh;overflow:hidden;background-image:radial-gradient(circle,rgba(20,20,20,.12) 1px,transparent 1.2px);background-size:26px 26px}
+.v{position:absolute;inset:0;display:none}
+body[data-v=A] #A,body[data-v=B] #B,body[data-v=C] #C,body[data-v=D] #D{display:block}
+img{display:block}
+.slot{position:absolute;overflow:hidden;will-change:clip-path,transform}
+.slot img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:saturate(.86) contrast(1.05);will-change:transform}
+.grain:after{content:"";position:absolute;inset:0;opacity:.16;mix-blend-mode:overlay;pointer-events:none;
+ background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+.you{display:grid;place-items:center;text-align:center;font-family:var(--serif);font-size:clamp(26px,2.4vw,38px);line-height:1.1;border:1.5px dashed rgba(20,20,20,.35);background:var(--panel)}
+/* A: each photo is cut open from a thin line, then settles from a zoom */
+#A .slot{left:var(--fl);top:var(--ft);width:var(--fw);height:var(--fh);border-radius:14px}
+#A .slit{position:absolute;left:var(--fl);top:var(--ft);width:var(--fw);height:var(--fh);pointer-events:none}
+#A .slit i{position:absolute;background:var(--ink);opacity:0}
+/* B: the photo opens from a frame to the whole screen */
+#B .slot{inset:0}
+#B .slot:before{content:"";position:absolute;inset:0;z-index:1;background:linear-gradient(90deg,rgba(0,0,0,.62),rgba(0,0,0,.15) 55%,rgba(0,0,0,0)),linear-gradient(0deg,rgba(0,0,0,.45),transparent 40%)}
+#B .slot img{object-position:center 30%}
+#B .you{border:0;background:var(--panel)}
+#B .you span{position:absolute;left:var(--fl);top:var(--ft);width:var(--fw);height:var(--fh);display:grid;place-items:center;border:1.5px dashed rgba(20,20,20,.35);border-radius:14px}
+/* C: photos printed on cloth, rippling with the scroll */
+#fab{position:absolute;inset:0;width:100%;height:100%}
+/* D: prints dealt onto a pile */
+#D .slot{left:var(--fl);top:var(--ft);width:var(--fw);height:var(--fh);border-radius:6px;overflow:visible}
+#D .slot .in{position:absolute;inset:0;border-radius:6px;overflow:hidden;background:#fff;padding:10px 10px 44px;box-shadow:0 30px 50px -30px rgba(0,0,0,.55),0 2px 6px rgba(0,0,0,.08)}
+#D .slot .in .ph{position:relative;width:100%;height:100%;overflow:hidden}
+#D .slot .in small{position:absolute;left:14px;right:14px;bottom:14px;display:flex;justify-content:space-between;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+#D .slot.you .in{display:grid;place-items:center;background:var(--paper);border:1.5px dashed rgba(20,20,20,.3);box-shadow:none}
+/* shared: number, line, tape */
+.beats{position:absolute;left:10vw;top:16vh;width:32vw;height:56vh;z-index:5;transition:color .5s}
+#bnum{font-variant-numeric:lining-nums tabular-nums;font-feature-settings:'lnum' 1;font-family:var(--serif);font-weight:500;font-size:clamp(110px,13vw,200px);line-height:.85;letter-spacing:-.02em}
+.bt{position:absolute;left:0;top:calc(clamp(110px,13vw,200px)*.85 + 14px);opacity:0;font-size:clamp(18px,1.6vw,24px);line-height:1.35;max-width:24ch}
+.bt .cta{display:inline-block;margin-top:20px;padding:11px 20px;background:var(--ink);color:var(--paper);text-decoration:none;font-size:14px;font-weight:400}
+.beats.light{color:#fff;text-shadow:0 2px 24px rgba(0,0,0,.35)}
+.tape2{position:absolute;left:0;right:0;top:86vh;height:var(--th);margin-top:calc(var(--th)/-2);z-index:5}
+.tape2 .strip{position:absolute;top:0;left:0;height:100%;will-change:transform}
+.tape2 .body{position:absolute;inset:0;background:#F1EDE4;box-shadow:0 1px 0 rgba(0,0,0,.06),0 12px 22px -14px rgba(0,0,0,.4)}
+.tape2 .tick{position:absolute;top:0;width:1px;background:#1b1a18}.tape2 .tick.b{top:auto;bottom:0}
+.tape2 .num{position:absolute;top:50%;transform:translate(-50%,-50%);font:500 calc(var(--th)*.3)/1 var(--sans);color:#1b1a18}
+.tape2 .tipm{position:absolute;top:-3px;bottom:-3px;width:calc(var(--u)*.3);background:linear-gradient(90deg,#77736b,#cfcbc2 45%,#8d8a83);border-radius:3px 0 0 3px}
+.mark2{position:absolute;top:calc(86vh - var(--th)*.95);height:calc(var(--th)*1.9);width:2px;margin-left:-1px;background:var(--ink);z-index:6}
+.mark2:before{content:"";position:absolute;left:-6px;top:-9px;border:7px solid transparent;border-top:9px solid var(--ink)}
+body[data-v=B] .mark2{background:#fff}body[data-v=B] .mark2:before{border-top-color:#fff}
+.sample{position:absolute;right:22px;top:18px;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);z-index:6}
+.switch{position:fixed;left:50%;bottom:14px;transform:translateX(-50%);z-index:20;display:flex;gap:2px;align-items:center;background:rgba(20,20,20,.9);color:#f3f1ec;padding:5px;border-radius:999px;font-size:12px;white-space:nowrap;box-shadow:0 6px 24px rgba(0,0,0,.15)}
+.switch button{background:none;border:0;color:inherit;font:inherit;padding:7px 11px;border-radius:999px;cursor:pointer}
+.switch button.on{background:#f3f1ec;color:#141414}
+@media (max-width:700px){
+ :root{--fl:12vw;--ft:33vh;--fw:76vw;--fh:41vh}
+ .beats{left:22px;right:22px;width:auto;top:8vh;height:auto}
+ #bnum{font-size:84px}.bt{top:84px;font-size:18px}.bt .cta{margin-top:10px}
+ .sample{left:22px;right:auto;top:auto;bottom:62px}
+ .switch button{padding:7px 9px}
+}
+</style>
+</head>
+<body data-v="A">
+<section class="lead"><div><small>Numbers section · photo motion test</small><b>Four ways to move the photos</b>
+ <p>Same numbers and tape in each; only the photos change. A cuts each photo open from a thin line. B opens it to the whole screen. C prints it on cloth that ripples as you scroll. D deals the prints onto a pile.</p>
+ <small style="margin-top:18px">Pick below · then scroll</small></div></section>
+
+<section class="s" id="s"><div class="pin">
+ <div id="probe" style="position:absolute;left:var(--fl);top:var(--ft);width:var(--fw);height:var(--fh);visibility:hidden"></div>
+ <div class="v" id="A"></div>
+ <div class="v" id="B"></div>
+ <div class="v" id="C"><canvas id="fab"></canvas></div>
+ <div class="v" id="D"></div>
+ <div class="beats" id="beats"><div id="bnum">20</div>
+  <div class="bt">students have learned with Shruti.</div>
+  <div class="bt">had never touched a sewing machine.</div>
+  <div class="bt">now run their own boutique.</div>
+  <div class="bt">work in fashion jobs.</div>
+  <div class="bt">Everyone started at zero. The next one is you.<br><a class="cta" href="#">Connect on WhatsApp</a></div>
+ </div>
+ <div class="tape2" id="tape2"><div class="strip" id="strip2"></div></div><div class="mark2" id="mark2"></div>
+ <span class="sample">Sample numbers · placeholder photos</span>
+</div></section>
+<section class="after"><div><small>Next section</small><b>What you will learn</b></div></section>
+<div class="switch"><button data-v="A">A · Cut open</button><button data-v="B">B · Full screen</button><button data-v="C">C · Cloth</button><button data-v="D">D · Prints</button></div>
+
+<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js"></script>
+<script>
+(()=>{
+const $=id=>document.getElementById(id),clamp=(x,a=0,b=1)=>Math.min(b,Math.max(a,x)),lerp=(a,b,t)=>a+(b-a)*t,
+ sstep=(a,b,x)=>{const t=clamp((x-a)/(b-a));return t*t*(3-2*t)};
+const RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const PH=['img/p5.jpg','img/p2.jpg','img/p3.jpg','img/p4.jpg'],CAP=['Shruti, Kerala Fashion League','Runway','Runway','Runway'],NB=5,TV=[20,17,15,4,0];
+const YOU='Your work,<br><em>next.</em>';
+const sec=$('s'),bnum=$('bnum'),beats=[...document.querySelectorAll('.bt')],beatBox=$('beats');
+
+/* ---- build the four photo layers ---- */
+const mk=(h)=>{const d=document.createElement('div');d.innerHTML=h;return d.firstElementChild};
+const A=$('A'),B=$('B'),D=$('D');
+PH.forEach((src,i)=>{A.appendChild(mk(`<div class="slot grain"><img src="${src}" alt=""${i===0?' style="object-position:center 82%"':''}></div>`));
+ B.appendChild(mk(`<div class="slot grain"><img src="${src}" alt=""${i===0?' style="object-position:center 85%"':''}></div>`));
+ D.appendChild(mk(`<div class="slot"><div class="in"><div class="ph grain"><img src="${src}" alt=""${i===0?' style="object-position:center 82%"':''}></div><small><span>0${i+1}</span><span>${CAP[i]}</span></small></div></div>`))});
+A.appendChild(mk(`<div class="slot you" style="border-radius:14px"><span>${YOU}</span></div>`));
+A.appendChild(mk(`<div class="slit"><i></i><i></i></div>`));
+B.appendChild(mk(`<div class="slot you"><span>${YOU}</span></div>`));
+D.appendChild(mk(`<div class="slot you"><div class="in"><span style="font-family:var(--serif);font-size:clamp(26px,2.4vw,38px);line-height:1.1;text-align:center">${YOU}</span></div></div>`));
+const sA=[...A.querySelectorAll('.slot')],sB=[...B.querySelectorAll('.slot')],sD=[...D.querySelectorAll('.slot')],slits=[...A.querySelectorAll('.slit i')];
+
+/* ---- tape ---- */
+const strip2=$('strip2'),tape2=$('tape2'),mark2=$('mark2');let U2=80,MX=0,ph=false,FR={x:0,y:0,w:1,h:1};
+function layout(){ph=innerWidth<700;U2=Math.round(clamp(innerWidth/(ph?6:12),52,96));const th=Math.round(U2*(ph?.8:.7)),L=32;
+ tape2.style.setProperty('--th',th+'px');tape2.style.setProperty('--u',U2+'px');mark2.style.setProperty('--th',th+'px');
+ let h=`<div class="body" style="width:${L*U2}px"></div><div class="tipm" style="left:${-U2*.3}px"></div>`;
+ for(let mm=0;mm<=L*10;mm++){const x=mm*U2/10,l=th*(mm%10===0?.26:mm%5===0?.18:.11);
+  h+=`<i class="tick" style="left:${x}px;height:${l}px"></i><i class="tick b" style="left:${x}px;height:${l}px"></i>`;
+  if(mm%10===0&&mm>0)h+=`<span class="num" style="left:${x}px">${mm/10}</span>`}
+ strip2.style.width=L*U2+'px';strip2.innerHTML=h;
+ MX=ph?innerWidth/2:innerWidth*.1+bnum.getBoundingClientRect().width/2;mark2.style.left=MX+'px';
+ const r=$('probe').getBoundingClientRect();FR={x:r.left,y:r.top,w:r.width,h:r.height};
+ if(C3)C3.layout()}
+
+/* ---- C: cloth (WebGL). Each photo is a plane that ripples like fabric; the ripple grows with scroll speed ---- */
+let C3=null;
+function makeCloth(){const cv=$('fab'),R=new THREE.WebGLRenderer({canvas:cv,antialias:true,alpha:true});R.setPixelRatio(Math.min(devicePixelRatio,2));
+ const S=new THREE.Scene(),cam=new THREE.PerspectiveCamera(30,1,10,10000),L=new THREE.TextureLoader(),planes=[];
+ const youTex=(()=>{const c=document.createElement('canvas');c.width=600;c.height=1000;const x=c.getContext('2d');x.fillStyle='#E7E3D9';x.fillRect(0,0,600,1000);
+  x.setLineDash([14,10]);x.strokeStyle='rgba(20,20,20,.4)';x.lineWidth=4;x.strokeRect(4,4,592,992);x.fillStyle='#141414';x.textAlign='center';
+  x.font='500 64px "Cormorant Garamond", Georgia, serif';x.fillText('Your work,',300,480);x.font='italic 500 64px "Cormorant Garamond", Georgia, serif';x.fillText('next.',300,555);
+  const t=new THREE.CanvasTexture(c);t.userData={a:.6};return t})();
+ const vs=`uniform float uT,uSp,uV;uniform vec2 uSize;varying vec2 vUv;varying float vSh;
+  void main(){vUv=uv;vec3 p=position;float a=4.0+uSp*26.0;
+   float z=sin(uv.x*4.5+uT*1.5+uv.y*2.0)*a*.6+sin(uv.y*6.5-uT*1.1)*a*.45;
+   p.z+=z;p.x+=sin(uv.y*3.1416)*uV*-900.0/uSize.x;p.y+=sin(uv.x*3.1416)*uSp*18.0/uSize.y;   // plane is unit-sized and scaled, so pixel offsets are divided back
+   float dz=cos(uv.x*4.5+uT*1.5+uv.y*2.0)*a*.6*4.5;vSh=clamp(dz*.004,-.25,.25);
+   gl_Position=projectionMatrix*modelViewMatrix*vec4(p,1.0);}`;
+ const fs=`uniform sampler2D uMap;uniform vec2 uSize;uniform float uImgA,uOp,uZoom;varying vec2 vUv;varying float vSh;
+  void main(){vec2 uv=vUv;float pa=uSize.x/uSize.y;vec2 s=pa>uImgA?vec2(1.0,uImgA/pa):vec2(pa/uImgA,1.0);uv=(uv-.5)*s/uZoom+.5;
+   vec3 c=texture2D(uMap,uv).rgb;c=mix(vec3(dot(c,vec3(.299,.587,.114))),c,.86);
+   vec2 px=vUv*uSize;float w=.93+.035*sin(px.x*1.9)+.035*sin(px.y*1.9);c*=w;c+=vSh;   // the weave shows through
+   vec2 q=abs(vUv-.5)*uSize-(uSize*.5-14.0);float d=length(max(q,0.0))-14.0;if(d>0.0)discard;
+   gl_FragColor=vec4(c,uOp);}`;
+ [...PH,null].forEach((src,i)=>{const tex=src?L.load(src,t=>{m.uniforms.uImgA.value=t.image.width/t.image.height}):youTex;
+  const m=new THREE.ShaderMaterial({vertexShader:vs,fragmentShader:fs,transparent:true,uniforms:{uMap:{value:tex},uSize:{value:new THREE.Vector2(1,1)},uImgA:{value:.6},uOp:{value:1},uZoom:{value:1},uT:{value:0},uSp:{value:0},uV:{value:0}}});
+  const p=new THREE.Mesh(new THREE.PlaneGeometry(1,1,48,64),m);S.add(p);planes.push(p)});
+ return {layout(){const w=innerWidth,h=innerHeight;R.setSize(w,h,false);cam.aspect=w/h;cam.position.set(0,0,h/2/Math.tan(Math.PI/12));cam.updateProjectionMatrix();
+   planes.forEach(p=>{p.scale.set(FR.w,FR.h,1);p.material.uniforms.uSize.value.set(FR.w,FR.h)})},
+  draw(e,vel,time){vel=clamp(vel,-.04,.04);const gap=ph?innerWidth*.05:innerWidth*.025,sp=Math.min(1,Math.abs(vel)*14);
+   planes.forEach((p,i)=>{const d=i-e,x=FR.x+FR.w/2+d*(FR.w+gap)-innerWidth/2,y=-(FR.y+FR.h/2-innerHeight/2);p.position.set(x,y,0);
+    const u=p.material.uniforms;u.uT.value=time;u.uSp.value=sp;u.uV.value=vel;u.uOp.value=d<0?clamp(1+d*1.3):1;u.uZoom.value=1+.12*(1-clamp(1-Math.abs(d)))});
+   R.render(S,cam)}}}
+
+/* ---- scroll: eased, with velocity ---- */
+let q=0,tq=0,eP=0,vel=0;
+function readScroll(){const r=sec.getBoundingClientRect();tq=clamp(-r.top/(r.height-innerHeight))}
+addEventListener('scroll',readScroll,{passive:true});
+function frame(now){requestAnimationFrame(frame);const r=sec.getBoundingClientRect();if(r.bottom<-50||r.top>innerHeight+50)return;
+ q+=(tq-q)*(RM?1:.075);if(Math.abs(tq-q)<1e-5)q=tq;
+ const t=clamp(q*NB-.5,0,NB-1),k=Math.min(NB-2,Math.floor(t)),e=k+sstep(.15,.85,t-k);vel+=((e-eP)-vel)*.25;eP=e;
+ const val=lerp(TV[k],TV[k+1],e-k);strip2.style.transform=`translate3d(${MX-val*U2}px,0,0)`;bnum.textContent=Math.round(val);
+ beats.forEach((el,i)=>{const o=1-sstep(.16,.4,Math.abs(t-i));el.style.opacity=o;el.style.transform=`translateY(${(1-o)*(t<i?22:-22)}px)`;el.style.pointerEvents=o>.5?'auto':'none'});
+ const v=document.body.dataset.v;beatBox.classList.toggle('light',v==='B'&&e<NB-1.5);
+ if(v==='A'){ // each photo is cut open along a line through its middle, alternating across and down; it settles from a zoom
+  sA.forEach((s,i)=>{const a=i===0?1:sstep(i-.62,i-.08,e),across=i%2===1,z=50*(1-a);
+   s.style.clipPath=across?`inset(${z}% 0 ${z}% 0 round 14px)`:`inset(0 ${z}% 0 ${z}% round 14px)`;s.style.visibility=a>0?'visible':'hidden';
+   const im=s.querySelector('img');if(im)im.style.transform=`scale(${1.32-.32*a+.05*clamp(e-i,0,1)})`});
+  const n=Math.round(e),i=Math.ceil(e-.001),a=sstep(i-.62,i-.08,e),across=i%2===1,show=a>0&&a<1;
+  slits.forEach((sl,j)=>{sl.style.opacity=show?(1-a)*.9:0;const z=50*(1-a);   // the two cut edges, travelling apart
+   Object.assign(sl.style,across?{left:'0',right:'0',height:'1px',width:'auto',top:(j?100-z:z)+'%',bottom:'auto'}:{top:'0',bottom:'0',width:'1px',height:'auto',left:(j?100-z:z)+'%',right:'auto'})});
+ }else if(v==='B'){ // a frame opens to the whole screen
+  const W=innerWidth,H=innerHeight;
+  sB.forEach((s,i)=>{const a=i===0?1:sstep(i-.7,i-.05,e),o=i===0?sstep(-.01,.25,q*NB):1,f=a*o;
+   const top=FR.y*(1-f),left=FR.x*(1-f),right=(W-FR.x-FR.w)*(1-f),bot=(H-FR.y-FR.h)*(1-f);
+   s.style.clipPath=`inset(${top}px ${right}px ${bot}px ${left}px round ${14*(1-f)}px)`;s.style.visibility=a>0?'visible':'hidden';
+   const im=s.querySelector('img');if(im)im.style.transform=`scale(${1.25-.25*a+.06*clamp(e-i,0,1)})`});
+ }else if(v==='C'){C3.draw(e,vel,RM?0:now/1000);
+ }else{ // prints dealt onto a pile: each slides up and lands slightly turned; older ones sink back
+  sD.forEach((s,i)=>{const a=i===0?1:sstep(i-.65,i-.05,e),old=clamp(e-i,0,3),rot=(i%2?2.2:-1.6)+(1-a)*(i%2?9:-9);
+   s.style.transform=`translate3d(${(1-a)*(i%2?40:-40)}px,${(1-a)*innerHeight*1.05-old*14}px,0) rotate(${rot}deg) scale(${1-.05*old})`;
+   s.style.filter=`brightness(${1-.12*old})`;s.style.zIndex=i;s.style.visibility=a>0&&old<2.9?'visible':'hidden'})}
+}
+function setV(v){document.body.dataset.v=v;document.querySelectorAll('.switch button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));
+ if(v==='C'&&!C3){C3=makeCloth();layout()}}
+document.querySelectorAll('.switch button').forEach(b=>b.onclick=()=>setV(b.dataset.v));
+addEventListener('resize',layout);
+const v0=(location.hash||'').slice(1);setV(['A','B','C','D'].includes(v0)?v0:'A');layout();readScroll();requestAnimationFrame(frame);
+document.fonts&&document.fonts.ready.then(layout);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Numbers section: simple versions</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;1,500&family=Jost:wght@300;400;500&family=Kalam:wght@300;400&display=swap">
+<style>
+:root{--paper:#F3F1EC;--panel:#E7E3D9;--ink:#141414;--muted:#77736B;--serif:"Cormorant Garamond",Georgia,serif;--sans:"Jost",system-ui,sans-serif;--hand:"Kalam",cursive}
+*{box-sizing:border-box;margin:0}
+html,body{background:var(--paper);color:var(--ink);font-family:var(--sans);font-weight:300}
+.lead,.after{height:70vh;display:grid;place-items:center;text-align:center;padding:0 24px}
+.lead small,.after small{display:block;font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);margin-bottom:12px}
+.lead b,.after b{font-family:var(--serif);font-weight:500;font-size:clamp(28px,3vw,40px)}
+.s{position:relative;height:600vh}
+.pin{position:sticky;top:0;height:100vh;height:100svh;overflow:hidden}
+.v{position:absolute;inset:0;display:none}
+body[data-v=tape] #tape,body[data-v=book] #book,body[data-v=photo] #photo{display:block}
+.sample{position:absolute;right:22px;top:20px;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);z-index:5}
+.cta{display:inline-block;margin-top:18px;padding:12px 22px;background:var(--ink);color:var(--paper);text-decoration:none;font:400 15px var(--sans);border-radius:2px}
+.switch{position:fixed;left:50%;bottom:14px;transform:translateX(-50%);z-index:20;display:flex;gap:4px;align-items:center;background:rgba(20,20,20,.9);color:#f3f1ec;padding:5px;border-radius:999px;font-size:12px;white-space:nowrap}
+.switch span{padding:0 6px 0 10px;opacity:.6;letter-spacing:.08em;text-transform:uppercase;font-size:10px}
+.switch button{background:none;border:0;color:inherit;font:inherit;padding:7px 12px;border-radius:999px;cursor:pointer}
+.switch button.on{background:#f3f1ec;color:#141414}
+
+/* ---------- A: tape measure ---------- */
+#tape .big{position:absolute;left:0;right:0;top:15%;text-align:center;font-family:var(--serif);font-weight:500;font-size:clamp(96px,16vw,200px);line-height:1;font-variant-numeric:lining-nums tabular-nums}
+#tape .track{position:absolute;left:0;right:0;top:50%;height:var(--th);margin-top:calc(var(--th)/-2)}
+#tape .strip{position:absolute;top:0;left:0;height:100%;will-change:transform}
+#tape .body{position:absolute;inset:0;background:#FCFBF7;box-shadow:0 1px 0 rgba(0,0,0,.08),0 10px 24px -12px rgba(0,0,0,.35);border-top:1px solid #d9d4c8;border-bottom:1px solid #d9d4c8}
+#tape .tick{position:absolute;top:0;width:1px;background:#1a1a1a}
+#tape .tick.b{top:auto;bottom:0}
+#tape .num{position:absolute;top:calc(var(--th)*.36);transform:translateX(-50%);font:500 calc(var(--th)*.24)/1 var(--sans);color:#141414}
+#tape .num.ten{color:#b0201b}
+#tape .inum{position:absolute;bottom:calc(var(--th)*.3);transform:translateX(-50%);font:400 calc(var(--th)*.15)/1 var(--sans);color:#555}
+#tape .tip{position:absolute;top:-3px;bottom:-3px;width:calc(var(--u)*.35);background:linear-gradient(90deg,#8d8a83,#d8d5ce 40%,#9d9a93);border-radius:2px 0 0 2px;box-shadow:0 4px 10px -4px rgba(0,0,0,.4)}
+#tape .mark{position:absolute;left:50%;top:calc(50% - var(--th)*.9);height:calc(var(--th)*1.8);width:2px;margin-left:-1px;background:var(--ink)}
+#tape .mark:before{content:"";position:absolute;left:-6px;top:-8px;border:7px solid transparent;border-top:9px solid var(--ink)}
+#tape .lines{position:absolute;left:0;right:0;top:calc(50% + var(--th)*1.3);text-align:center;padding:0 24px}
+
+/* ---------- B: tailor's register ---------- */
+#book .desk{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:26px;padding:48px 16px 76px}
+#book .page{position:relative;width:min(600px,92vw);height:min(470px,64vh);background:#FBF8F0;transform:rotate(-1.2deg);
+ box-shadow:0 1px 2px rgba(0,0,0,.1),0 24px 40px -22px rgba(0,0,0,.45);
+ background-image:linear-gradient(90deg,transparent 0 63px,rgba(176,32,27,.45) 63px 64px,transparent 64px),
+  repeating-linear-gradient(180deg,transparent 0 calc(var(--rl) - 1px),rgba(70,110,160,.22) calc(var(--rl) - 1px) var(--rl));
+ background-position:0 0,0 var(--top);--rl:min(64px,9.5vh);--top:min(86px,12vh)}
+#book .head{position:absolute;left:78px;top:calc(var(--top) - 44px);font:400 22px var(--hand);color:#2a3a5c}
+#book .row{position:absolute;left:0;right:16px;height:var(--rl);display:flex;align-items:flex-end;padding-bottom:6px;font-family:var(--hand);color:#1f2c4a;transition:opacity .3s}
+#book .row .n{width:64px;text-align:center;font-size:min(40px,6vh);line-height:1;font-weight:400}
+#book .row .t{padding-left:14px;font-size:min(25px,3.7vh);line-height:1.1;font-weight:300}
+#book .row.past{opacity:.38}
+#book .row input{font:300 min(25px,3.7vh) var(--hand);color:#1f2c4a;background:none;border:0;border-bottom:1px dashed rgba(31,44,74,.5);width:200px;outline:none;padding:0}
+#book .under{position:static;opacity:0}#book .under .cta{margin-top:0}
+
+/* ---------- C: one line + photo ---------- */
+#photo .wrap{position:absolute;inset:0;display:grid;grid-template-columns:1fr 1fr;align-items:center;gap:6vw;padding:70px 9vw 80px}
+#photo .txt{position:relative;height:60vh}
+#photo .beat{position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);opacity:0}
+#photo .beat b{display:block;font:500 clamp(84px,10vw,150px)/1 var(--serif);font-variant-numeric:lining-nums}
+#photo .beat p{font-size:clamp(20px,1.9vw,28px);line-height:1.3;margin-top:10px;max-width:420px}
+#photo .pics{position:relative;height:72vh;border-radius:6px;overflow:hidden;background:#ddd}
+#photo .pics img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;will-change:opacity,transform}
+
+.bt{position:absolute;left:0;right:0;opacity:0;font-size:clamp(20px,2vw,28px);line-height:1.3}
+@media (max-width:700px){
+ .sample{left:20px;right:auto}
+ #photo .wrap{grid-template-columns:1fr;grid-template-rows:56vh 1fr;gap:20px;padding:56px 20px 70px}
+ #photo .pics{height:100%;order:-1}
+ #book .row .t{font-size:19px}#book .row input{font-size:19px;width:150px}
+ #photo .txt{height:100%}
+ #photo .beat{top:0;transform:none;text-align:left}
+ #photo .beat b{font-size:72px}
+ #book .head{font-size:18px}
+ #book .row .n{width:56px}
+}
+</style>
+</head>
+<body data-v="tape">
+<section class="lead"><div><small>Numbers section · simple versions</small><b>Three plain ways to say it</b><br><small style="margin-top:18px">Pick one below · then scroll</small></div></section>
+
+<section class="s" id="s"><div class="pin">
+ <span class="sample">Sample numbers · to be confirmed by Shruti</span>
+
+ <!-- A: the tape slides to each number -->
+ <div class="v" id="tape">
+  <div class="big" id="tbig">20</div>
+  <div class="track"><div class="strip" id="strip"></div></div>
+  <div class="mark"></div>
+  <div class="lines">
+   <div class="bt">students have learned with Shruti.</div>
+   <div class="bt">had never touched a sewing machine.</div>
+   <div class="bt">now run their own boutique.</div>
+   <div class="bt">work in fashion jobs.</div>
+   <div class="bt">Everyone started at zero. The next one is you.<br><a class="cta" href="#">Connect on WhatsApp</a></div>
+  </div>
+ </div>
+
+ <!-- B: lines written into a tailor's register -->
+ <div class="v" id="book"><div class="desk"><div class="page" id="page">
+  <div class="head">Teaching Threads · batch register</div>
+  <div class="row"><span class="n">20</span><span class="t">learned with Shruti</span></div>
+  <div class="row"><span class="n">17</span><span class="t">had never used a machine</span></div>
+  <div class="row"><span class="n">15</span><span class="t">opened their own boutique</span></div>
+  <div class="row"><span class="n">4</span><span class="t">now work in fashion jobs</span></div>
+  <div class="row"><span class="n">21</span><span class="t"><input id="nm" placeholder="your name" maxlength="18" aria-label="Your name"></span></div>
+ </div><div class="under"><a class="cta" href="#">Connect on WhatsApp</a></div></div>
+ </div>
+
+ <!-- C: one line at a time, one photo at a time -->
+ <div class="v" id="photo"><div class="wrap">
+  <div class="txt">
+   <div class="beat"><b>20</b><p>students have learned with Shruti.</p></div>
+   <div class="beat"><b>17</b><p>had never touched a sewing machine.</p></div>
+   <div class="beat"><b>15</b><p>now run their own boutique.</p></div>
+   <div class="beat"><b>4</b><p>work in fashion jobs.</p></div>
+   <div class="beat"><b>You</b><p>could be next.</p><a class="cta" href="#">Connect on WhatsApp</a></div>
+  </div>
+  <div class="pics"><img src="img/p1.jpg" alt=""><img src="img/p2.jpg" alt=""><img src="img/p3.jpg" alt=""><img src="img/p4.jpg" alt=""><img src="img/p5.jpg" alt="" style="object-position:center 80%"></div>
+ </div></div>
+</div></section>
+
+<section class="after"><div><small>Next section</small><b>What you will learn</b><small style="margin-top:14px;text-transform:none;letter-spacing:.02em">Photos are runway placeholders until student photos come in.</small></div></section>
+<div class="switch"><span>Version</span><button data-v="tape">A · Tape</button><button data-v="book">B · Register</button><button data-v="photo">C · Photos</button></div>
+
+<script>
+(()=>{
+const $=id=>document.getElementById(id),clamp=(x,a=0,b=1)=>Math.min(b,Math.max(a,x)),lerp=(a,b,t)=>a+(b-a)*t,
+ sstep=(a,b,x)=>{const t=clamp((x-a)/(b-a));return t*t*(3-2*t)};
+const N=5,sec=$('s');
+function setV(v){document.body.dataset.v=v;document.querySelectorAll('[data-v]').forEach(b=>b.tagName==='BUTTON'&&b.classList.toggle('on',b.dataset.v===v));tick()}
+document.querySelectorAll('button[data-v]').forEach(b=>b.onclick=()=>setV(b.dataset.v));
+
+/* t runs 0..N-1: whole numbers are the beats; each beat holds for half its slot */
+function T(){const r=sec.getBoundingClientRect(),q=clamp(-r.top/(r.height-innerHeight));return clamp(q*N-.5,0,N-1)}
+const ease=t=>{const k=Math.floor(t),f=t-k;return k+sstep(.25,.75,f)};          // eased beat position
+const vis=(t,k)=>1-sstep(.18,.42,Math.abs(t-k));                                  // a beat's opacity
+
+/* ---- A: build the tape (0-32 cm, inches on the lower edge) ---- */
+const strip=$('strip'),tape=$('tape');let U=80;
+function buildTape(){
+ U=Math.round(clamp(innerWidth/7,56,96));const th=Math.round(U*.95),L=32;
+ tape.style.setProperty('--th',th+'px');tape.style.setProperty('--u',U+'px');
+ let h=`<div class="body" style="width:${L*U}px"></div><div class="tip" style="left:${-U*.35}px"></div>`;
+ for(let mm=0;mm<=L*10;mm++){const x=mm*U/10,cm=mm%10===0,half=mm%5===0;
+  h+=`<i class="tick" style="left:${x}px;height:${th*(cm?.3:half?.22:.13)}px"></i>`;
+  if(cm&&mm>0)h+=`<span class="num${mm%100===0?' ten':''}" style="left:${x}px">${mm/10}</span>`}
+ for(let e=0;e*2.54<=L;e+=1/8){const x=e*2.54*U,whole=e%1===0,half=e%.5===0;
+  h+=`<i class="tick b" style="left:${x}px;height:${th*(whole?.24:half?.16:.09)}px"></i>`;
+  if(whole&&e>0)h+=`<span class="inum" style="left:${x}px">${e}</span>`}
+ strip.style.width=L*U+'px';strip.innerHTML=h}
+const TV=[20,17,15,4,0],tbig=$('tbig'),tLines=[...tape.querySelectorAll('.bt')];
+
+/* ---- B ---- */
+const rows=[...document.querySelectorAll('#book .row')],page=$('page'),bookCta=document.querySelector('#book .under');
+function placeRows(){const cs=getComputedStyle(page),rl=parseFloat(cs.getPropertyValue('--rl'))||page.clientHeight*.095;
+ const top=Math.min(86,innerHeight*.12),rlpx=Math.min(64,innerHeight*.095);
+ rows.forEach((r,i)=>r.style.top=(top+rlpx*(i+1)-rlpx)+'px')}
+
+/* ---- C ---- */
+const pbeats=[...document.querySelectorAll('#photo .beat')],pics=[...document.querySelectorAll('#photo .pics img')];
+
+function tick(){
+ const t=T(),e=ease(t),v=document.body.dataset.v;
+ if(v==='tape'){
+  const k=Math.floor(e),val=k>=N-1?TV[N-1]:lerp(TV[k],TV[k+1],e-k);
+  strip.style.transform=`translate3d(${innerWidth/2-val*U}px,0,0)`;
+  tbig.textContent=Math.round(t)===N-1&&Math.abs(t-(N-1))<.3?'0':Math.round(val);
+  tLines.forEach((el,i)=>el.style.opacity=vis(t,i));
+ }else if(v==='book'){
+  rows.forEach((r,i)=>{const w=clamp((t-(i-.55))/.45);           // write the line left to right
+   r.style.clipPath=`inset(-20px ${100-w*100}% -20px 0)`;r.classList.toggle('past',t>i+.5)});
+  bookCta.style.opacity=sstep(N-1.3,N-1,t);
+ }else{
+  pbeats.forEach((el,i)=>{const o=vis(t,i);el.style.opacity=o;el.style.transform=(innerWidth>700?'translateY(-50%) ':'')+`translateY(${(1-o)*(t<i?16:-16)}px)`});
+  pics.forEach((im,i)=>{const o=1-sstep(.3,.5,Math.abs(t-i));im.style.opacity=o;im.style.transform=`scale(${1.06-.06*clamp(1-Math.abs(t-i))})`});
+ }
+}
+addEventListener('scroll',()=>requestAnimationFrame(tick),{passive:true});
+addEventListener('resize',()=>{buildTape();placeRows();tick()});
+buildTape();placeRows();setV(new URLSearchParams(location.search).get('v')||'tape');
+})();
+</script>
+</body>
+</html>
