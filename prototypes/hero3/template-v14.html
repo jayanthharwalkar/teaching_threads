@@ -1,0 +1,1046 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Hero test: thread and floating tools</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;1,500&family=Jost:wght@300;400;500&display=swap">
+<style>
+:root{--paper:#F3F1EC;--panel:#E7E3D9;--ink:#141414;--body:#3B3935;--muted:#77736B;--line:#D9D5CC;
+ --serif:"Cormorant Garamond",Georgia,serif;--sans:"Jost",system-ui,sans-serif}
+*{box-sizing:border-box;margin:0}
+html,body{background:var(--paper);color:var(--ink);font-family:var(--sans);font-weight:300}
+.hero{position:relative;height:360vh}
+.pin{position:sticky;top:0;height:100vh;height:100svh;overflow:hidden}
+.panel{position:absolute;background-color:var(--panel);
+ background-image:radial-gradient(circle,rgba(20,20,20,.12) 1px,transparent 1.2px);background-size:26px 26px;background-position:center}
+#gl{position:absolute;inset:0;width:100%;height:100%;display:block;opacity:0;transition:opacity .9s}
+#gl.ready{opacity:1}
+nav{position:absolute;left:0;right:0;top:0;display:flex;align-items:center;justify-content:space-between;padding:24px 36px;z-index:3}
+.logo{font-family:var(--serif);font-size:24px;color:var(--ink);text-decoration:none}
+nav .links{display:flex;gap:30px;align-items:center;font-size:14px;font-weight:400}
+nav .links a{color:var(--ink);text-decoration:none}
+.cta{display:inline-block;padding:11px 20px;border:1px solid var(--ink);color:var(--ink);text-decoration:none;font-size:14px;font-weight:400}
+.cta.fill{background:var(--ink);color:var(--paper)}
+.menu{font-size:14px;font-weight:400;color:var(--ink);text-decoration:none;border-bottom:1px solid var(--ink);padding-bottom:2px}
+#thr{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:1}
+.band{position:absolute;z-index:2}
+.band h1{font-family:var(--serif);font-weight:500;font-size:clamp(40px,5vw,76px);line-height:1;letter-spacing:-.01em;white-space:nowrap}
+.band h1 em{font-style:italic}
+.next{position:relative;overflow:hidden}
+.s2{position:relative;height:720vh;background:var(--panel);--fl:50vw;--ft:10vh;--fw:30vw;--fh:63vh}
+.pin2{position:sticky;top:0;height:100vh;height:100svh;overflow:hidden;background-image:radial-gradient(circle,rgba(20,20,20,.12) 1px,transparent 1.2px);background-size:26px 26px;background-position:center}
+.beats{position:absolute;left:10vw;top:16vh;width:30vw;height:56vh}
+.bt{position:absolute;left:0;top:0;opacity:0;will-change:opacity,transform}
+.bt b{display:block;font-variant-numeric:lining-nums tabular-nums;font-feature-settings:'lnum' 1;font-family:var(--serif);font-weight:500;font-size:clamp(110px,13vw,200px);line-height:.85;letter-spacing:-.02em}
+.bt p{font-size:clamp(18px,1.6vw,24px);line-height:1.35;margin-top:14px;color:var(--ink);font-weight:300;max-width:24ch}
+.bt .cta{margin-top:22px}
+#bnum{position:absolute;left:0;top:0;font-variant-numeric:lining-nums tabular-nums;font-feature-settings:'lnum' 1;font-family:var(--serif);font-weight:500;font-size:clamp(110px,13vw,200px);line-height:.85;letter-spacing:-.02em}
+.beats .bt{top:calc(clamp(110px,13vw,200px)*.85)}
+/* the tape: slides so the number sits under the mark */
+.tape2{position:absolute;left:0;right:0;top:84vh;height:var(--th);margin-top:calc(var(--th)/-2)}
+.tape2 .strip{position:absolute;top:0;left:0;height:100%;will-change:transform}
+.tape2 .body{position:absolute;inset:0;background:#F1EDE4;box-shadow:0 1px 0 rgba(0,0,0,.06),0 12px 22px -14px rgba(0,0,0,.4)}
+.tape2 .tick{position:absolute;top:0;width:1px;background:#1b1a18}
+.tape2 .tick.b{top:auto;bottom:0}
+.tape2 .num{position:absolute;top:50%;transform:translate(-50%,-50%);font:500 calc(var(--th)*.3)/1 var(--sans);color:#1b1a18}
+.tape2 .tipm{position:absolute;top:-3px;bottom:-3px;width:calc(var(--u)*.3);background:linear-gradient(90deg,#77736b,#cfcbc2 45%,#8d8a83);border-radius:3px 0 0 3px}
+.mark2{position:absolute;top:calc(84vh - var(--th)*.95);height:calc(var(--th)*1.9);width:2px;margin-left:-1px;background:var(--ink)}
+.mark2:before{content:"";position:absolute;left:-6px;top:-9px;border:7px solid transparent;border-top:9px solid var(--ink)}
+.sample{position:absolute;right:24px;bottom:22px;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
+.side{position:absolute;z-index:2}
+.side h1{font-family:var(--serif);font-weight:500;font-size:clamp(36px,3.9vw,60px);line-height:.98;letter-spacing:-.01em}
+.side h1 em{font-style:italic}
+.side p{font-size:15px;line-height:1.55;color:var(--body);max-width:30ch;margin-bottom:22px}
+.side small{display:block;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:14px}
+.side ul{list-style:none;padding:0;margin:0 0 24px;font-size:14px;line-height:1.9;color:var(--body)}
+.side ul li{border-top:1px solid var(--line);padding:5px 0}
+.hint{display:flex;align-items:center;gap:10px;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
+.hint i{display:block;width:34px;height:1px;background:var(--muted);transform-origin:left;animation:drop 2.2s ease-in-out infinite}
+@keyframes drop{0%{transform:scaleX(0)}50%{transform:scaleX(1)}100%{transform:scaleX(1);opacity:0}}
+.end{position:absolute;left:0;right:0;bottom:11%;text-align:center;opacity:0;z-index:2;padding:0 20px}
+.end small{display:block;font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);margin-bottom:12px}
+.end b{font-family:var(--serif);font-weight:500;font-size:clamp(30px,3.6vw,50px);line-height:1.05}
+.loading{position:absolute;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);transform:translate(-50%,-50%);z-index:2;text-align:center}
+.next{min-height:80vh;display:grid;place-items:center;text-align:center;padding:60px 24px;border-top:1px solid var(--line)}
+.next small{display:block;font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);margin-bottom:14px}
+.next b{font-family:var(--serif);font-weight:500;font-size:36px}
+.switch{position:fixed;left:50%;bottom:14px;transform:translateX(-50%);z-index:20;display:flex;gap:4px;align-items:center;
+ background:rgba(20,20,20,.9);color:#f3f1ec;padding:5px;border-radius:999px;font-size:12px;box-shadow:0 6px 24px rgba(0,0,0,.15)}
+.switch span{padding:0 6px 0 10px;opacity:.6;letter-spacing:.08em;text-transform:uppercase;font-size:10px}
+.switch button{background:none;border:0;color:inherit;font:inherit;padding:7px 12px;border-radius:999px;cursor:pointer;white-space:nowrap}
+.switch button.on{background:#f3f1ec;color:#141414}
+
+/* section heads: a small label that stays, and a big line that greets you on arrival */
+.s2 .eyebrow{position:absolute;left:10vw;top:9vh;font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);z-index:3}
+.s2 h2{position:absolute;left:10vw;top:16vh;max-width:34vw;font-family:var(--serif);font-weight:500;font-size:clamp(48px,5.4vw,84px);line-height:.98;letter-spacing:-.01em;z-index:3;will-change:opacity,transform}
+.s2 h2 em{font-style:italic}
+/* the prints: dealt onto a pile, one per number, each with a caption on its white border */
+.pile{position:absolute;left:var(--fl);top:var(--ft);width:var(--fw);height:var(--fh)}
+.print{position:absolute;inset:0;margin:0;will-change:transform}
+.print .in{position:absolute;inset:0;background:#fbfaf7;padding:11px 11px 54px;border-radius:3px;box-shadow:0 34px 50px -30px rgba(0,0,0,.55),0 2px 6px rgba(0,0,0,.08)}
+.print .ph{position:relative;width:100%;height:100%;overflow:hidden;background:#222}
+.print img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:saturate(.86) contrast(1.05)}
+.print .ph:after{content:"";position:absolute;inset:0;opacity:.16;mix-blend-mode:overlay;pointer-events:none;
+ background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+.print figcaption{position:absolute;left:16px;right:16px;bottom:16px;display:flex;justify-content:space-between;align-items:baseline;gap:12px;font-family:var(--serif);font-style:italic;font-size:18px;color:#2b2927}
+.print figcaption span{font-family:var(--sans);font-style:normal;font-size:10px;letter-spacing:.2em;color:var(--muted)}
+.print.you .in{background:var(--paper);border:1.5px dashed rgba(20,20,20,.3);box-shadow:none;display:grid;place-items:center;text-align:center;font-family:var(--serif);font-size:clamp(28px,2.6vw,40px);line-height:1.1}
+
+/* ================= what you will learn: the five stages (scroll scrubs the clips) ================= */
+#stages{height:calc(var(--units,5) * 90vh + 100vh);background-color:var(--panel);background-image:radial-gradient(circle,rgba(20,20,20,.12) 1px,transparent 1.2px);background-size:26px 26px;font-size:17px;line-height:1.6}
+#stages p{margin:0}
+#stages .spin{position:sticky;top:0;height:100vh;height:100svh;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);overflow:hidden}
+#stages .visual{position:relative;background:#F0EEE9;overflow:hidden;margin:7vh 0 7vh 10vw;border-radius:22px;box-shadow:0 30px 60px -40px rgba(0,0,0,.35)}
+#stages .shot{position:absolute;inset:0;opacity:0;--dir:1}
+#stages .shot.on{opacity:1}
+#stages .shot img{display:block;width:100%;height:100%;object-fit:cover;object-position:center var(--fy,50%);transform:scale(var(--push,1));transform-origin:center var(--fy,50%)}
+#stages .shot.out{animation:whipOut .46s cubic-bezier(.65,0,.35,1) both}
+#stages .shot.in{animation:whipIn .46s cubic-bezier(.65,0,.35,1) both}
+@keyframes whipOut{from{opacity:1;transform:none;filter:blur(0)}to{opacity:0;transform:translateX(calc(var(--dir) * -55%));filter:blur(22px)}}
+@keyframes whipIn{from{opacity:0;transform:translateX(calc(var(--dir) * 55%));filter:blur(22px)}to{opacity:1;transform:none;filter:blur(0)}}
+#stages .shot canvas{position:absolute;inset:0;z-index:1;width:100%;height:100%;display:none}
+#stages .shot.ready canvas{display:block}
+#stages .shot.ready img{visibility:hidden}
+#stages .wtxt{min-width:0;display:flex;flex-direction:column;justify-content:center;gap:40px;padding:48px 10vw 48px clamp(24px,5vw,72px)}
+#stages .eyebrow{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);margin-bottom:14px}
+#stages h2{margin:0;font-family:var(--serif);font-weight:500;font-size:clamp(40px,4vw,62px);line-height:1;text-wrap:balance}
+#stages h2 em{font-style:italic}
+#stages .stack{display:grid}
+#stages .stg{grid-area:1/1;opacity:0;transform:translateY(18px);transition:opacity .45s ease,transform .45s ease;pointer-events:none}
+#stages .stg.on{opacity:1;transform:none;pointer-events:auto}
+#stages .stg .num{font-family:var(--serif);font-weight:500;font-size:clamp(56px,6vw,96px);line-height:.9;font-variant-numeric:lining-nums tabular-nums;color:var(--line)}
+#stages .stg h3{margin:8px 0 12px;font-family:var(--serif);font-weight:500;font-size:clamp(34px,3.4vw,50px);line-height:1}
+#stages .stg p{max-width:26em;color:var(--body);font-size:clamp(17px,1.35vw,20px);line-height:1.45}
+#stages .prog{display:flex;align-items:center;gap:14px;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
+#stages .ticks{display:flex;gap:6px}
+#stages .ticks i{width:28px;height:2px;background:var(--line);transition:background .3s}
+#stages .ticks i.done{background:var(--ink)}
+@media (max-width:900px){
+ #stages .spin{grid-template-columns:1fr;grid-template-rows:minmax(0,60fr) minmax(0,40fr)}
+ #stages .visual{margin:14px 12px 0;border-radius:16px}
+ #stages .wtxt{justify-content:flex-start;gap:12px;padding:18px 22px 16px}
+ #stages h2,#stages .stg .num{display:none}
+ #stages .eyebrow{margin:0}
+ #stages .stg h3{margin:0 0 6px;font-size:30px}
+ #stages .stg p{font-size:16px}
+}
+@media (prefers-reduced-motion:reduce){#stages .shot.out,#stages .shot.in{animation:none}#stages .stg{transition:none;transform:none}}
+
+/* ================= Shruti and her work: an endless wall of her photos, dragged in any direction ================= */
+.works{position:relative;background-color:var(--panel);background-image:radial-gradient(circle,rgba(20,20,20,.12) 1px,transparent 1.2px);background-size:26px 26px}
+.whead{padding:18vh 10vw 7vh}
+.whead .eyebrow{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);margin-bottom:16px}
+.whead h2{font-family:var(--serif);font-weight:500;font-size:clamp(48px,5.4vw,84px);line-height:.98;letter-spacing:-.01em}
+.whead h2 em{font-style:italic}
+.creds{list-style:none;padding:0;margin:34px 0 0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px;max-width:900px;font-size:14px;line-height:1.45;color:var(--body)}
+.creds li{border-top:1px solid rgba(20,20,20,.18);padding-top:12px}
+.creds b{display:block;font-family:var(--serif);font-weight:500;font-size:26px;line-height:1.1;color:var(--ink);margin-bottom:4px}
+.wall{position:relative;height:92vh;height:92svh;overflow:hidden;cursor:grab;touch-action:pan-y;user-select:none;-webkit-user-select:none}
+.wall.drag{cursor:grabbing}
+.plane{position:absolute;inset:0;transform-origin:50% 50%;transition:transform .5s cubic-bezier(.2,.7,.2,1)}
+.wall.drag .plane{transform:scale(.92)}
+.wk{position:absolute;left:0;top:0;will-change:transform;background:#d9d4c8}
+.wk img{display:block;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .5s;-webkit-user-drag:none;pointer-events:none}
+.wk img.in{opacity:1}
+.whint{position:absolute;left:50%;bottom:22px;white-space:nowrap;transform:translateX(-50%);padding:8px 14px;border-radius:999px;background:rgba(20,20,20,.85);color:#f3f1ec;font-size:11px;letter-spacing:.16em;text-transform:uppercase;pointer-events:none;transition:opacity .6s}
+.lb{position:fixed;inset:0;z-index:30;background:rgba(231,227,217,.96);display:grid;grid-template-rows:1fr auto;place-items:center;padding:6vh 6vw 4vh;opacity:0;pointer-events:none;transition:opacity .35s}
+.lb.on{opacity:1;pointer-events:auto}
+.lb img{max-width:100%;max-height:78vh;object-fit:contain;box-shadow:0 30px 60px -30px rgba(0,0,0,.5);transform:scale(.96);transition:transform .45s cubic-bezier(.2,.7,.2,1)}
+.lb.on img{transform:none}
+.lb p{margin-top:18px;font-family:var(--serif);font-style:italic;font-size:22px;text-align:center}
+.lb button{position:absolute;right:22px;top:18px;background:none;border:1px solid var(--ink);padding:9px 16px;font:400 13px var(--sans);cursor:pointer;color:var(--ink)}
+@media (max-width:700px){
+ .whead{padding:12vh 22px 5vh}.whead h2{font-size:46px}
+ .creds{grid-template-columns:1fr;gap:12px;margin-top:24px}.creds li{display:flex;gap:12px;align-items:baseline}.creds b{font-size:21px;flex:0 0 6.6em;margin:0}
+ .wall{height:80vh;height:80svh}
+}
+@media (max-width:700px){
+ nav{padding:16px 20px}
+ nav .links a:not(.cta){display:none}
+ .logo{font-size:21px}
+ .side h1{font-size:34px}
+ .band h1{white-space:normal;font-size:34px}
+ .beats{left:22px;right:22px;width:auto;top:9vh;height:26vh}#bnum{font-size:84px}.beats .bt{top:76px}.bt p{font-size:18px;margin-top:8px}.bt .cta{margin-top:12px}
+ .s2{--fl:12vw;--ft:36vh;--fw:76vw;--fh:38vh}.s2 .eyebrow{top:3.5vh;left:22px}.s2 h2{left:22px;right:22px;top:8vh;font-size:48px;max-width:none}.print figcaption{font-size:14px;bottom:11px;left:12px;right:12px;white-space:nowrap;overflow:hidden}.print .in{padding:8px 8px 40px}
+ .sample{right:auto;left:22px;top:auto;bottom:64px}
+ .beats{top:9vh}nav .cta{padding:9px 13px;font-size:13px}
+}
+@media (prefers-reduced-motion:reduce){.hint i{animation:none}}
+
+/* ================= shared: section heads, reveal on scroll, "to confirm" tags ================= */
+.sec{position:relative;background-color:var(--panel);background-image:radial-gradient(circle,rgba(20,20,20,.12) 1px,transparent 1.2px);background-size:26px 26px;padding:18vh 10vw 16vh}
+.sec .eyebrow,.whead .eyebrow{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);margin-bottom:16px}
+.sec h2{font-family:var(--serif);font-weight:500;font-size:clamp(48px,5.4vw,84px);line-height:.98;letter-spacing:-.01em;max-width:20ch}
+.sec h2 em{font-style:italic}
+.rv{opacity:0;transform:translateY(26px);transition:opacity .8s ease,transform .8s cubic-bezier(.2,.7,.2,1);transition-delay:var(--d,0s)}
+.rv.in{opacity:1;transform:none}
+.tbc{display:inline-block;vertical-align:middle;margin-left:8px;padding:2px 7px;border:1px dashed rgba(20,20,20,.35);border-radius:999px;font:400 9.5px/1.4 var(--sans);letter-spacing:.14em;text-transform:uppercase;color:var(--muted);white-space:nowrap}
+
+/* ================= 3 months or 6 months ================= */
+.plans{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:28px;margin-top:56px;max-width:1150px}
+.plan{position:relative;background:#F3F1EC;border-radius:22px;padding:40px 40px 36px;box-shadow:0 30px 60px -44px rgba(0,0,0,.4);display:flex;flex-direction:column}
+.plan.six{background:var(--ink);color:#F3F1EC}
+.plan .len{font-family:var(--serif);font-weight:500;font-size:clamp(84px,8vw,128px);line-height:.8;font-variant-numeric:lining-nums;font-feature-settings:'lnum' 1}
+.plan .len small{font-size:.3em;margin-left:10px;font-style:italic}
+.plan .for{margin:22px 0 26px;font-family:var(--serif);font-size:clamp(22px,1.9vw,28px);line-height:1.2;max-width:20ch}
+.plan h4{font:400 11px var(--sans);letter-spacing:.2em;text-transform:uppercase;opacity:.6;margin-bottom:10px}
+.plan ul{list-style:none;padding:0;margin:0 0 30px;font-size:15px;line-height:1.5}
+.plan li{padding:9px 0 9px 26px;border-top:1px solid rgba(20,20,20,.12);position:relative}
+.plan.six li{border-color:rgba(243,241,236,.16)}
+.plan li:before{content:"";position:absolute;left:2px;top:17px;width:12px;border-top:1.5px dashed currentColor;opacity:.7}   /* a stitch */
+.plan .cta{margin-top:auto;align-self:flex-start}
+.plan.six .cta{background:#F3F1EC;color:var(--ink);border-color:#F3F1EC}
+.plan .meta{margin-top:16px;font-size:12px;opacity:.6}
+
+/* ================= is this for you ================= */
+.fors{list-style:none;padding:0;margin:56px 0 0;max-width:1000px}
+.fors li{display:grid;grid-template-columns:90px 1fr;align-items:baseline;gap:12px;padding:22px 0;border-top:1px solid rgba(20,20,20,.16);font-family:var(--serif);font-size:clamp(26px,2.6vw,40px);line-height:1.15}
+.fors li span{font:400 11px var(--sans);letter-spacing:.2em;color:var(--muted)}
+.stand{margin-top:90px}
+.stand>p{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);margin-bottom:22px}
+.stand ul{list-style:none;padding:0;margin:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:28px;max-width:1150px}
+.stand li{background:#F3F1EC;border-radius:18px;padding:28px 26px}
+.stand b{display:block;font-family:var(--serif);font-weight:500;font-size:26px;line-height:1.1;margin-bottom:10px}
+.stand li p{font-size:15px;line-height:1.5;color:var(--body)}
+
+/* ================= Shruti: her story and a journey along a thread ================= */
+.whead .intro{margin-top:26px;max-width:46ch;font-size:clamp(17px,1.4vw,20px);line-height:1.55;color:var(--body)}
+.journey{position:relative;margin-top:70px;max-width:1240px}
+.journey svg{position:absolute;left:0;top:0;width:100%;height:60px;overflow:visible;pointer-events:none}
+.journey ol{list-style:none;padding:0;margin:0;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:22px;position:relative}
+.journey li{padding-top:64px;position:relative}
+.journey li:before{content:"";position:absolute;left:0;top:23px;width:11px;height:11px;border-radius:50%;background:var(--panel);border:1.5px solid var(--ink)}
+.journey .yr{font-family:var(--serif);font-weight:500;font-size:34px;line-height:1;font-variant-numeric:lining-nums;font-feature-settings:'lnum' 1}
+.journey li p{margin-top:8px;font-size:15px;line-height:1.45;color:var(--body);max-width:22ch}
+.journey li.prize .yr{font-style:italic}
+
+/* ================= visit + close + footer ================= */
+.visit-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:48px;margin-top:56px;max-width:1240px;align-items:stretch}
+.vinfo{display:grid;gap:0;align-content:start}
+.vinfo div{padding:20px 0;border-top:1px solid rgba(20,20,20,.16)}
+.vinfo small{display:block;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.vinfo b{font-family:var(--serif);font-weight:500;font-size:28px;line-height:1.15}
+.vinfo a{color:inherit}
+.vmap{position:relative;min-height:420px;border-radius:22px;overflow:hidden;background:#EFEBE3;box-shadow:0 30px 60px -44px rgba(0,0,0,.4)}
+.vmap svg{position:absolute;inset:0;width:100%;height:100%}
+.vmap .pin-dot{position:absolute;left:54%;top:46%;transform:translate(-50%,-100%);text-align:center}
+.vmap .pin-dot i{display:block;width:18px;height:18px;margin:0 auto 6px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);background:var(--ink)}
+.vmap .pin-dot span{display:inline-block;background:var(--ink);color:#F3F1EC;font-size:12px;padding:6px 10px;border-radius:6px;white-space:nowrap}
+.vmap .open{position:absolute;left:20px;bottom:20px}
+.closing{background:var(--ink);color:#F3F1EC;text-align:center;padding:20vh 8vw}
+.closing h2{font-family:var(--serif);font-weight:500;font-size:clamp(48px,6vw,96px);line-height:.98;max-width:14ch;margin:0 auto}
+.closing h2 em{font-style:italic}
+.closing p{margin:22px auto 34px;max-width:40ch;font-size:17px;line-height:1.55;opacity:.75}
+.closing .cta{background:#F3F1EC;color:var(--ink);border-color:#F3F1EC;padding:15px 26px;font-size:15px}
+.foot{background:var(--ink);color:rgba(243,241,236,.6);display:flex;flex-wrap:wrap;gap:12px 28px;justify-content:space-between;padding:26px 10vw 80px;border-top:1px solid rgba(243,241,236,.12);font-size:13px}
+.foot a{color:inherit}
+@media (max-width:900px){
+ .sec{padding:12vh 22px 12vh}.sec h2{font-size:46px}
+ .plans{grid-template-columns:1fr;gap:18px;margin-top:36px}.plan{padding:30px 24px 28px}
+ .fors{margin-top:34px}.fors li{grid-template-columns:44px 1fr;font-size:24px;padding:16px 0}
+ .stand{margin-top:56px}.stand ul{grid-template-columns:1fr;gap:14px}
+ .journey{margin-top:44px}.journey svg{display:none}
+ .journey ol{grid-template-columns:1fr;gap:0;border-left:1.5px solid var(--ink);margin-left:5px}
+ .journey li{padding:0 0 26px 26px}.journey li:before{left:-7px;top:6px}.journey .yr{font-size:28px}
+ .visit-grid{grid-template-columns:1fr;gap:26px;margin-top:34px}.vmap{min-height:300px}
+ .closing{padding:14vh 22px}.closing h2{font-size:48px}
+ .foot{padding:22px 22px 80px}
+}
+@media (prefers-reduced-motion:reduce){.rv{opacity:1;transform:none;transition:none}}
+
+/* ================= the game: thread the needle ================= */
+.game{padding-bottom:12vh}
+.game .sub{margin-top:18px;max-width:44ch;font-size:clamp(17px,1.4vw,20px);line-height:1.5;color:var(--body)}
+.gbox{position:relative;margin-top:44px;height:min(64vh,620px);border-radius:22px;background:#F3F1EC;box-shadow:0 30px 60px -44px rgba(0,0,0,.4);overflow:hidden;touch-action:none;cursor:none}
+.gbox canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.ghud{position:absolute;left:22px;top:18px;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);pointer-events:none}
+.ghint{position:absolute;left:50%;bottom:22px;transform:translateX(-50%);padding:8px 14px;border-radius:999px;background:rgba(20,20,20,.85);color:#f3f1ec;font-size:11px;letter-spacing:.16em;text-transform:uppercase;pointer-events:none;white-space:nowrap;transition:opacity .5s}
+.gwin{position:absolute;right:22px;top:16px;display:flex;gap:10px;opacity:0;pointer-events:none;transition:opacity .5s}
+.gwin.on{opacity:1;pointer-events:auto}
+.gwin button{background:none;border:1px solid var(--ink);padding:9px 16px;font:400 13px var(--sans);cursor:pointer;color:var(--ink)}
+.game .won{display:none;margin-top:22px}
+.game.done .won{display:inline-block}
+@media (max-width:900px){.gbox{height:58vh;margin-top:30px}}
+</style>
+</head>
+<body>
+<section class="hero" id="hero">
+ <div class="pin" id="pin">
+  <div class="panel" id="panel"></div>
+  <canvas id="gl"></canvas>
+  <div class="loading" id="loading">Loading the dress form…</div>
+  <canvas id="thr"></canvas>
+  <nav><a class="logo" href="#">Teaching Threads</a><a class="cta fill" href="https://wa.me/919353562706" target="_blank" rel="noopener">Connect on WhatsApp</a></nav>
+  <div class="band" id="band"><h1>Learn to <em>make</em> your own clothes.</h1></div>
+  <div class="end" id="end"><b>Every garment starts with a measurement.</b></div>
+ </div>
+</section>
+<section class="s2" id="s2" aria-label="Our students"><div class="pin2">
+ <p class="eyebrow">Our students</p>
+ <h2 id="s2h">They started <em>where you are.</em></h2>
+ <div class="beats"><div id="bnum">20</div>
+  <div class="bt"><p>students have learned with Shruti.</p></div>
+  <div class="bt"><p>had never touched a sewing machine.</p></div>
+  <div class="bt"><p>now run their own boutique.</p></div>
+  <div class="bt"><p>work in fashion jobs.</p></div>
+  <div class="bt"><p>Everyone started at zero. The next one is you.</p><a class="cta fill" href="https://wa.me/919353562706" target="_blank" rel="noopener">Connect on WhatsApp</a></div>
+ </div>
+ <div class="pile" id="pile">
+  <figure class="print"><div class="in"><div class="ph"><img loading="lazy" decoding="async" src="work/p5.jpg" alt="Shruti Mahajan with a model wearing her design" style="object-position:center 82%"></div><figcaption>Shruti with her design, Kerala Fashion League<span>01</span></figcaption></div></figure>
+  <figure class="print"><div class="in"><div class="ph"><img loading="lazy" decoding="async" src="work/p2.jpg" alt="A designer walks the runway beside a model"></div><figcaption>On the runway, 2016<span>02</span></figcaption></div></figure>
+  <figure class="print"><div class="in"><div class="ph"><img loading="lazy" decoding="async" src="work/p3.jpg" alt="A model in a printed blue gown"></div><figcaption>Printed silk gown, 2016<span>03</span></figcaption></div></figure>
+  <figure class="print"><div class="in"><div class="ph"><img loading="lazy" decoding="async" src="work/p4.jpg" alt="A model in an embellished floral lehenga"></div><figcaption>Kerala Fashion League, 2017<span>04</span></figcaption></div></figure>
+  <figure class="print you"><div class="in"><span>Your work,<br><em>next.</em></span></div></figure>
+ </div>
+ <div class="tape2" id="tape2"><div class="strip" id="strip2"></div></div><div class="mark2" id="mark2"></div>
+ <span class="sample">Sample numbers · placeholder photos</span>
+</div></section>
+
+<section class="stages" id="stages" aria-label="The course in five stages">
+  <div class="spin">
+    <div class="visual">
+    <div class="shot on" style="--fy:62%" data-fy="0.62" data-stage="0" data-seq="assets/week-1/f" data-count="61"><canvas aria-hidden="true"></canvas><img loading="lazy" decoding="async" src="assets/week-1-measure.webp" alt="Seen through the student's eyes: clay-white hands holding a measuring tape around the bust of a dress form" width="1024" height="1536"></div>
+    <div class="shot tr" style="--fy:62%" data-fy="0.62" data-fy-end="0.55" data-stage="1" data-span="0.25" data-seq="assets/trans-1-2/f" data-count="31"><canvas aria-hidden="true"></canvas><img loading="lazy" decoding="async" src="assets/trans-1-2/f001.webp" alt="" width="720" height="1080"></div>
+    <div class="shot" style="--fy:55%" data-fy="0.55" data-fy-end="0.75" data-stage="1" data-seq="assets/stage-2/f" data-count="61"><canvas aria-hidden="true"></canvas><img loading="lazy" decoding="async" src="assets/stage-2/f001.webp" alt="Looking down at pattern paper: one hand holds a ruler flat while the other draws a bodice block line in black pencil" width="720" height="1080"></div>
+    <div class="shot tr" style="--fy:75%" data-fy="0.75" data-fy-end="0.72" data-stage="2" data-span="0.25" data-seq="assets/trans-2-3/f" data-count="31"><canvas aria-hidden="true"></canvas><img loading="lazy" decoding="async" src="assets/trans-2-3/f001.webp" alt="" width="720" height="1080"></div>
+    <div class="shot" style="--fy:72%" data-fy="0.72" data-stage="2" data-seq="assets/week-2/f" data-count="61"><canvas aria-hidden="true"></canvas><img loading="lazy" decoding="async" src="assets/week-2-machine.webp" alt="Seated at an industrial sewing machine: clay-white hands guide fabric under the needle along a black stitch line" width="1024" height="1536"></div>
+    <div class="shot tr" style="--fy:72%" data-fy="0.72" data-fy-end="0.48" data-stage="3" data-span="0.25" data-seq="assets/trans-3-4/f" data-count="31"><canvas aria-hidden="true"></canvas><img loading="lazy" decoding="async" src="assets/trans-3-4/f001.webp" alt="" width="720" height="1080"></div>
+    <div class="shot" style="--fy:48%" data-fy="0.48" data-stage="3" data-seq="assets/stage-4/f" data-count="61"><canvas aria-hidden="true"></canvas><img loading="lazy" decoding="async" src="assets/stage-4/f001.webp" alt="A finished blouse on the dress form: clay-white hands fasten the top black hook at the neckline" width="720" height="1080"></div>
+    <div class="shot tr" style="--fy:48%" data-fy="0.48" data-fy-end="0.5" data-stage="4" data-span="0.25" data-seq="assets/trans-4-5/f" data-count="31"><canvas aria-hidden="true"></canvas><img loading="lazy" decoding="async" src="assets/trans-4-5/f001.webp" alt="" width="720" height="1080"></div>
+    <div class="shot" style="--fy:50%" data-fy="0.5" data-fy-end="0.45" data-stage="4" data-seq="assets/stage-5/f" data-count="61"><canvas aria-hidden="true"></canvas><img loading="lazy" decoding="async" src="assets/stage-5/f001.webp" alt="A pleated lehenga under the blouse: clay-white hands tie its black drawstring into a bow, two black tassels hanging" width="720" height="1080"></div>
+    </div>
+    <div class="wtxt">
+      <div><p class="eyebrow">What you will learn</p><h2>From your first measurement <em>to your own lehenga.</em></h2></div>
+      <div class="stack" aria-live="polite">
+        <article class="stg on"><div class="num">01</div><h3>Measure</h3><p>Where the tape goes, how snug to pull it, and what each number means.</p></article>
+        <article class="stg"><div class="num">02</div><h3>Draft the pattern</h3><p>Your numbers become a paper pattern, drawn with a ruler and pencil.</p></article>
+        <article class="stg"><div class="num">03</div><h3>Stitch</h3><p>Hours on an industrial machine, until your seams run straight on their own.</p></article>
+        <article class="stg"><div class="num">04</div><h3>Your first blouse</h3><p>A fitted blouse, darted, piped and closed with hooks you set yourself.</p></article>
+        <article class="stg"><div class="num">05</div><h3>Lehenga</h3><p>A flared lehenga, gathered at the waist and tied with a dori and tassels.</p></article>
+      </div>
+      <div class="prog"><div class="ticks" id="ticks"><i class="done"></i><i></i><i></i><i></i><i></i></div><span id="stLabel">Stage 01 of 05</span></div>
+    </div>
+  </div>
+</section>
+<section class="sec" id="courses" aria-label="Courses">
+ <p class="eyebrow">Courses</p>
+ <h2 class="rv">3 months <em>or</em> 6 months.</h2>
+ <div class="plans">
+  <article class="plan rv">
+   <div class="len">3<small>months</small></div>
+   <p class="for">Stitch for yourself and your family.</p>
+   <h4>What you'll make</h4>
+   <ul>
+    <li>Measuring, drafting and machine practice</li>
+    <li>Straight and A-line kurtas, 3 sleeve styles</li>
+    <li>7 blouse styles, from one-dart to princess cut</li>
+    <li>Panel, umbrella and pleated lehengas, 2 gowns</li>
+    <li>Finishing, design basics and branding</li>
+   </ul>
+   <a class="cta fill" href="https://wa.me/919353562706?text=Hi%2C%20I%27d%20like%20to%20know%20about%20the%203-month%20course" target="_blank" rel="noopener">Ask about 3 months</a>
+   <p class="meta">Next batch, timings <span class="tbc">to confirm</span></p>
+  </article>
+  <article class="plan six rv" style="--d:.12s">
+   <div class="len">6<small>months</small></div>
+   <p class="for">Go further, and get ready to open your own boutique.</p>
+   <h4>Everything in 3 months, plus</h4>
+   <ul>
+    <li>Placket kurta and designer tunic, 3 more sleeves</li>
+    <li>Katori and shirt-collar blouses, and a cape</li>
+    <li>Fishcut lehenga and knot skirt</li>
+    <li>Aari work: pearls, beads, zardozi and thread</li>
+    <li>Fabrics, a local market visit and boutique management</li>
+   </ul>
+   <a class="cta fill" href="https://wa.me/919353562706?text=Hi%2C%20I%27d%20like%20to%20know%20about%20the%206-month%20course" target="_blank" rel="noopener">Ask about 6 months</a>
+   <p class="meta">Next batch, timings <span class="tbc" style="border-color:rgba(243,241,236,.4);color:rgba(243,241,236,.7)">to confirm</span></p>
+  </article>
+ </div>
+</section>
+
+<section class="sec" id="for" aria-label="Who it is for">
+ <p class="eyebrow">Who it's for</p>
+ <h2 class="rv">You don't need to know <em>anything yet.</em></h2>
+ <ul class="fors">
+  <li class="rv"><span>01</span>You have never touched a sewing machine.</li>
+  <li class="rv"><span>02</span>You want to stitch your own blouses and lehengas.</li>
+  <li class="rv"><span>03</span>You want to open a boutique, or work in fashion.</li>
+  <li class="rv"><span>04</span>You want a skill you can earn from, at home.</li>
+ </ul>
+ <div class="stand">
+  <p>What we stand for</p>
+  <ul>
+   <li class="rv"><b>Real machines, from day one.</b><p>You learn on industrial sewing machines, the kind boutiques use.</p></li>
+   <li class="rv" style="--d:.1s"><b>Small batches.</b><p>So Shruti sees every stitch you make. <span class="tbc">to confirm</span></p></li>
+   <li class="rv" style="--d:.2s"><b>Taught by a working designer.</b><p>Everything you learn comes from her own boutique and runway work.</p></li>
+  </ul>
+ </div>
+</section>
+
+<section class="works" id="works" aria-label="Shruti and her work">
+ <div class="whead"><p class="eyebrow">Shruti and her work</p><h2 class="rv">Learn from a designer, <em>not just a teacher.</em></h2>
+  <p class="intro rv">Shruti Mahajan is a registered fashion designer from Hubballi. She has run her own boutique for over twelve years and taken her collections to the runway. <span class="tbc">her story to confirm</span></p>
+  <div class="journey" id="journey">
+   <svg viewBox="0 0 1000 60" preserveAspectRatio="none" aria-hidden="true"><path id="jthread" d="M-80,40 C60,10 120,40 200,29 S330,8 400,29 S530,48 600,29 S730,8 800,29 S930,46 1080,22" fill="none" stroke="#141414" stroke-width="1.6" stroke-linecap="round" vector-effect="non-scaling-stroke"/></svg>
+   <ol>
+    <li class="rv"><div class="yr">20XX</div><p>Studies fashion design. <span class="tbc">to confirm</span></p></li>
+    <li class="rv" style="--d:.08s"><div class="yr">2013</div><p>Opens her boutique in Hubli-Dharwad. <span class="tbc">year</span></p></li>
+    <li class="rv" style="--d:.16s"><div class="yr">2016</div><p>Shows her Forest Fury collection at Kerala Fashion League.</p></li>
+    <li class="rv prize" style="--d:.24s"><div class="yr">Award</div><p>Times of India names her the youngest female entrepreneur. <span class="tbc">year</span></p></li>
+    <li class="rv" style="--d:.32s"><div class="yr">Today</div><p>Teaches what she knows at Teaching Threads.</p></li>
+   </ol>
+  </div></div>
+ <div class="wall" id="wall"><div class="plane" id="plane"></div><span class="whint" id="whint">Drag to look around · tap a photo</span></div>
+</section>
+<div class="lb" id="lb" role="dialog" aria-modal="true" aria-label="Photo"><img alt=""><p></p><button type="button">Close</button></div>
+<section class="sec" id="visit" aria-label="Visit the studio">
+ <p class="eyebrow">Visit the studio</p>
+ <h2 class="rv">Come and see <em>the machines.</em></h2>
+ <div class="visit-grid">
+  <div class="vinfo">
+   <div class="rv"><small>Address</small><b>Teaching Threads, Hubballi, Karnataka</b> <span class="tbc">full address</span></div>
+   <div class="rv"><small>Open</small><b>Mon to Sat, 10am to 6pm</b> <span class="tbc">to confirm</span></div>
+   <div class="rv"><small>Call or WhatsApp</small><b><a href="tel:+919353562706">93535 62706</a></b></div>
+   <div class="rv"><small>Google reviews</small><b>4.9 stars from 130+ ratings</b></div>
+  </div>
+  <div class="vmap rv" style="--d:.1s">
+   <svg viewBox="0 0 600 420" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <g fill="none" stroke="#D9D3C6" stroke-width="16" stroke-linecap="round"><path d="M-20,300 C120,270 220,320 360,250 S560,180 640,200"/><path d="M180,-20 C200,120 260,220 300,440"/></g>
+    <g fill="none" stroke="#E2DDD1" stroke-width="7"><path d="M-20,120 L640,90"/><path d="M60,-20 L120,440"/><path d="M420,-20 L470,440"/><path d="M-20,380 L640,350"/><path d="M520,-20 C500,140 560,260 540,440"/></g>
+   </svg>
+   <div class="pin-dot"><i></i><span>Teaching Threads</span></div>
+   <a class="cta fill open" href="https://www.google.com/maps/search/Teaching+Threads+Hubballi" target="_blank" rel="noopener">Open in Google Maps</a>
+  </div>
+ </div>
+</section>
+<section class="sec game" id="game" aria-label="A small game">
+ <p class="eyebrow">Before you go</p>
+ <h2 class="rv" id="gh">Can you thread <em>the needle?</em></h2>
+ <p class="sub rv" id="gsub">Guide the thread through the eye. It's the first thing every tailor learns.</p>
+ <a class="cta fill won" href="https://wa.me/919353562706?text=Hi%2C%20I%20just%20threaded%20the%20needle%20on%20your%20website%20%F0%9F%A7%B5" target="_blank" rel="noopener">Book your first class on WhatsApp</a>
+ <div class="gbox" id="gbox"><canvas id="gcv" aria-label="Thread the needle game: move the thread through the needle's eye"></canvas>
+  <span class="ghud" id="ghud">Tries: 0</span><span class="ghint" id="ghint">Drag the thread to the needle</span>
+  <div class="gwin" id="gwin"><button type="button" id="gagain">Play again</button></div></div>
+</section>
+<section class="closing" aria-label="Get in touch">
+ <h2 class="rv">Your first measurement is <em>one message away.</em></h2>
+ <p class="rv">Tell us which course you're thinking about. Shruti or the team will reply on WhatsApp.</p>
+ <a class="cta fill rv" href="https://wa.me/919353562706" target="_blank" rel="noopener">Connect on WhatsApp</a>
+</section>
+<footer class="foot"><span>Teaching Threads Fashion Academy · Hubballi, Karnataka</span><span><a href="tel:+919353562706">93535 62706</a> · Instagram <span class="tbc" style="border-color:rgba(243,241,236,.3);color:rgba(243,241,236,.6)">link</span></span><span>© 2026</span></footer>
+
+<div class="switch"><span>Tape</span><button data-tape="paper">White</button><button data-tape="ink">Black</button></div>
+
+<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/loaders/GLTFLoader.js"></script>
+<script>
+/* load one of the page's own data files: each is a script that calls window.__got(name, data) */
+window.__wait={};window.__got=(k,v)=>{const w=__wait[k];if(w){delete __wait[k];w[0](v)}};
+window.loadData=(k,url)=>new Promise((ok,no)=>{__wait[k]=[ok,no];const sc=document.createElement('script');sc.src=url;sc.async=true;
+ sc.onerror=()=>{delete __wait[k];no(new Error('could not load '+url))};document.head.appendChild(sc)});
+</script>
+<script>
+(()=>{
+const $=id=>document.getElementById(id);
+const pin=$('pin'),cv=$('gl'),panel=$('panel'),band=$('band'),end=$('end');
+const RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const clamp=(x,a=0,b=1)=>Math.min(b,Math.max(a,x)),lerp=(a,b,t)=>a+(b-a)*t,sstep=(a,b,x)=>{const t=clamp((x-a)/(b-a));return t*t*(3-2*t)};
+const V=(x,y,z)=>new THREE.Vector3(x,y,z);
+
+/* ---------- renderer ---------- */
+const R=new THREE.WebGLRenderer({canvas:cv,antialias:true,alpha:true});R.setPixelRatio(Math.min(devicePixelRatio,2));R.outputEncoding=THREE.sRGBEncoding;
+const S=new THREE.Scene(),C=new THREE.PerspectiveCamera(24,1,.1,60);
+S.add(new THREE.HemisphereLight(0xffffff,0xa9a294,.62));
+const key=new THREE.DirectionalLight(0xffffff,.62);key.position.set(-3,3,4);S.add(key);
+const rim=new THREE.DirectionalLight(0xffffff,.28);rim.position.set(4,1,-3);S.add(rim);
+const clay=new THREE.MeshStandardMaterial({color:0xece7dd,roughness:.88,metalness:0});
+function canvasTex(w,h,draw){const c=document.createElement('canvas');c.width=w;c.height=h;draw(c.getContext('2d'),w,h);
+ const t=new THREE.CanvasTexture(c);t.encoding=THREE.sRGBEncoding;t.anisotropy=R.capabilities.getMaxAnisotropy();t.wrapS=t.wrapT=THREE.RepeatWrapping;return t}
+const woundTex=canvasTex(512,256,(x,w,h)=>{x.fillStyle='#8a8a8a';x.fillRect(0,0,w,h);
+ for(let i=0;i<h;i+=3){x.fillStyle='rgba(0,0,0,.18)';x.fillRect(0,i,w,1)}
+ x.lineWidth=2;for(let k=-h;k<w;k+=46){x.strokeStyle='rgba(255,255,255,.28)';x.beginPath();x.moveTo(k,0);x.lineTo(k+h*.7,h);x.stroke();
+  x.strokeStyle='rgba(0,0,0,.22)';x.beginPath();x.moveTo(k+23,h);x.lineTo(k+23+h*.7,0);x.stroke()}
+ x.fillStyle='rgba(255,255,255,.35)';x.fillRect(w*.62,0,5,h)});
+const spoolMat=new THREE.MeshStandardMaterial({color:0x5c5853,roughness:.75,map:woundTex});
+
+/* ---------- measuring tape: 50 cm of print, cm numbers, mm ticks on both edges ---------- */
+const CM=50,TPX=4096;
+function tapePrint(bg,fg){return canvasTex(TPX,128,(x,w,h)=>{x.fillStyle=bg;x.fillRect(0,0,w,h);x.fillStyle=fg;const pc=w/CM;
+ for(let mm=0;mm<CM*10;mm++){const X=mm*pc/10,l=mm%10===0?34:mm%5===0?24:14,lw=mm%10===0?3:2;x.fillRect(X,0,lw,l);x.fillRect(X,h-l,lw,l)}
+ x.font='500 40px Jost, system-ui, sans-serif';x.textAlign='center';x.textBaseline='middle';
+ for(let c=1;c<=CM;c++)x.fillText(String(c),c*pc-pc/2,h/2+2)})}
+const TAPES={paper:{tex:tapePrint('#F1EDE4','#1b1a18'),edge:0xe2ddd2},ink:{tex:tapePrint('#1a1918','#EFEBE2'),edge:0x1a1918}};
+const tapeFace=new THREE.MeshStandardMaterial({roughness:.62,side:THREE.DoubleSide});
+const tapeEdge=new THREE.MeshStandardMaterial({roughness:.7,side:THREE.DoubleSide});
+const rollSide=new THREE.MeshStandardMaterial({roughness:.66});
+function setTape(n){const t=TAPES[n];tapeFace.map=t.tex;tapeEdge.color.setHex(t.edge);
+ const rt=t.tex.clone();rt.needsUpdate=true;rt.repeat.set(.45,1);rollSide.map=rt;rollSide.userData.tex=rt;
+ tapeFace.needsUpdate=rollSide.needsUpdate=true;document.querySelectorAll('[data-tape]').forEach(b=>b.classList.toggle('on',b.dataset.tape===n))}
+document.querySelectorAll('[data-tape]').forEach(b=>b.onclick=()=>setTape(b.dataset.tape));
+
+/* ---------- tools (clay, built in code) ---------- */
+const tools=[];
+function addTool(obj,pos,rot,o={}){obj.position.copy(pos);obj.rotation.set(rot[0],rot[1],rot[2]);S.add(obj);
+ tools.push(Object.assign({obj,base:pos.clone(),rot0:obj.rotation.clone(),spin:o.spin||[.2,.3,.1],bob:o.bob??.05,ph:Math.random()*6.28,anim:o.anim},o));return obj}
+const ext=(shape,depth,bev=.012)=>{const g=new THREE.ExtrudeGeometry(shape,{depth,bevelEnabled:true,bevelThickness:bev,bevelSize:bev,bevelSegments:3,curveSegments:28});g.center();return g};
+function kainchi(){const g=new THREE.Group(),halves=[];
+ for(const side of [1,-1]){const h=new THREE.Group();
+  const b=new THREE.Shape();b.moveTo(-.06,.035*side);b.quadraticCurveTo(.5,.05*side,1.02,.004*side);b.lineTo(1.02,-.006*side);b.quadraticCurveTo(.5,-.012*side,-.06,-.03*side);b.closePath();
+  const blade=new THREE.Mesh(ext(b,.022,.008),clay);blade.geometry.translate(.48,0,0);h.add(blade);
+  const big=side>0,rx=big?.2:.15,ry=big?.11:.095,cx=-.36,cy=-.07*side;
+  const loop=new THREE.Shape();loop.absellipse(cx,cy,rx,ry,0,Math.PI*2);const hole=new THREE.Path();hole.absellipse(cx,cy,rx-.045,ry-.04,0,Math.PI*2,true);loop.holes.push(hole);
+  const lg=new THREE.ExtrudeGeometry(loop,{depth:.03,bevelEnabled:true,bevelThickness:.012,bevelSize:.012,bevelSegments:3,curveSegments:40});lg.translate(0,0,-.015);h.add(new THREE.Mesh(lg,clay));
+  const neck=new THREE.Shape();neck.moveTo(-.2,-.0*side);neck.lineTo(-.02,.025*side);neck.lineTo(-.02,-.03*side);neck.lineTo(-.2,-.06*side);neck.closePath();
+  const ng=new THREE.ExtrudeGeometry(neck,{depth:.03,bevelEnabled:true,bevelThickness:.01,bevelSize:.01,bevelSegments:2});ng.translate(0,0,-.015);h.add(new THREE.Mesh(ng,clay));
+  h.position.z=side*.02;g.add(h);halves.push([h,side])}
+ const screw=new THREE.Mesh(new THREE.CylinderGeometry(.035,.035,.09,24),clay);screw.rotation.x=Math.PI/2;g.add(screw);
+ g.userData.open=a=>halves.forEach(([h,s])=>h.rotation.z=s*a);g.userData.open(.15);g.scale.setScalar(.95);return g}
+
+// measuring tape roll with a loose tail
+function spool(){const g=new THREE.Group();
+ const fl=new THREE.LatheGeometry([[0,0],[.15,0],[.165,.012],[.165,.03],[.15,.04],[.06,.04],[0,.04]].map(p=>new THREE.Vector2(p[0],p[1])),48);
+ const top=new THREE.Mesh(fl,clay);top.position.y=.15;g.add(top);const bot=new THREE.Mesh(fl,clay);bot.rotation.x=Math.PI;bot.position.y=-.15;g.add(bot);
+ const body=new THREE.Mesh(new THREE.CylinderGeometry(.13,.13,.3,48,1,true),spoolMat);g.add(body);
+ const dark=new THREE.MeshStandardMaterial({color:0x9e978a,roughness:1});
+ const hole=new THREE.Mesh(new THREE.CylinderGeometry(.03,.03,.39,16),dark);g.add(hole);
+ for(let i=0;i<3;i++){const a=i/3*Math.PI*2,hh=new THREE.Mesh(new THREE.CylinderGeometry(.016,.016,.006,16),new THREE.MeshStandardMaterial({color:0x6f695f,roughness:1}));
+  hh.position.set(Math.sin(a)*.1,.192,Math.cos(a)*.1);g.add(hh)}
+ return g}
+
+function thimble(){const p=[];for(let i=0;i<=20;i++){const t=i/20;p.push(new THREE.Vector2(.085-.012*t,t*.15))}
+ for(let i=1;i<=10;i++){const a=i/10*Math.PI/2;p.push(new THREE.Vector2(Math.cos(a)*.073,.15+Math.sin(a)*.05))}
+ const g=new THREE.Group();g.add(new THREE.Mesh(new THREE.LatheGeometry(p,48),clay));
+ const rimg=new THREE.Mesh(new THREE.TorusGeometry(.087,.01,8,48),clay);rimg.rotation.x=Math.PI/2;g.add(rimg);
+ for(let r=0;r<4;r++){const ring=new THREE.Mesh(new THREE.TorusGeometry(.083-.003*r,.003,6,48),clay);ring.rotation.x=Math.PI/2;ring.position.y=.04+r*.03;g.add(ring)}
+ return g}
+
+function pinT(len=.24){const g=new THREE.Group();const s=new THREE.Mesh(new THREE.CylinderGeometry(.0055,.002,len,8),clay);s.position.y=-len/2;g.add(s);
+ g.add(new THREE.Mesh(new THREE.SphereGeometry(.026,20,14),clay));return g}
+
+// tomato pincushion with pins
+function cushion(){const g=new THREE.Group();const geo=new THREE.SphereGeometry(.19,48,32),v=geo.attributes.position,q=new THREE.Vector3();
+ for(let i=0;i<v.count;i++){q.fromBufferAttribute(v,i);const az=Math.atan2(q.x,q.z),k=1-.07*Math.pow(Math.abs(Math.cos(az*4)),.5);q.x*=k;q.z*=k;q.y*=.72;v.setXYZ(i,q.x,q.y,q.z)}
+ geo.computeVertexNormals();g.add(new THREE.Mesh(geo,clay));
+ const cap=new THREE.Mesh(new THREE.ConeGeometry(.05,.04,6),clay);cap.position.y=.14;g.add(cap);
+ [[.3,.4],[1.4,.6],[2.6,.35],[3.9,.55],[5.1,.45]].forEach(([az,el])=>{const p=pinT(.22),d=new THREE.Vector3(Math.sin(az)*Math.cos(el),Math.sin(el)*.72,Math.cos(az)*Math.cos(el)).normalize();
+  p.position.copy(d.clone().multiplyScalar(.2));p.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),d);p.position.add(d.clone().multiplyScalar(.04));g.add(p)});return g}
+
+// tailor's chalk: rounded triangle slab
+function chalk(){const s=new THREE.Shape(),r=.03,P=[[0,.2],[-.19,-.12],[.19,-.12]];
+ s.moveTo(0,.17);s.quadraticCurveTo(0,.2,-.02,.17);s.lineTo(-.165,-.09);s.quadraticCurveTo(-.19,-.12,-.15,-.12);s.lineTo(.15,-.12);s.quadraticCurveTo(.19,-.12,.165,-.09);s.lineTo(.02,.17);s.quadraticCurveTo(0,.2,0,.17);
+ return new THREE.Mesh(ext(s,.035,.015),clay)}
+
+function button(r=.08){const s=new THREE.Shape();s.absarc(0,0,r,0,Math.PI*2);for(const [x,y] of [[1,1],[-1,1],[1,-1],[-1,-1]]){const h=new THREE.Path();h.absarc(x*r*.27,y*r*.27,r*.13,0,Math.PI*2,true);s.holes.push(h)}
+ const g=new THREE.Group();g.add(new THREE.Mesh(ext(s,.018,.007),clay));const rim=new THREE.Mesh(new THREE.TorusGeometry(r*.92,r*.07,8,40),clay);rim.position.z=.012;g.add(rim);return g}
+
+// needle: the thread runs through its eye
+function needle(){const g=new THREE.Group(),L=.62;
+ const shaft=new THREE.Mesh(new THREE.CylinderGeometry(.014,.002,L,12),clay);shaft.position.y=-L/2-.02;g.add(shaft);
+ const eye=new THREE.Mesh(new THREE.TorusGeometry(.03,.011,10,28),clay);eye.scale.set(.6,1.5,1);g.add(eye);return g}
+
+
+// the tape roll the measuring tape comes off: axis upright so the tape leaves flat
+const RR=.19,TW=.06,TT=.007;
+const roll=new THREE.Group();{const body=new THREE.Mesh(new THREE.CylinderGeometry(RR,RR,TW+.004,72,1,true),rollSide);roll.add(body);
+ for(const s of [1,-1]){const cap=new THREE.Mesh(new THREE.CylinderGeometry(RR+.008,RR+.008,.012,72),clay);cap.position.y=s*(TW/2+.008);roll.add(cap);
+  const knob=new THREE.Mesh(new THREE.CylinderGeometry(.06,.07,.02,40),clay);knob.position.y=s*(TW/2+.022);roll.add(knob)}}
+const roll2=roll;S.add(roll2);const ROLL0=V(1.15,.2,.55),rc2=V(0,0,0);
+
+// tools packed close around the form; they spread out as the frame opens
+// bigger tailoring pieces, built in code
+const inkMat=new THREE.MeshStandardMaterial({color:0x2a2826,roughness:.7});
+function lSquare(){const g=new THREE.Group(),s=new THREE.Shape(),A=1.05,B=.62,w=.085;
+ s.moveTo(0,0);s.lineTo(A,0);s.lineTo(A,w);s.lineTo(w,w);s.lineTo(w,B);s.lineTo(0,B);s.closePath();
+ const m=new THREE.Mesh(new THREE.ExtrudeGeometry(s,{depth:.018,bevelEnabled:true,bevelThickness:.005,bevelSize:.005,bevelSegments:2}),clay);g.add(m);
+ const tk=new THREE.InstancedMesh(new THREE.BoxGeometry(1,1,1),inkMat,60);let k=0;const M=new THREE.Matrix4();
+ for(let i=1;i<=40&&k<60;i++){const x=.09+i*.024;if(x>A-.02)break;const l=i%5?.018:.034;M.compose(V(x,l/2+.004,.025),new THREE.Quaternion(),V(.0035,l,.004));tk.setMatrixAt(k++,M)}
+ for(let i=1;i<=22&&k<60;i++){const y=.09+i*.024;if(y>B-.02)break;const l=i%5?.018:.034;M.compose(V(l/2+.004,y,.025),new THREE.Quaternion(),V(l,.0035,.004));tk.setMatrixAt(k++,M)}
+ tk.count=k;g.add(tk);g.children.forEach(c=>c.position.add(V(-.35,-.2,0)));return g}
+function frenchCurve(){const s=new THREE.Shape();
+ s.moveTo(0,0);s.bezierCurveTo(.25,-.12,.6,-.05,.85,.18);s.bezierCurveTo(.95,.28,.9,.38,.78,.33);s.bezierCurveTo(.6,.22,.42,.2,.28,.3);s.bezierCurveTo(.15,.38,.02,.3,0,.18);s.closePath();
+ const h=new THREE.Path();h.absellipse(.3,.1,.11,.05,0,Math.PI*2,true);s.holes.push(h);const h2=new THREE.Path();h2.absellipse(.62,.12,.07,.035,0,Math.PI*2,true);s.holes.push(h2);
+ return new THREE.Mesh(ext(s,.014,.006),clay)}
+function swatch(){const geo=new THREE.PlaneGeometry(.95,.68,60,44),v=geo.attributes.position;
+ for(let i=0;i<v.count;i++){const x=v.getX(i),y=v.getY(i);v.setZ(i,Math.sin(x*5.5+y*1.5)*.05+Math.cos(y*6)*.03+x*x*.12);
+  // pinked edge: zigzag along the bottom
+  if(Math.abs(y+.34)<.001)v.setY(i,y+((i%2)?.018:0))}
+ geo.computeVertexNormals();
+ const tex=canvasTex(256,256,(x,w,h)=>{x.fillStyle='#fff';x.fillRect(0,0,w,h);x.fillStyle='rgba(0,0,0,.07)';for(let i=0;i<w;i+=4){x.fillRect(i,0,1,h);x.fillRect(0,i,w,1)}});tex.repeat.set(6,4);
+ return new THREE.Mesh(geo,new THREE.MeshStandardMaterial({color:0xe9e3d6,roughness:.95,side:THREE.DoubleSide,map:tex}))}
+function hanger(){const pts=[V(-.46,-.02,0),V(-.05,.2,0),V(0,.24,0),V(.05,.2,0),V(.46,-.02,0),V(.47,-.06,0),V(.42,-.07,0),V(-.42,-.07,0),V(-.47,-.06,0),V(-.46,-.02,0)];
+ const g=new THREE.Group();g.add(new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts,true,'catmullrom',.05),160,.012,10,true),clay));
+ const hk=new THREE.CatmullRomCurve3([V(0,.24,0),V(0,.31,0),V(.05,.37,0),V(.0,.42,0),V(-.04,.38,0)]);g.add(new THREE.Mesh(new THREE.TubeGeometry(hk,40,.011,8,false),clay));return g}
+function ripper(){const g=new THREE.Group(),pr=[];for(let i=0;i<=24;i++){const t=i/24;pr.push(new THREE.Vector2(.03+.012*Math.sin(t*Math.PI)-.012*t,t*.32))}
+ const h=new THREE.Mesh(new THREE.LatheGeometry(pr,32),clay);g.add(h);
+ const sh=new THREE.Mesh(new THREE.CylinderGeometry(.006,.008,.16,12),clay);sh.position.y=.4;g.add(sh);
+ const f1=new THREE.Mesh(new THREE.CylinderGeometry(.004,.006,.05,8),clay);f1.position.set(.012,.5,0);f1.rotation.z=-.4;g.add(f1);
+ const f2=new THREE.Mesh(new THREE.CylinderGeometry(.005,.006,.04,8),clay);f2.position.set(-.008,.495,0);g.add(f2);
+ const ball=new THREE.Mesh(new THREE.SphereGeometry(.011,12,10),inkMat);ball.position.set(-.008,.52,0);g.add(ball);
+ g.children.forEach(c=>c.position.y-=.26);return g}
+
+const spl=spool();S.add(spl);
+// placement: big pieces fill the gaps either side of the form; small ones sit in front
+addTool(hanger(),V(-.95,.42,-.9),[.05,.35,.12],{spin:[.02,.08,.02],bob:.04}).scale.setScalar(1.25);
+addTool(swatch(),V(-.95,-.6,-.6),[.12,-.25,.15],{spin:[.03,.06,.03],bob:.04});
+addTool(lSquare(),V(.95,-.7,-.5),[.15,-.45,.35],{spin:[.03,.07,.04],bob:.04});
+addTool(frenchCurve(),V(.95,.62,-.7),[.4,-.3,-.25],{spin:[.04,.1,.05]}).scale.setScalar(.85);
+addTool(kainchi(),V(-1.05,.15,.2),[.3,-.5,.55],{spin:[.04,.14,.03],anim:'snip'}).scale.setScalar(.68);
+addTool(ripper(),V(.6,-.2,.45),[.3,.2,-.8],{spin:[.1,.15,.12]});
+addTool(cushion(),V(1.3,-.1,-.5),[.2,0,-.1],{spin:[.03,.25,.02]});
+addTool(chalk(),V(-.45,-.9,.35),[.6,.5,.3],{spin:[.2,.16,.12]});
+addTool(button(.12),V(.5,.55,.4),[.5,.4,0],{spin:[.2,.3,.08]});
+addTool(button(.08),V(-.45,.5,.5),[-.9,.2,0],{spin:[.3,.25,.15]});
+addTool(thimble(),V(.45,-.95,.4),[-.4,0,.5],{spin:[.2,.3,.1]});
+addTool(pinT(.3),V(1.05,-.45,.5),[.4,0,1.1],{spin:[.1,.2,.3]});
+addTool(pinT(.26),V(-1.3,-.2,.4),[.2,0,-.9],{spin:[.15,.1,.25]});
+addTool(needle(),V(-.6,.3,.45),[.3,.2,-.9],{spin:[.1,.15,.2]});
+
+/* ---------- dress form ---------- */
+const form=new THREE.Group();S.add(form);
+const pole=new THREE.Mesh(new THREE.CylinderGeometry(.034,.034,.95,32),clay);pole.position.y=-1.4;form.add(pole);
+const base=new THREE.Mesh(new THREE.CylinderGeometry(.3,.31,.05,72),clay);base.position.y=-1.87;form.add(base);
+const edge=new THREE.Mesh(new THREE.TorusGeometry(.305,.012,8,72),clay);edge.rotation.x=Math.PI/2;edge.position.y=-1.845;form.add(edge);
+const BUST=.27,PITCH=TW+.012,NA=128,YS=[.31,.27,.23,.19,.15,.11,.07,.03];let rtab=null,rBust=.3;
+function buildTable(torso){const rc=new THREE.Raycaster();rtab=YS.map(y=>{const row=[];for(let a=0;a<NA;a++){const t=a/NA*Math.PI*2,d=V(Math.sin(t),0,Math.cos(t));
+  rc.set(V(0,y,0).addScaledVector(d,3),d.clone().negate());const h=rc.intersectObject(torso,true);row.push(h.length?Math.hypot(h[0].point.x,h[0].point.z):.28)}return row});
+ // a tape pulled round a body bridges the hollows: take a running max so it stays taut
+ rtab=rtab.map(row=>row.map((r,i)=>Math.max(r,row[(i+NA-3)%NA]*.995,row[(i+3)%NA]*.995)));
+ rBust=rtab[1].reduce((a,b)=>a+b)/NA}
+function rAt(th,y){th=((th%(2*Math.PI))+2*Math.PI)%(2*Math.PI);const fa=th/(2*Math.PI)*NA,a0=Math.floor(fa)%NA,a1=(a0+1)%NA,ta=fa-Math.floor(fa);
+ const fy=clamp((YS[0]-y)/(YS[0]-YS[1]),0,YS.length-1),y0=Math.floor(fy),y1=Math.min(YS.length-1,y0+1),ty=fy-y0;
+ const r=row=>lerp(rtab[row][a0],rtab[row][a1],ta);return lerp(r(y0),r(y1),ty)}
+
+/* ---------- the tape ribbon: a flat strip with thickness, rebuilt every frame ---------- */
+const tapeWrap=new THREE.Mesh(new THREE.BufferGeometry(),[tapeFace,tapeEdge]);S.add(tapeWrap);
+const tip=new THREE.Mesh(new THREE.BoxGeometry(.016,TW+.012,.05),new THREE.MeshStandardMaterial({color:0x2a2826,roughness:.5,metalness:.2}));S.add(tip);
+const UPW=1/0.45/ (CM/100) / 100; // world units -> texture repeats (1 world unit ≈ 45 cm)
+function ribbon(P,N,ws=1,off=0){const n=P.length,pos=new Float32Array(n*24),nor=new Float32Array(n*24),uv=new Float32Array(n*16);
+ const t=V(0,0,0),b=V(0,0,0),q=V(0,0,0);let u=0;
+ for(let i=0;i<n;i++){if(i)u+=P[i].distanceTo(P[i-1]);t.subVectors(P[Math.min(i+1,n-1)],P[Math.max(i-1,0)]).normalize();b.crossVectors(t,N[i]).normalize();
+  const c=P[i],m=N[i],hw=TW/2*ws,ht=TT/2*ws,U=(u-off)*.9/ws;
+  const cs=[[hw,ht],[-hw,ht],[hw,-ht],[-hw,-ht],[hw,ht],[hw,-ht],[-hw,ht],[-hw,-ht]],ns=[m,m,m,m,b,b,b,b],sg=[1,1,-1,-1,1,1,-1,-1],vv=[1,0,1,0,.5,.5,.5,.5];
+  for(let k=0;k<8;k++){q.copy(c).addScaledVector(b,cs[k][0]).addScaledVector(m,cs[k][1]);pos.set([q.x,q.y,q.z],(i*8+k)*3);
+   nor.set([ns[k].x*sg[k],ns[k].y*sg[k],ns[k].z*sg[k]],(i*8+k)*3);uv.set([U,vv[k]],(i*8+k)*2)}}
+ const face=[],edge=[];
+ for(let i=0;i<n-1;i++)for(let f=0;f<4;f++){const a=i*8+f*2,c=a+8,arr=f<2?face:edge;arr.push(a,c,a+1,a+1,c,c+1)}
+ const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.BufferAttribute(pos,3));g.setAttribute('normal',new THREE.BufferAttribute(nor,3));
+ g.setAttribute('uv',new THREE.BufferAttribute(uv,2));g.setIndex([...face,...edge]);g.addGroup(0,face.length,0);g.addGroup(face.length,edge.length,1);return [g,u]}
+const tng=th=>V(Math.cos(th),0,-Math.sin(th)),rad=th=>V(Math.sin(th),0,Math.cos(th));
+function buildTape(Rot,R0,intro,rc,t){
+ const w=Math.max(0,Rot-R0)*(intro>=1?1:0);
+ // where the tape leaves the form: the tangent point seen from the roll
+ const d=Math.hypot(rc.x,rc.z),phi=Math.atan2(rc.x,rc.z),off=Math.acos(clamp(rBust/d));
+ let phiL=phi-off;if(rc.clone().sub(rad(phiL).multiplyScalar(rBust)).dot(tng(phiL).negate())<0)phiL=phi+off;
+ const yL=BUST-PITCH*w/(2*Math.PI);
+ const P=[],N=[];
+ // wound part: from the tip (first wrap, at the bust line) down to the leaving point
+ const steps=Math.ceil(w/(2*Math.PI)*NA);
+ for(let i=steps;i>=0&&steps>0;i--){const s=w*i/steps,y=yL+PITCH*s/(2*Math.PI),wa=phiL+s,r=(rtab?rAt(wa-Rot,y):.3)+TT;P.push(rad(wa).multiplyScalar(r).setY(y));N.push(rad(wa))}
+ const Lp=rad(phiL).multiplyScalar((rtab?rAt(phiL-Rot,yL):.3)+TT).setY(yL);
+ // where it leaves the roll: tangent point on the roll's circle
+ const rl=V(Lp.x-rc.x,0,Lp.z-rc.z),dl=rl.length(),ps=Math.atan2(rl.x,rl.z),o2=Math.acos(clamp(RR/dl));
+ let ang=ps+o2;let X=rad(ang).multiplyScalar(RR).add(rc).setY(rc.y);let dX=tng(ang);if(dX.dot(X.clone().sub(Lp))<0)dX.negate();
+ const tL=tng(phiL).negate(),k=Math.max(.25,Lp.distanceTo(X)*.42);
+ const B0=Lp,B1=Lp.clone().addScaledVector(tL,k),B2=X.clone().addScaledVector(dX,-k),B3=X;
+ const NF=80,f0=intro>=1?0:1-intro,free=[];
+ for(let i=0;i<=NF;i++){const f=lerp(f0,1,i/NF),a=1-f;
+  const p=V(0,0,0).addScaledVector(B0,a*a*a).addScaledVector(B1,3*a*a*f).addScaledVector(B2,3*a*f*f).addScaledVector(B3,f*f*f);
+  p.y-=Math.sin(Math.PI*f)*(.09+.02*Math.sin(t*1.3));free.push(p)}
+ // normals: carried along the curve, then turned so the tape lies flat on the form at one end and on the roll at the other, with one lazy full twist
+ const n0=intro>=1?rad(phiL):V(-1,0,0),n1=X.clone().sub(rc).setY(0).normalize(),FN=[];let cur=n0.clone();
+ const tans=free.map((p,i)=>V(0,0,0).subVectors(free[Math.min(i+1,NF)],free[Math.max(i-1,0)]).normalize());
+ for(let i=0;i<=NF;i++){cur.addScaledVector(tans[i],-cur.dot(tans[i])).normalize();FN.push(cur.clone())}
+ const last=FN[NF],tz=tans[NF],err=Math.atan2(V(0,0,0).crossVectors(last,n1).dot(tz),last.dot(n1)),TWIST=2*Math.PI;
+ for(let i=0;i<=NF;i++){const f=sstep(0,1,i/NF);FN[i].applyAxisAngle(tans[i],(err+TWIST)*f)}
+ const start=P.length?1:0;for(let i=start;i<=NF;i++){P.push(free[i]);N.push(FN[i])}
+ const [g,len]=ribbon(P,N);tapeWrap.geometry.dispose();tapeWrap.geometry=g;
+ // metal tip at the free end
+ tip.position.copy(P[0]);const tt=V(0,0,0).subVectors(P[1],P[0]).normalize();
+ const mtx=new THREE.Matrix4().makeBasis(N[0],V(0,0,0).crossVectors(tt,N[0]).normalize(),tt.clone());tip.quaternion.setFromRotationMatrix(mtx);
+ return len}
+
+/* ---------- the thread: comes off the spool at the bottom and leaves the screen on the left.
+   Drawn by a second, unclipped canvas so it can cross the frame's edge. ---------- */
+const R2=new THREE.WebGLRenderer({canvas:$('thr'),antialias:true,alpha:true});R2.setPixelRatio(Math.min(devicePixelRatio,2));R2.outputEncoding=THREE.sRGBEncoding;
+const S2=new THREE.Scene(),thrMat=new THREE.MeshBasicMaterial({color:0x141414}),thread=new THREE.Mesh(new THREE.BufferGeometry(),thrMat);S2.add(thread);
+S2.add(new THREE.HemisphereLight(0xffffff,0xa9a294,.62));{const k2=new THREE.DirectionalLight(0xffffff,.62);k2.position.set(-3,3,4);S2.add(k2)}
+function buildThread(sp,phase,show){const ss=spl.scale.x,s0=V(sp.x-.13*ss,sp.y+.02,sp.z+.02),pts=[s0.clone()];
+ for(let d=.06;d<=15;d+=.06){const a=.24*Math.min(1,d/.8)*(1+d*.04),e=Math.min(1,d/.5);
+  pts.push(V(s0.x-d,s0.y+d*.07*e+a*Math.sin(d*1.15-phase),s0.z+d*.13+a*.6*Math.cos(d*1.1-phase*.8)))}
+ const n=Math.max(2,Math.round(pts.length*show));const crv=new THREE.CatmullRomCurve3(pts.slice(0,n));
+ const g=new THREE.TubeGeometry(crv,Math.max(8,n*2),.0062,6,false);thread.geometry.dispose();thread.geometry=g}
+/* ================= Section 2: our students. A heading greets you, then one number at a time on the tape,
+   with one print dealt onto the pile for each (captions on the white border). =================*/
+const s2=$('s2'),s2h=$('s2h'),beats=[...document.querySelectorAll('#s2 .bt')],bnum=$('bnum'),prints=[...document.querySelectorAll('#pile .print')],
+ strip2=$('strip2'),tape2=$('tape2'),mark2=$('mark2');
+const TV=[0,20,17,15,4,0],NP=TV.length;let U2=80,MX=0,ph2=false;   // position 0 is the arrival: the tape runs up to 20 as the heading gives way
+function layout2(){ph2=innerWidth<700;U2=Math.round(clamp(innerWidth/(ph2?6:12),52,96));const th=Math.round(U2*(ph2?.8:.7)),L=32;
+ tape2.style.setProperty('--th',th+'px');tape2.style.setProperty('--u',U2+'px');mark2.style.setProperty('--th',th+'px');
+ let h=`<div class="body" style="width:${L*U2}px"></div><div class="tipm" style="left:${-U2*.3}px"></div>`;
+ for(let mm=0;mm<=L*10;mm++){const x=mm*U2/10,cm=mm%10===0,half=mm%5===0,l=th*(cm?.26:half?.18:.11);
+  h+=`<i class="tick" style="left:${x}px;height:${l}px"></i><i class="tick b" style="left:${x}px;height:${l}px"></i>`;
+  if(cm&&mm>0)h+=`<span class="num" style="left:${x}px">${mm/10}</span>`}
+ strip2.style.width=L*U2+'px';strip2.innerHTML=h;
+ MX=ph2?innerWidth/2:innerWidth*.1+Math.min(150,innerWidth*.07);mark2.style.left=MX+'px'}
+let q2=0,tq2=0;
+function s2Scroll(){const r=s2.getBoundingClientRect();tq2=clamp(-r.top/(r.height-innerHeight))}
+addEventListener('scroll',s2Scroll,{passive:true});
+function frame2(){requestAnimationFrame(frame2);const r=s2.getBoundingClientRect();if(r.bottom<-50||r.top>innerHeight+50)return;
+ q2+=(tq2-q2)*(RM?1:.075);if(Math.abs(tq2-q2)<1e-5)q2=tq2;
+ const t=clamp(q2*NP-.5,0,NP-1),k=Math.min(NP-2,Math.floor(t)),e=k+sstep(.15,.85,t-k);
+ const val=lerp(TV[k],TV[k+1],e-k);strip2.style.transform=`translate3d(${MX-val*U2}px,0,0)`;bnum.textContent=Math.round(val);
+ // arrival: the heading holds, then lifts away as the first number comes in
+ const hOut=sstep(.2,.6,t);s2h.style.opacity=1-hOut;s2h.style.transform=`translateY(${-hOut*30}px)`;
+ bnum.style.opacity=sstep(.45,.85,t);
+ beats.forEach((el,i)=>{const o=1-sstep(.16,.4,Math.abs(t-(i+1)));el.style.opacity=o;el.style.transform=`translateY(${(1-o)*(t<i+1?22:-22)}px)`;el.style.pointerEvents=o>.5?'auto':'none'});
+ // prints: each slides up and lands slightly turned; older ones sink back into the pile
+ prints.forEach((pr,i)=>{const at=i+1,a=sstep(at-.7,at-.08,e),old=clamp(e-at,0,3),rot=(i%2?2.2:-1.8)+(1-a)*(i%2?9:-9);
+  pr.style.transform=`translate3d(${(1-a)*(i%2?50:-50)}px,${(1-a)*innerHeight*1.05-old*14}px,0) rotate(${rot}deg) scale(${1-.05*old})`;
+  pr.style.filter=old>0?`brightness(${1-.1*old})`:'';pr.style.zIndex=i;pr.style.visibility=a>0&&old<2.9?'visible':'hidden'});
+}
+/* ---------- layout ---------- */
+let W=1,H=1,phone=false,F0={x:0,y:0,w:1,h:1};
+function size(){W=pin.clientWidth;H=pin.clientHeight;phone=W<700;R.setSize(W,H,false);R2.setSize(W,H,false);
+ const m=phone?12:Math.round(Math.max(24,W*.1)),top=phone?70:96;band.style.cssText=`left:${phone?20:m}px;right:${phone?20:m}px;top:${top}px`;
+ const fy=top+band.offsetHeight+(phone?18:28);F0={x:m,y:fy,w:W-2*m,h:H-fy-(phone?66:24)};
+ $('loading')&&($('loading').style.cssText+=`;left:${F0.x+F0.w/2}px;top:${F0.y+F0.h/2}px`);layout2()}
+addEventListener('resize',size);size();s2Scroll();requestAnimationFrame(frame2);addEventListener('load',layout2);document.fonts&&document.fonts.ready.then(size);
+
+let mx=0,my=0,tmx=0,tmy=0;addEventListener('pointermove',e=>{if(e.pointerType==='mouse'){tmx=e.clientX/innerWidth*2-1;tmy=e.clientY/innerHeight*2-1}});
+let target=0,pp=0;
+function readScroll(){const r=$('hero').getBoundingClientRect();target=clamp(-r.top/(r.height-innerHeight))}
+addEventListener('scroll',readScroll,{passive:true});readScroll();pp=target;
+
+/* ---------- load the form (parsed in place: the page can't fetch) ---------- */
+let ready=false,t0=0;setTape('paper');
+// the model is its own file (base64 in JSON: the host won't serve .glb), so the page paints first
+loadData('model','model/dress-form.js').then(b64=>{const glbBin=Uint8Array.from(atob(b64),c=>c.charCodeAt(0));
+new THREE.GLTFLoader().parse(glbBin.buffer,'',g=>{const torso=g.scene;torso.traverse(c=>{if(c.isMesh)c.material=clay});form.add(torso);
+ const r0=form.rotation.y;form.rotation.y=0;form.updateMatrixWorld(true);buildTable(torso);form.rotation.y=r0;
+ ready=true;t0=performance.now();cv.classList.add('ready');$('loading').remove()},
+ e=>{$('loading').textContent='Could not load the dress form: '+(e&&e.message||e);cv.classList.add('ready')});}).catch(e=>{$('loading').textContent='Could not load the dress form';cv.classList.add('ready')});
+
+/* ---------- frame loop ---------- */
+let lastP=0,spin=0,spinV=0;const qs=new THREE.Quaternion(),qt=new THREE.Quaternion();const CZ0=()=>phone?4.0:4.25,R0=.55,TURN=Math.PI*2-.55,rc=V(0,0,0);
+function frame(now){requestAnimationFrame(frame);
+ pp+=(target-pp)*(RM?1:.2);if(Math.abs(target-pp)<1e-4)pp=target;const p=pp,t=now/1000,mo=RM?0:1;
+ mx+=(tmx-mx)*.05;my+=(tmy-my)*.05;
+ // the frame grows from a small window to the full screen
+ const o=sstep(.0,.36,p),fx=lerp(F0.x,0,o),fy=lerp(F0.y,0,o),fw=lerp(F0.w,W,o),fh=lerp(F0.h,H,o),r=lerp(phone?16:22,0,o);
+ panel.style.cssText=`left:${fx}px;top:${fy}px;width:${fw}px;height:${fh}px;border-radius:${r}px`;
+ cv.style.clipPath=`inset(${fy}px ${W-fx-fw}px ${H-fy-fh}px ${fx}px round ${r}px)`;
+ // camera looks through the frame: the frame is the lens, so objects stay packed inside it
+ const dz=sstep(.3,1,p);C.aspect=fw/fh;C.fov=phone?30:24;
+ C.setViewOffset(fw,fh,-fx,-fy,W,H);
+ C.position.set(mx*.12,lerp(-.2,.15,dz)-my*.06,lerp(CZ0(),phone?3.6:3.4,dz));C.lookAt(0,lerp(phone?-.3:-.3,.1,dz),0);
+ // text is pushed aside as the frame opens
+ const so=sstep(0,.16,p);band.style.opacity=1-so;band.style.transform=`translateY(${so*50}px)`;
+ end.style.opacity=sstep(.74,.88,p);end.style.transform=`translateY(${(1-sstep(.74,.88,p))*20}px)`;
+ form.rotation.y=R0+TURN*sstep(0,.88,p);       // ends at a full turn: facing straight
+ const wide=phone?.72:1.12,spread=wide+o*(phone?.3:.12)+p*.2;
+ tools.forEach(T=>{const b=T.base;T.obj.position.set(b.x*spread+mx*.1*(b.z+2)/3,b.y*(1+o*.25)+Math.sin(t*.9+T.ph)*T.bob*mo-my*.06*(b.z+2)/3,b.z+p*1.4);
+  T.obj.rotation.set(T.rot0.x+T.spin[0]*(t*.25*mo+p*4),T.rot0.y+T.spin[1]*(t*.25*mo+p*4),T.rot0.z+T.spin[2]*(t*.25*mo+p*4));
+  if(T.anim==='snip')T.obj.userData.open(.04+.2*(.5+.5*Math.sin(p*18+t*.6*mo)))});
+ // phones: everything but the dress form leaves as you scroll
+ const gone=phone?sstep(.03,.28,p):0;
+ if(gone>0)tools.forEach(T=>{if(T.s0==null)T.s0=T.obj.scale.x;T.obj.position.x*=1+gone*1.6;T.obj.scale.setScalar(T.s0*(1-gone));T.obj.visible=gone<.99});
+ else tools.forEach(T=>{if(T.s0!=null){T.obj.scale.setScalar(T.s0);T.obj.visible=true}});
+ C.updateMatrixWorld();const SPZ=.9,depth=(C.position.z-SPZ)/(CZ0()-SPZ);
+ const pinAt=(ax,ay)=>{const nx=(fx+fw*ax)/W*2-1,ny=-((fy+fh*ay)/H*2-1),dir=V(nx,ny,.5).unproject(C).sub(C.position).normalize();
+  return C.position.clone().addScaledVector(dir,(SPZ-C.position.z)/dir.z)};
+ const ay=phone?.8:lerp(.76,.7,o);
+ const dp=p-lastP;lastP=p;spin+=dp*40;spinV+=(Math.abs(dp)*40-spinV)*.12;
+ const tilt=Math.min(.2,spinV*2.2);
+ // spool: lower left, turns and wobbles as you scroll; its thread is pulled out to the left and off the screen
+ const sp=pinAt(phone?.26:lerp(.3,.27,o),ay);sp.x-=gone*2.2;
+ spl.position.copy(sp);spl.scale.setScalar((phone?.75:.85)*depth);
+ qs.setFromAxisAngle(V(0,1,0),-spin);qt.setFromAxisAngle(V(Math.cos(spin),0,Math.sin(spin)),tilt);spl.quaternion.copy(qt).multiply(qs);
+ const phase=p*20,out=sstep(0,.5,p);                       // none on landing, off the screen by mid-scroll
+ thread.visible=out>.004;
+ if(ready&&thread.visible)buildThread(sp,phase,out);
+ // the original tape: second roll on the right, wraps the bust as the form turns
+ rc2.set(ROLL0.x*wide*(1+o*.12)+mx*.08+gone*2.2,ROLL0.y-my*.05,ROLL0.z);roll2.position.copy(rc2);
+ if(ready){const intro=RM?1:clamp((now-t0)/1700),ie=1-Math.pow(1-intro,3);const len=buildTape(form.rotation.y,R0,ie,rc2,t*mo);roll2.rotation.set(0,-len/RR,0)}
+ if($('hero').getBoundingClientRect().bottom>0){R.render(S,C);R2.render(S2,C)}}
+requestAnimationFrame(frame);
+})();
+</script>
+<script>
+(function () {
+  // the stages section is pinned while you scroll its height: five stages, one on screen at a time;
+  // a filmed camera move (.tr) joins two stages, otherwise a whip pan
+  const sec = document.getElementById('stages'), shots = [...sec.querySelectorAll('.shot')], ticks = [...document.querySelectorAll('#ticks i')];
+  const cards = [...sec.querySelectorAll('.stg')], stLabel = document.getElementById('stLabel');
+  const spans = shots.map(s => +s.dataset.span || 1), total = spans.reduce((a, b) => a + b, 0);
+  sec.style.setProperty('--units', total);  // section height follows the scenes and moves inside it
+  let cur = 0, stage = 0, ticking = false;
+  function setStage(n) {
+    if (n === stage) return;
+    cards.forEach((c, k) => c.classList.toggle('on', k === n));
+    stLabel.textContent = 'Stage ' + String(n + 1).padStart(2, '0') + ' of ' + String(cards.length).padStart(2, '0');
+    ticks.forEach((t, k) => t.classList.toggle('done', k <= n));
+    stage = n;
+  }
+  function show(i) {
+    if (i === cur) return;
+    const dir = i > cur ? 1 : -1, prev = shots[cur], next = shots[i];
+    shots.forEach(s => s.classList.remove('on', 'in', 'out'));
+    // the transition's first and last frames match the neighbouring scenes, so swap without a whip
+    const seamless = Math.abs(i - cur) === 1 && (prev.classList.contains('tr') || next.classList.contains('tr'));
+    if (seamless) next.classList.add('on');
+    else {
+      void sec.offsetWidth;
+      prev.style.setProperty('--dir', dir); next.style.setProperty('--dir', dir);
+      prev.classList.add('out'); next.classList.add('on', 'in');
+    }
+    cur = i;
+  }
+  shots.forEach(s => s.addEventListener('animationend', () => s.classList.remove('in', 'out')));
+
+  // video scenes: a frame sequence drawn to a canvas, scrubbed by scroll (cover-fit like the stills)
+  // each scene has a focus height (data-fy, optionally easing to data-fy-end) on its action, so the crop keeps the tape, pencil, needle or hooks in view
+  // transitions rush through the middle (ease-in-out); the ends move slowly so the joins match
+  function drawSeq(shot, k) {
+    const tr = shot.classList.contains('tr');
+    if (tr) k = k < 0.5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2;
+    const q = shot.seq, want = Math.round(k * (q.frames.length - 1));
+    if (!q.ready) return;
+    let at = want;  // a frame not decoded yet would stall the scroll: draw the nearest one that is
+    for (let d = 1; !q.ok[at] && d < q.frames.length; d++) at = q.ok[want - d] ? want - d : q.ok[want + d] ? want + d : at;
+    const img = q.frames[at];
+    if (want !== q.want) { q.want = want; for (let d = 1; d <= 4; d++) [want + d, want - d].forEach(j => q.frames[j] && q.ok[j] && q.frames[j].decode().catch(() => {})); }  // keep the frames around the playhead decoded
+    const key = at + ':' + k.toFixed(3) + ':' + q.cv.clientWidth + 'x' + q.cv.clientHeight;
+    if (key === q.key) return;  // nothing changed since the last draw
+    q.key = key;
+    const c = q.cv, w = c.clientWidth, h = c.clientHeight, dpr = Math.min(devicePixelRatio || 1, 2);
+    if (c.width !== Math.round(w * dpr) || c.height !== Math.round(h * dpr)) { c.width = Math.round(w * dpr); c.height = Math.round(h * dpr); }
+    const sc = Math.max(c.width / img.naturalWidth, c.height / img.naturalHeight), dw = img.naturalWidth * sc, dh = img.naturalHeight * sc;
+    const fy0 = +shot.dataset.fy || 0.5, fy1 = shot.dataset.fyEnd ? +shot.dataset.fyEnd : fy0;  // a transition eases between its scenes' focus heights
+    q.ctx.drawImage(img, (c.width - dw) / 2, (c.height - dh) * (fy0 + (fy1 - fy0) * k), dw, dh);
+  }
+  // frames download coarse to fine (every 8th, then 4th, 2nd, all) so a fast scroll always has something near;
+  // each is decoded off the main thread before it is used. A scene shows once its first pass is in.
+  // frames arrive as one file per clip (stages/<clip>.json, base64 webp) and only start downloading once the
+  // visitor reaches the students section, so they never hold up the first screen
+  function loadShot(s, list) {
+    const n = list.length, cv = s.querySelector('canvas'), q = { cv, ctx: cv.getContext('2d', { alpha: false }), frames: [], ok: [], ready: false };
+    const order = [];
+    [8, 4, 2, 1].forEach(st => { for (let f = 0; f < n; f += st) if (!order.includes(f)) order.push(f); });
+    if (!order.slice(0, Math.ceil(n / 8)).includes(n - 1)) order.splice(Math.ceil(n / 8), 0, ...order.splice(order.indexOf(n - 1), 1));
+    let first = Math.ceil(n / 8) + 1;
+    s.seq = q;
+    order.forEach(f => {
+      const im = new Image();
+      im.decoding = 'async';
+      const done = ok => { q.ok[f] = ok; if (--first === 0) { q.ready = true; s.classList.add('ready'); } if (ok) { q.key = null; onScroll(); } };
+      im.onload = () => im.decode().then(() => done(true), () => done(true));
+      im.onerror = () => done(false);
+      im.src = 'data:image/webp;base64,' + list[f];
+      q.frames[f] = im;
+    });
+  }
+  let started = false;
+  async function startFrames() {
+    if (started) return; started = true;
+    for (const s of shots) {
+      if (!s.dataset.seq) continue;
+      const clip = s.dataset.seq.split('/')[1];
+      try { loadShot(s, await loadData(clip, 'stages/' + clip + '.js')); } catch (e) { console.warn('frames', clip, e); }
+    }
+  }
+  const trigger = document.getElementById('s2') || sec;
+  new IntersectionObserver((es, o) => { if (es[0].isIntersecting) { o.disconnect(); startFrames(); } }, { rootMargin: '100% 0px' }).observe(trigger);
+  function onScroll() {
+    ticking = false;
+    const r = sec.getBoundingClientRect(), span = Math.max(1, r.height - innerHeight);
+    let u = Math.min(1, Math.max(0, -r.top / span)) * total, i = 0;
+    while (i < shots.length - 1 && u >= spans[i]) u -= spans[i++];
+    show(i);
+    const k = Math.min(1, u / spans[i]), s = shots[i];
+    setStage(+s.dataset.stage - (s.classList.contains('tr') && k < 0.5 ? 1 : 0));  // mid-move, on the empty backdrop
+    if (shots[i].seq) drawSeq(shots[i], k); else shots[i].style.setProperty('--push', (1 + 0.06 * k).toFixed(4));
+  }
+  addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(onScroll); } }, { passive: true });
+  addEventListener('resize', onScroll);
+  onScroll();
+})();
+</script>
+<script>
+/* The wall: a grid that repeats forever in every direction. Only the cells on screen exist, and each loads a small
+   thumbnail when it first appears; the full photo loads only when tapped. Drag pans it (with a throw), the page scroll
+   nudges it, and it drifts slowly when left alone. */
+(function () {
+  const WORK = __WORK__, n = WORK.length;
+  const wall = document.getElementById('wall'), plane = document.getElementById('plane'), hint = document.getElementById('whint'), lb = document.getElementById('lb');
+  const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let CW = 180, GX = 280, GY = 320, W = 1, H = 1;
+  function size() { W = wall.clientWidth; H = wall.clientHeight; const ph = innerWidth < 700;
+    CW = ph ? 112 : Math.max(130, Math.min(210, innerWidth * .13)); GX = CW * (ph ? 1.45 : 1.6); GY = CW * (ph ? 1.7 : 1.78); }
+  // neighbours never repeat: right +3, down +4 (mod 10)
+  const pick = (c, r) => (((c * 3 + r * 4) % n) + n) % n;
+  const jit = (c, r) => { const x = Math.sin(c * 127.1 + r * 311.7) * 43758.5453; return (x - Math.floor(x)) - .5; };
+  const live = new Map();
+  let ox = 0, oy = 0, vx = 0, vy = 0, drag = false, moved = 0, lx = 0, ly = 0, lastScroll = scrollY, used = false;
+  function cell(c, r) {
+    const w = WORK[pick(c, r)], box = CW * 1.3; let iw = CW, ih = CW / w.a; if (ih > box) { ih = box; iw = box * w.a; }
+    const el = document.createElement('div'); el.className = 'wk'; el.style.width = iw + 'px'; el.style.height = ih + 'px';
+    el.dataset.i = pick(c, r); el.dataset.dx = (GX - iw) / 2; el.dataset.dy = (GY - ih) / 2 + jit(c, r) * CW * .35;
+    const im = new Image(); im.decoding = 'async'; im.alt = w.c; im.onload = () => im.classList.add('in'); im.src = w.t; el.appendChild(im);
+    plane.appendChild(el); return el;
+  }
+  function render() {
+    const c0 = Math.floor((-ox - GX) / GX), c1 = Math.ceil((W - ox + GX) / GX), r0 = Math.floor((-oy - GY) / GY), r1 = Math.ceil((H - oy + GY) / GY), keep = new Set();
+    for (let c = c0; c <= c1; c++) for (let r = r0; r <= r1; r++) {
+      const k = c + ',' + r; keep.add(k); let el = live.get(k); if (!el) { el = cell(c, r); live.set(k, el); }
+      el.style.transform = `translate3d(${c * GX + ox + +el.dataset.dx}px,${r * GY + oy + +el.dataset.dy}px,0)`;
+    }
+    live.forEach((el, k) => { if (!keep.has(k)) { el.remove(); live.delete(k); } });
+  }
+  let on = false;
+  new IntersectionObserver(es => { on = es[0].isIntersecting; if (on) requestAnimationFrame(tick); }).observe(wall);
+  function tick() {
+    if (!on) return; requestAnimationFrame(tick);
+    const ds = scrollY - lastScroll; lastScroll = scrollY;
+    if (!drag) { vx *= .94; vy *= .94; ox += vx + (RM ? 0 : -.22); oy += vy - ds * .35; }
+    render();
+  }
+  wall.addEventListener('pointerdown', e => { drag = true; moved = 0; lx = e.clientX; ly = e.clientY; vx = vy = 0; wall.setPointerCapture(e.pointerId); wall.classList.add('drag'); });
+  wall.addEventListener('pointermove', e => { if (!drag) return; const dx = e.clientX - lx, dy = e.clientY - ly; lx = e.clientX; ly = e.clientY;
+    moved += Math.abs(dx) + Math.abs(dy); ox += dx; oy += e.pointerType === 'touch' ? 0 : dy; vx = dx; vy = e.pointerType === 'touch' ? 0 : dy;
+    if (!used && moved > 20) { used = true; hint.style.opacity = 0; } });
+  const end = e => { if (!drag) return; drag = false; wall.classList.remove('drag');
+    if (moved < 6) { const t = document.elementsFromPoint(e.clientX, e.clientY).find(x => x.classList && x.classList.contains('wk')); if (t) open(+t.dataset.i); } };
+  wall.addEventListener('pointerup', end); wall.addEventListener('pointercancel', () => { drag = false; wall.classList.remove('drag'); });
+  // tap: the full photo, with its caption
+  const lbImg = lb.querySelector('img'), lbCap = lb.querySelector('p');
+  function open(i) { lbImg.src = WORK[i].t; const big = new Image(); big.onload = () => { if (lbImg.dataset.i == i) lbImg.src = big.src; }; big.src = WORK[i].f; lbImg.dataset.i = i; lbImg.alt = WORK[i].c; lbCap.textContent = WORK[i].c; lb.classList.add('on'); }
+  const close = () => lb.classList.remove('on');
+  lb.addEventListener('click', close); addEventListener('keydown', e => { if (e.key === 'Escape') close(); });
+  addEventListener('resize', () => { size(); live.forEach(el => el.remove()); live.clear(); render(); });
+  size(); ox = -GX * .3; render();
+})();
+</script>
+<script>
+(function () {
+  const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), { threshold: .25, rootMargin: '0px 0px -8% 0px' });
+  document.querySelectorAll('.rv').forEach(el => io.observe(el));
+  const path = document.getElementById('jthread'), box = document.getElementById('journey');
+  if (path) { const L = path.getTotalLength(); path.style.strokeDasharray = L; path.style.strokeDashoffset = L;
+    const draw = () => { const r = box.getBoundingClientRect(), k = Math.min(1, Math.max(0, (innerHeight * .9 - r.top) / (innerHeight * .55))); path.style.strokeDashoffset = L * (1 - k); };
+    addEventListener('scroll', draw, { passive: true }); draw(); }
+})();
+</script>
+<script>
+/* Thread the needle. The thread is a light rope (verlet); its tip follows the pointer with a little lag, so fast
+   flicks overshoot. The needle sways. Crossing the needle's line inside the eye threads it; crossing the metal
+   is blocked and counts as a try. Collision is worked out in the needle's own frame (it tilts as it sways). */
+(function () {
+  const box = document.getElementById('gbox'), cv = document.getElementById('gcv'), ctx = cv.getContext('2d');
+  const hud = document.getElementById('ghud'), hint = document.getElementById('ghint'), win = document.getElementById('gwin');
+  const sec = document.getElementById('game'), gh = document.getElementById('gh'), gsub = document.getElementById('gsub');
+  const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let W = 1, H = 1, dpr = 1, S = 1;           // S: scale for phones
+  const N = 44, SEG = 8;
+  let P = [], Q = [];                          // rope points now / before
+  let px = 0, py = 0, tx = 0, ty = 0, active = false, touch = false;
+  let tries = 0, lastMiss = 0, threaded = false, pinK = -1, t0 = 0, tWin = 0, shake = 0, used = false;
+  function size() { const r = box.getBoundingClientRect(); dpr = Math.min(devicePixelRatio || 1, 2); W = r.width; H = r.height;
+    cv.width = W * dpr; cv.height = H * dpr; S = W < 600 ? .8 : 1; }
+  function reset() {
+    const x0 = W * .18, y0 = H * .72; P = []; Q = [];
+    for (let i = 0; i < N; i++) { const p = [x0 - i * SEG * .7, y0 + i * SEG * .5]; P.push(p.slice()); Q.push(p.slice()); }
+    tx = px = x0; ty = py = y0; tries = 0; threaded = false; pinK = -1; t0 = 0; used = false;
+    hud.textContent = 'Tries: 0'; hint.style.opacity = 1; win.classList.remove('on'); sec.classList.remove('done');
+    gh.innerHTML = 'Can you thread <em>the needle?</em>'; gsub.textContent = "Guide the thread through the eye. It's the first thing every tailor learns.";
+  }
+  // the needle: eye centre (cx, cy), tilt a; the shaft runs from 70px above the eye to H*.5 below it
+  function needle(t) { const sw = RM ? 0 : 1;
+    return { cx: W * .58 + Math.sin(t * .62) * 34 * S * sw + (shake > 0 ? Math.sin(t * 60) * shake * 6 : 0), cy: H * .3 + Math.sin(t * .9) * 10 * S * sw,
+      a: Math.sin(t * .45) * .1 * sw, eh: 46 * S, ew: 10 * S, sw: 18 * S, top: 34 * S, len: H * .56 }; }
+  const toLocal = (n, x, y) => { const dx = x - n.cx, dy = y - n.cy, c = Math.cos(-n.a), s = Math.sin(-n.a); return [dx * c - dy * s, dx * s + dy * c]; };
+  const toWorld = (n, x, y) => { const c = Math.cos(n.a), s = Math.sin(n.a); return [n.cx + x * c - y * s, n.cy + x * s + y * c]; };
+  function pos(e) { const r = box.getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top - (e.pointerType === 'touch' ? 46 : 0)]; }
+  box.addEventListener('pointerdown', e => { active = true; touch = e.pointerType === 'touch'; [tx, ty] = pos(e); box.setPointerCapture(e.pointerId); if (!t0) t0 = performance.now(); used = true; hint.style.opacity = 0; });
+  box.addEventListener('pointermove', e => { if (e.pointerType === 'mouse' || active) { [tx, ty] = pos(e); if (e.pointerType === 'mouse' && !t0) { t0 = performance.now(); } if (!used && e.pointerType === 'mouse') { used = true; hint.style.opacity = 0; } } });
+  box.addEventListener('pointerup', () => { active = false; });
+  document.getElementById('gagain').addEventListener('click', e => { e.stopPropagation(); reset(); });
+
+  function step(t) {
+    const n = needle(t);
+    // tip follows the pointer, a little behind
+    const ox = P[0][0], oy = P[0][1];
+    let nx = ox + (tx - ox) * .28, ny = oy + (ty - oy) * .28;
+    nx = Math.max(4, Math.min(W - 4, nx)); ny = Math.max(4, Math.min(H - 4, ny));
+    if (!threaded) {
+      const a = toLocal(n, ox, oy), b = toLocal(n, nx, ny);
+      if (a[0] * b[0] < 0) {                          // the tip crosses the needle's line
+        const k = a[0] / (a[0] - b[0]), y = a[1] + (b[1] - a[1]) * k;
+        if (Math.abs(y) < n.eh / 2 - 2) {             // through the eye
+          threaded = true; pinK = 3; tWin = performance.now();
+          const secs = ((tWin - (t0 || tWin)) / 1000).toFixed(1), tr = tries + 1;
+          gh.innerHTML = 'Threaded in ' + tr + (tr === 1 ? ' try.' : ' tries.') + ' <em>You have the hands for this.</em>';
+          gsub.textContent = 'That took you ' + secs + ' seconds. Class one starts with exactly this.';
+          sec.classList.add('done'); setTimeout(() => win.classList.add('on'), 900);
+        } else if (y > -n.top && y < n.len) {          // into the metal: blocked
+          const side = Math.sign(a[0]) || 1, back = toWorld(n, side * (n.sw / 2 + 3), y);
+          nx = back[0]; ny = back[1];
+          const now = performance.now(); if (now - lastMiss > 450) { tries++; hud.textContent = 'Tries: ' + tries; shake = 1; } lastMiss = now;
+        }
+      }
+    }
+    P[0][0] = nx; P[0][1] = ny; Q[0][0] = nx; Q[0][1] = ny;
+    // the rest of the thread: verlet, light gravity
+    for (let i = 1; i < N; i++) { const p = P[i], q = Q[i], vx = (p[0] - q[0]) * .96, vy = (p[1] - q[1]) * .96; q[0] = p[0]; q[1] = p[1]; p[0] += vx; p[1] += vy + .28; }
+    for (let it = 0; it < 10; it++) {
+      for (let i = 0; i < N - 1; i++) { const a = P[i], b = P[i + 1], dx = b[0] - a[0], dy = b[1] - a[1], d = Math.hypot(dx, dy) || 1, k = (d - SEG) / d * .5;
+        if (i === 0) { b[0] -= dx * k * 2; b[1] -= dy * k * 2; } else { a[0] += dx * k; a[1] += dy * k; b[0] -= dx * k; b[1] -= dy * k; } }
+      if (threaded) { const e = toWorld(n, 0, 0); P[pinK][0] = e[0]; P[pinK][1] = e[1]; }   // held by the eye
+      for (const p of P) { p[1] = Math.min(H - 3, p[1]); p[0] = Math.max(-40, Math.min(W + 40, p[0])); }
+    }
+    shake *= .9;
+    return n;
+  }
+  function drawNeedle(n, front) {
+    ctx.save(); ctx.translate(n.cx, n.cy); ctx.rotate(n.a);
+    const w = n.sw / 2, g = ctx.createLinearGradient(-w, 0, w, 0);
+    g.addColorStop(0, '#8e8a83'); g.addColorStop(.35, '#f2f0eb'); g.addColorStop(.6, '#bdb9b1'); g.addColorStop(1, '#7c7871');
+    if (!front) {
+      ctx.fillStyle = 'rgba(0,0,0,.08)'; ctx.beginPath(); ctx.ellipse(10, n.len * .5, w * 1.2, n.len * .55, 0, 0, Math.PI * 2); ctx.fill();   // soft shadow
+      ctx.fillStyle = g; ctx.beginPath();
+      ctx.moveTo(-w * .9, -n.top); ctx.quadraticCurveTo(0, -n.top - w * 1.6, w * .9, -n.top);   // rounded head
+      ctx.lineTo(w, n.len * .55); ctx.lineTo(0, n.len); ctx.lineTo(-w, n.len * .55); ctx.closePath(); ctx.fill();
+      ctx.globalCompositeOperation = 'destination-out'; ctx.beginPath(); ctx.ellipse(0, 0, n.ew / 2, n.eh / 2, 0, 0, Math.PI * 2); ctx.fill();   // the eye is a hole
+      ctx.globalCompositeOperation = 'source-over';
+      ctx.strokeStyle = 'rgba(60,56,50,.35)'; ctx.lineWidth = 1; ctx.beginPath(); ctx.ellipse(0, 0, n.ew / 2, n.eh / 2, 0, 0, Math.PI * 2); ctx.stroke();
+    } else {
+      // once threaded, the eye's sides are drawn again over the thread so it reads as going through
+      ctx.fillStyle = g; ctx.beginPath(); ctx.rect(-w, -n.eh / 2 - 2, w - n.ew / 2, n.eh + 4); ctx.rect(n.ew / 2, -n.eh / 2 - 2, w - n.ew / 2, n.eh + 4); ctx.fill();
+    }
+    ctx.restore();
+  }
+  function drawThread() {
+    ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    ctx.strokeStyle = '#141414'; ctx.lineWidth = 2.4 * S; ctx.beginPath(); ctx.moveTo(P[0][0], P[0][1]);
+    for (let i = 1; i < N - 1; i++) { const mx = (P[i][0] + P[i + 1][0]) / 2, my = (P[i][1] + P[i + 1][1]) / 2; ctx.quadraticCurveTo(P[i][0], P[i][1], mx, my); }
+    ctx.stroke();
+    // a frayed tip
+    const [x, y] = P[0], dx = P[0][0] - P[1][0], dy = P[0][1] - P[1][1], d = Math.hypot(dx, dy) || 1, ux = dx / d, uy = dy / d;
+    ctx.lineWidth = .9; ctx.strokeStyle = 'rgba(20,20,20,.75)';
+    for (const sp of [-.5, 0, .45]) { ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x + (ux * Math.cos(sp) - uy * Math.sin(sp)) * 6, y + (ux * Math.sin(sp) + uy * Math.cos(sp)) * 6); ctx.stroke(); }
+  }
+  let on = false;
+  new IntersectionObserver(es => { on = es[0].isIntersecting; if (on) requestAnimationFrame(frame); }, { threshold: .05 }).observe(box);
+  function frame(now) {
+    if (!on) return; requestAnimationFrame(frame);
+    const t = now / 1000, n = step(t);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, W, H);
+    drawNeedle(n, false); drawThread(); if (threaded) drawNeedle(n, true);
+    // a small cursor ring where the pointer is (desktop)
+    if (!touch) { ctx.strokeStyle = 'rgba(20,20,20,.35)'; ctx.lineWidth = 1; ctx.beginPath(); ctx.arc(tx, ty, 9, 0, Math.PI * 2); ctx.stroke(); }
+  }
+  addEventListener('resize', () => { size(); reset(); });
+  size(); reset();
+})();
+</script>
+</body>
+</html>

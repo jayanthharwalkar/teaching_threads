@@ -249,19 +249,31 @@ nav .links a{color:var(--ink);text-decoration:none}
 }
 @media (prefers-reduced-motion:reduce){.rv{opacity:1;transform:none;transition:none}}
 
-/* ================= the game: thread the needle ================= */
-.game{padding-bottom:12vh}
-.game .sub{margin-top:18px;max-width:44ch;font-size:clamp(17px,1.4vw,20px);line-height:1.5;color:var(--body)}
-.gbox{position:relative;margin-top:44px;height:min(64vh,620px);border-radius:22px;background:#F3F1EC;box-shadow:0 30px 60px -44px rgba(0,0,0,.4);overflow:hidden;touch-action:none;cursor:none}
-.gbox canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
-.ghud{position:absolute;left:22px;top:18px;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);pointer-events:none}
-.ghint{position:absolute;left:50%;bottom:22px;transform:translateX(-50%);padding:8px 14px;border-radius:999px;background:rgba(20,20,20,.85);color:#f3f1ec;font-size:11px;letter-spacing:.16em;text-transform:uppercase;pointer-events:none;white-space:nowrap;transition:opacity .5s}
-.gwin{position:absolute;right:22px;top:16px;display:flex;gap:10px;opacity:0;pointer-events:none;transition:opacity .5s}
-.gwin.on{opacity:1;pointer-events:auto}
-.gwin button{background:none;border:1px solid var(--ink);padding:9px 16px;font:400 13px var(--sans);cursor:pointer;color:var(--ink)}
-.game .won{display:none;margin-top:22px}
-.game.done .won{display:inline-block}
-@media (max-width:900px){.gbox{height:58vh;margin-top:30px}}
+
+/* ================= closing + the game: thread the needle, in the footer ================= */
+.closing{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:6vw;align-items:center;text-align:left;padding:16vh 10vw 12vh}
+.closing h2{margin:0}
+.closing p{margin:22px 0 34px}
+.needle-game{color:#F3F1EC}
+.nghead{display:flex;justify-content:space-between;gap:12px;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:rgba(243,241,236,.6);margin-bottom:12px}
+.nghead b{font-weight:400;color:#F3F1EC}
+#ngtries{white-space:nowrap}
+.ngbox{position:relative;height:min(66vh,600px);border-radius:22px;overflow:hidden;touch-action:none;cursor:crosshair;
+ background:radial-gradient(120% 80% at 50% 25%,#3a3734 0%,#1f1e1c 55%,#151413 100%);box-shadow:inset 0 0 0 1px rgba(243,241,236,.08)}
+.ngbox canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+#ngfx{pointer-events:none}
+.nghint{position:absolute;left:50%;bottom:20px;transform:translateX(-50%);padding:8px 14px;border-radius:999px;background:rgba(243,241,236,.92);color:#141414;font-size:11px;letter-spacing:.16em;text-transform:uppercase;pointer-events:none;white-space:nowrap;transition:opacity .5s}
+.ngdone{position:absolute;left:26px;right:40%;bottom:24px;text-align:left;opacity:0;transform:translateY(10px);transition:opacity .6s .3s,transform .6s .3s;pointer-events:none}
+.ngdone b{display:block;font-family:var(--serif);font-weight:500;font-size:clamp(28px,2.6vw,40px)}
+.ngdone span{font-size:14px;color:rgba(243,241,236,.7)}
+.needle-game.won .ngdone{opacity:1;transform:none}
+.needle-game.won .nghint{opacity:0}
+.ngfoot{display:flex;gap:12px;align-items:center;margin-top:14px}
+.ngfoot button{background:none;border:1px solid rgba(243,241,236,.5);color:#F3F1EC;padding:10px 18px;font:400 13px var(--sans);cursor:pointer}
+.ngfoot button:hover{border-color:#F3F1EC}
+.ngfoot a{display:none;padding:10px 18px;background:#F3F1EC;color:#141414;text-decoration:none;font-size:13px}
+.needle-game.won .ngfoot a{display:inline-block}
+@media (max-width:900px){.closing{grid-template-columns:1fr;gap:42px;padding:12vh 22px 8vh}.ngbox{height:62vh}.nghead{font-size:11px;letter-spacing:.1em}.ngdone{left:20px;right:45%}}
 </style>
 </head>
 <body>
@@ -287,10 +299,10 @@ nav .links a{color:var(--ink);text-decoration:none}
   <div class="bt"><p>Everyone started at zero. The next one is you.</p><a class="cta fill" href="https://wa.me/919353562706" target="_blank" rel="noopener">Connect on WhatsApp</a></div>
  </div>
  <div class="pile" id="pile">
-  <figure class="print"><div class="in"><div class="ph"><img loading="lazy" decoding="async" src="work/p5.jpg" alt="Shruti Mahajan with a model wearing her design" style="object-position:center 82%"></div><figcaption>Shruti with her design, Kerala Fashion League<span>01</span></figcaption></div></figure>
-  <figure class="print"><div class="in"><div class="ph"><img loading="lazy" decoding="async" src="work/p2.jpg" alt="A designer walks the runway beside a model"></div><figcaption>On the runway, 2016<span>02</span></figcaption></div></figure>
-  <figure class="print"><div class="in"><div class="ph"><img loading="lazy" decoding="async" src="work/p3.jpg" alt="A model in a printed blue gown"></div><figcaption>Printed silk gown, 2016<span>03</span></figcaption></div></figure>
-  <figure class="print"><div class="in"><div class="ph"><img loading="lazy" decoding="async" src="work/p4.jpg" alt="A model in an embellished floral lehenga"></div><figcaption>Kerala Fashion League, 2017<span>04</span></figcaption></div></figure>
+  <figure class="print"><div class="in"><div class="ph"><img fetchpriority="low" decoding="async" src="work/p5.jpg" alt="Shruti Mahajan with a model wearing her design" style="object-position:center 82%"></div><figcaption>Shruti with her design, Kerala Fashion League<span>01</span></figcaption></div></figure>
+  <figure class="print"><div class="in"><div class="ph"><img fetchpriority="low" decoding="async" src="work/p2.jpg" alt="A designer walks the runway beside a model"></div><figcaption>On the runway, 2016<span>02</span></figcaption></div></figure>
+  <figure class="print"><div class="in"><div class="ph"><img fetchpriority="low" decoding="async" src="work/p3.jpg" alt="A model in a printed blue gown"></div><figcaption>Printed silk gown, 2016<span>03</span></figcaption></div></figure>
+  <figure class="print"><div class="in"><div class="ph"><img fetchpriority="low" decoding="async" src="work/p4.jpg" alt="A model in an embellished floral lehenga"></div><figcaption>Kerala Fashion League, 2017<span>04</span></figcaption></div></figure>
   <figure class="print you"><div class="in"><span>Your work,<br><em>next.</em></span></div></figure>
  </div>
  <div class="tape2" id="tape2"><div class="strip" id="strip2"></div></div><div class="mark2" id="mark2"></div>
@@ -413,25 +425,26 @@ nav .links a{color:var(--ink);text-decoration:none}
   </div>
  </div>
 </section>
-<section class="sec game" id="game" aria-label="A small game">
- <p class="eyebrow">Before you go</p>
- <h2 class="rv" id="gh">Can you thread <em>the needle?</em></h2>
- <p class="sub rv" id="gsub">Guide the thread through the eye. It's the first thing every tailor learns.</p>
- <a class="cta fill won" href="https://wa.me/919353562706?text=Hi%2C%20I%20just%20threaded%20the%20needle%20on%20your%20website%20%F0%9F%A7%B5" target="_blank" rel="noopener">Book your first class on WhatsApp</a>
- <div class="gbox" id="gbox"><canvas id="gcv" aria-label="Thread the needle game: move the thread through the needle's eye"></canvas>
-  <span class="ghud" id="ghud">Tries: 0</span><span class="ghint" id="ghint">Drag the thread to the needle</span>
-  <div class="gwin" id="gwin"><button type="button" id="gagain">Play again</button></div></div>
-</section>
 <section class="closing" aria-label="Get in touch">
- <h2 class="rv">Your first measurement is <em>one message away.</em></h2>
- <p class="rv">Tell us which course you're thinking about. Shruti or the team will reply on WhatsApp.</p>
- <a class="cta fill rv" href="https://wa.me/919353562706" target="_blank" rel="noopener">Connect on WhatsApp</a>
+ <div class="ctext">
+  <h2 class="rv">Your first measurement is <em>one message away.</em></h2>
+  <p class="rv">Tell us which course you're thinking about. Shruti or the team will reply on WhatsApp.</p>
+  <a class="cta fill rv" href="https://wa.me/919353562706" target="_blank" rel="noopener">Connect on WhatsApp</a>
+ </div>
+ <div class="needle-game rv" id="ngame">
+  <div class="nghead"><span>Before you go · <b>Can you thread the needle?</b></span><span id="ngtries">Tries 0</span></div>
+  <div class="ngbox" id="ngbox"><canvas id="ng3d" aria-label="Thread the needle: move the thread through the needle's eye"></canvas><canvas id="ngfx" aria-hidden="true"></canvas>
+   <span class="nghint" id="nghint">Drag the thread through the eye</span>
+   <div class="ngdone" id="ngdone"><b id="ngres">Threaded!</b><span id="ngsub"></span></div></div>
+  <div class="ngfoot"><button type="button" id="ngagain">Play again</button><a id="ngwa" href="https://wa.me/919353562706?text=Hi%2C%20I%20just%20threaded%20the%20needle%20on%20your%20website%20%F0%9F%A7%B5" target="_blank" rel="noopener">Book your first class</a></div>
+ </div>
 </section>
 <footer class="foot"><span>Teaching Threads Fashion Academy · Hubballi, Karnataka</span><span><a href="tel:+919353562706">93535 62706</a> · Instagram <span class="tbc" style="border-color:rgba(243,241,236,.3);color:rgba(243,241,236,.6)">link</span></span><span>© 2026</span></footer>
 
 <div class="switch"><span>Tape</span><button data-tape="paper">White</button><button data-tape="ink">Black</button></div>
 
 <script src="https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/environments/RoomEnvironment.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/loaders/GLTFLoader.js"></script>
 <script>
 /* load one of the page's own data files: each is a script that calls window.__got(name, data) */
@@ -931,115 +944,114 @@ requestAnimationFrame(frame);
 })();
 </script>
 <script>
-/* Thread the needle. The thread is a light rope (verlet); its tip follows the pointer with a little lag, so fast
-   flicks overshoot. The needle sways. Crossing the needle's line inside the eye threads it; crossing the metal
-   is blocked and counts as a try. Collision is worked out in the needle's own frame (it tilts as it sways). */
+/* Thread the needle (in the footer). The needle is a 3D steel needle, built in code so its eye is a real hole:
+   a needle-shaped outline with an eye cut out, extruded and heavily bevelled so it is round in section, lit by a
+   studio environment. It stays still. The thread is a light rope worked out in screen pixels; its tip follows the
+   pointer a little behind. It is drawn as a 3D tube just in front of the needle, and once threaded the part at
+   the eye sits in the needle's plane, so it is seen passing through the hole. Crossing the needle's centre line
+   inside the eye threads it; anywhere else on the metal it is blocked and counts a try. Threading ends the game
+   (confetti, result) until Play again. */
 (function () {
-  const box = document.getElementById('gbox'), cv = document.getElementById('gcv'), ctx = cv.getContext('2d');
-  const hud = document.getElementById('ghud'), hint = document.getElementById('ghint'), win = document.getElementById('gwin');
-  const sec = document.getElementById('game'), gh = document.getElementById('gh'), gsub = document.getElementById('gsub');
-  const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  let W = 1, H = 1, dpr = 1, S = 1;           // S: scale for phones
-  const N = 44, SEG = 8;
-  let P = [], Q = [];                          // rope points now / before
-  let px = 0, py = 0, tx = 0, ty = 0, active = false, touch = false;
-  let tries = 0, lastMiss = 0, threaded = false, pinK = -1, t0 = 0, tWin = 0, shake = 0, used = false;
-  function size() { const r = box.getBoundingClientRect(); dpr = Math.min(devicePixelRatio || 1, 2); W = r.width; H = r.height;
-    cv.width = W * dpr; cv.height = H * dpr; S = W < 600 ? .8 : 1; }
-  function reset() {
-    const x0 = W * .18, y0 = H * .72; P = []; Q = [];
-    for (let i = 0; i < N; i++) { const p = [x0 - i * SEG * .7, y0 + i * SEG * .5]; P.push(p.slice()); Q.push(p.slice()); }
-    tx = px = x0; ty = py = y0; tries = 0; threaded = false; pinK = -1; t0 = 0; used = false;
-    hud.textContent = 'Tries: 0'; hint.style.opacity = 1; win.classList.remove('on'); sec.classList.remove('done');
-    gh.innerHTML = 'Can you thread <em>the needle?</em>'; gsub.textContent = "Guide the thread through the eye. It's the first thing every tailor learns.";
-  }
-  // the needle: eye centre (cx, cy), tilt a; the shaft runs from 70px above the eye to H*.5 below it
-  function needle(t) { const sw = RM ? 0 : 1;
-    return { cx: W * .58 + Math.sin(t * .62) * 34 * S * sw + (shake > 0 ? Math.sin(t * 60) * shake * 6 : 0), cy: H * .3 + Math.sin(t * .9) * 10 * S * sw,
-      a: Math.sin(t * .45) * .1 * sw, eh: 46 * S, ew: 10 * S, sw: 18 * S, top: 34 * S, len: H * .56 }; }
-  const toLocal = (n, x, y) => { const dx = x - n.cx, dy = y - n.cy, c = Math.cos(-n.a), s = Math.sin(-n.a); return [dx * c - dy * s, dx * s + dy * c]; };
-  const toWorld = (n, x, y) => { const c = Math.cos(n.a), s = Math.sin(n.a); return [n.cx + x * c - y * s, n.cy + x * s + y * c]; };
-  function pos(e) { const r = box.getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top - (e.pointerType === 'touch' ? 46 : 0)]; }
-  box.addEventListener('pointerdown', e => { active = true; touch = e.pointerType === 'touch'; [tx, ty] = pos(e); box.setPointerCapture(e.pointerId); if (!t0) t0 = performance.now(); used = true; hint.style.opacity = 0; });
-  box.addEventListener('pointermove', e => { if (e.pointerType === 'mouse' || active) { [tx, ty] = pos(e); if (e.pointerType === 'mouse' && !t0) { t0 = performance.now(); } if (!used && e.pointerType === 'mouse') { used = true; hint.style.opacity = 0; } } });
-  box.addEventListener('pointerup', () => { active = false; });
-  document.getElementById('gagain').addEventListener('click', e => { e.stopPropagation(); reset(); });
-
-  function step(t) {
-    const n = needle(t);
-    // tip follows the pointer, a little behind
+  const game = document.getElementById('ngame'), box = document.getElementById('ngbox'), cv = document.getElementById('ng3d'), fx = document.getElementById('ngfx'), fctx = fx.getContext('2d');
+  const triesEl = document.getElementById('ngtries'), hint = document.getElementById('nghint'), resEl = document.getElementById('ngres'), subEl = document.getElementById('ngsub');
+  const R = new THREE.WebGLRenderer({ canvas: cv, antialias: true, alpha: true }); R.setPixelRatio(Math.min(devicePixelRatio, 2)); R.outputEncoding = THREE.sRGBEncoding;
+  R.toneMapping = THREE.ACESFilmicToneMapping; R.toneMappingExposure = 1.05;
+  const S = new THREE.Scene(), C = new THREE.PerspectiveCamera(22, 1, .1, 100); C.position.set(0, 0, 14);
+  const pm = new THREE.PMREMGenerator(R); S.environment = pm.fromScene(new THREE.RoomEnvironment(), .04).texture;
+  S.add(new THREE.AmbientLight(0xffffff, .15)); const key = new THREE.DirectionalLight(0xffffff, 1.4); key.position.set(-3, 4, 6); S.add(key);
+  // ---- the needle: outline with the eye as a hole, in needle units (length ~ 8.6, shaft 0.2 wide) ----
+  const NW = .2, HEAD = .62, EYE_H = .72, EYE_W = .1, LEN = 7.6;
+  const sh = new THREE.Shape();
+  sh.moveTo(0, -LEN);                                                          // the point
+  sh.bezierCurveTo(.02, -LEN + .6, NW / 2, -LEN + 2.4, NW / 2, -LEN + 3.4);      // long taper
+  sh.lineTo(NW / 2, -.75);
+  sh.bezierCurveTo(NW / 2, -.55, NW * .62, -.45, NW * .62, -.1);                // slightly wider at the eye
+  sh.lineTo(NW * .62, HEAD - .2); sh.bezierCurveTo(NW * .62, HEAD, NW * .3, HEAD + .1, 0, HEAD + .1);
+  sh.bezierCurveTo(-NW * .3, HEAD + .1, -NW * .62, HEAD, -NW * .62, HEAD - .2); sh.lineTo(-NW * .62, -.1);
+  sh.bezierCurveTo(-NW * .62, -.45, -NW / 2, -.55, -NW / 2, -.75);
+  sh.lineTo(-NW / 2, -LEN + 3.4); sh.bezierCurveTo(-NW / 2, -LEN + 2.4, -.02, -LEN + .6, 0, -LEN);
+  const eye = new THREE.Path(); { const hw = EYE_W / 2 + .035, hh = EYE_H / 2 + .035;   // cut a little wider: the bevel closes it in
+    eye.moveTo(0, -hh); eye.bezierCurveTo(hw, -hh, hw, -hh * .6, hw, 0); eye.bezierCurveTo(hw, hh * .6, hw, hh, 0, hh);
+    eye.bezierCurveTo(-hw, hh, -hw, hh * .6, -hw, 0); eye.bezierCurveTo(-hw, -hh * .6, -hw, -hh, 0, -hh); }
+  sh.holes.push(eye);
+  const geo = new THREE.ExtrudeGeometry(sh, { depth: .04, bevelEnabled: true, bevelThickness: .085, bevelSize: .034, bevelSegments: 10, curveSegments: 48 });
+  geo.translate(0, 0, -.02); geo.computeVertexNormals();
+  const steel = new THREE.MeshPhysicalMaterial({ color: 0xd4d6d8, metalness: 1, roughness: .16, clearcoat: .6, clearcoatRoughness: .1, envMapIntensity: 1.25 });
+  const needle = new THREE.Mesh(geo, steel); const ng = new THREE.Group(); ng.add(needle); S.add(ng);
+  ng.rotation.set(0, .22, .13);                                                  // fixed pose: a slight lean, turned a touch so the steel catches light
+  // ---- thread ----
+  const threadMat = new THREE.MeshStandardMaterial({ color: 0x7d100b, roughness: .85, envMapIntensity: .25 });
+  const thread = new THREE.Mesh(new THREE.BufferGeometry(), threadMat); S.add(thread);
+  let W = 1, H = 1, dpr = 1, scale = 1;
+  const N = 46, SEG = 8; let P = [], Q = [];
+  let tx = 0, ty = 0, active = false, isTouch = false, tries = 0, lastMiss = 0, done = false, pinK = -1, t0 = 0, used = false;
+  const plane = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0), ray = new THREE.Raycaster(), v2 = new THREE.Vector2(), tmp = new THREE.Vector3();
+  function size() { const r = box.getBoundingClientRect(); W = r.width; H = r.height; dpr = Math.min(devicePixelRatio || 1, 2);
+    R.setSize(W, H, false); fx.width = W * dpr; fx.height = H * dpr; C.aspect = W / H;
+    // keep the needle big: fit its height (and width on phones) in view
+    C.position.z = W < 600 ? 15.5 : 13; C.updateProjectionMatrix();
+    ng.position.set(W < 600 ? .35 : .45, W < 600 ? 1.45 : 1.05, 0); ng.updateMatrixWorld(true); scale = W < 600 ? .85 : 1; }
+  const toWorld = (x, y, z = 0) => { v2.set(x / W * 2 - 1, -(y / H) * 2 + 1); ray.setFromCamera(v2, C); plane.constant = -z; ray.ray.intersectPlane(plane, tmp); return tmp.clone(); };
+  const toScreen = v => { const p = v.clone().project(C); return [(p.x + 1) / 2 * W, (1 - p.y) / 2 * H]; };
+  const inv = new THREE.Matrix4();
+  const local = (x, y) => { inv.copy(ng.matrixWorld).invert(); return toWorld(x, y).applyMatrix4(inv); };   // pointer in the needle's own frame
+  const fromLocal = (x, y) => toScreen(new THREE.Vector3(x, y, 0).applyMatrix4(ng.matrixWorld));
+  function reset() { const x0 = W * .2, y0 = H * .78; P = []; Q = [];
+    for (let i = 0; i < N; i++) { const p = [x0 - i * SEG * .8, y0 + i * SEG * .4]; P.push(p.slice()); Q.push(p.slice()); }
+    tx = x0; ty = y0; tries = 0; done = false; pinK = -1; t0 = 0; used = false; parts.length = 0;
+    triesEl.textContent = 'Tries 0'; hint.style.opacity = 1; game.classList.remove('won'); }
+  function pos(e) { const r = box.getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top - (e.pointerType === 'touch' ? 48 : 0)]; }
+  box.addEventListener('pointerdown', e => { if (done) return; active = true; isTouch = e.pointerType === 'touch'; [tx, ty] = pos(e); box.setPointerCapture(e.pointerId); if (!t0) t0 = performance.now(); used = true; hint.style.opacity = 0; });
+  box.addEventListener('pointermove', e => { if (done) return; if (e.pointerType === 'mouse' || active) { [tx, ty] = pos(e); if (!t0) t0 = performance.now(); if (!used) { used = true; hint.style.opacity = 0; } } });
+  addEventListener('pointerup', () => { active = false; });
+  document.getElementById('ngagain').addEventListener('click', reset);
+  // ---- confetti ----
+  const parts = [], COLS = ['#b3261e', '#F3F1EC', '#c9a227', '#e8b4a8', '#8d8a83'];
+  function burst(x, y) { for (let i = 0; i < 90; i++) { const a = Math.random() * Math.PI * 2, sp = 3 + Math.random() * 7;
+    parts.push({ x, y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 4, r: Math.random() * 6.28, vr: (Math.random() - .5) * .4, w: 6 + Math.random() * 6, h: 3 + Math.random() * 4, c: COLS[i % COLS.length], life: 1 }); } }
+  function step() {
     const ox = P[0][0], oy = P[0][1];
-    let nx = ox + (tx - ox) * .28, ny = oy + (ty - oy) * .28;
-    nx = Math.max(4, Math.min(W - 4, nx)); ny = Math.max(4, Math.min(H - 4, ny));
-    if (!threaded) {
-      const a = toLocal(n, ox, oy), b = toLocal(n, nx, ny);
-      if (a[0] * b[0] < 0) {                          // the tip crosses the needle's line
-        const k = a[0] / (a[0] - b[0]), y = a[1] + (b[1] - a[1]) * k;
-        if (Math.abs(y) < n.eh / 2 - 2) {             // through the eye
-          threaded = true; pinK = 3; tWin = performance.now();
-          const secs = ((tWin - (t0 || tWin)) / 1000).toFixed(1), tr = tries + 1;
-          gh.innerHTML = 'Threaded in ' + tr + (tr === 1 ? ' try.' : ' tries.') + ' <em>You have the hands for this.</em>';
-          gsub.textContent = 'That took you ' + secs + ' seconds. Class one starts with exactly this.';
-          sec.classList.add('done'); setTimeout(() => win.classList.add('on'), 900);
-        } else if (y > -n.top && y < n.len) {          // into the metal: blocked
-          const side = Math.sign(a[0]) || 1, back = toWorld(n, side * (n.sw / 2 + 3), y);
-          nx = back[0]; ny = back[1];
-          const now = performance.now(); if (now - lastMiss > 450) { tries++; hud.textContent = 'Tries: ' + tries; shake = 1; } lastMiss = now;
+    let nx = ox, ny = oy;
+    if (!done) { nx = ox + (tx - ox) * .3; ny = oy + (ty - oy) * .3; nx = Math.max(4, Math.min(W - 4, nx)); ny = Math.max(4, Math.min(H - 4, ny));
+      const a = local(ox, oy), b = local(nx, ny);
+      if (a.x * b.x < 0) {
+        const k = a.x / (a.x - b.x), y = a.y + (b.y - a.y) * k;
+        if (Math.abs(y) < EYE_H / 2 - .06) {                          // through the eye: the game ends here
+          done = true; pinK = 2; const secs = ((performance.now() - (t0 || performance.now())) / 1000).toFixed(1), tr = tries + 1;
+          resEl.textContent = 'Threaded in ' + tr + (tr === 1 ? ' try!' : ' tries!'); subEl.textContent = secs + ' seconds. You have the hands for this.';
+          game.classList.add('won'); const e = fromLocal(0, 0); burst(e[0], e[1]);
+        } else if (y > -LEN && y < HEAD + .12) {                         // the metal stops it
+          const side = Math.sign(a.x) || 1, back = fromLocal(side * (NW * .75), y); nx = back[0]; ny = back[1];
+          const now = performance.now(); if (now - lastMiss > 450) { tries++; triesEl.textContent = 'Tries ' + tries; } lastMiss = now;
         }
       }
     }
     P[0][0] = nx; P[0][1] = ny; Q[0][0] = nx; Q[0][1] = ny;
-    // the rest of the thread: verlet, light gravity
-    for (let i = 1; i < N; i++) { const p = P[i], q = Q[i], vx = (p[0] - q[0]) * .96, vy = (p[1] - q[1]) * .96; q[0] = p[0]; q[1] = p[1]; p[0] += vx; p[1] += vy + .28; }
-    for (let it = 0; it < 10; it++) {
+    for (let i = 1; i < N; i++) { const p = P[i], q = Q[i], vx = (p[0] - q[0]) * .96, vy = (p[1] - q[1]) * .96; q[0] = p[0]; q[1] = p[1]; p[0] += vx; p[1] += vy + .3; }
+    if (done) { const p = P[0], q = Q[0], vx = (p[0] - q[0]) * .96, vy = (p[1] - q[1]) * .96; q[0] = p[0]; q[1] = p[1]; p[0] += vx; p[1] += vy + .3; }   // the tip falls free once threaded
+    const eyeS = fromLocal(0, 0);
+    for (let it = 0; it < 12; it++) {
       for (let i = 0; i < N - 1; i++) { const a = P[i], b = P[i + 1], dx = b[0] - a[0], dy = b[1] - a[1], d = Math.hypot(dx, dy) || 1, k = (d - SEG) / d * .5;
-        if (i === 0) { b[0] -= dx * k * 2; b[1] -= dy * k * 2; } else { a[0] += dx * k; a[1] += dy * k; b[0] -= dx * k; b[1] -= dy * k; } }
-      if (threaded) { const e = toWorld(n, 0, 0); P[pinK][0] = e[0]; P[pinK][1] = e[1]; }   // held by the eye
-      for (const p of P) { p[1] = Math.min(H - 3, p[1]); p[0] = Math.max(-40, Math.min(W + 40, p[0])); }
+        if (i === 0 && !done) { b[0] -= dx * k * 2; b[1] -= dy * k * 2; } else { a[0] += dx * k; a[1] += dy * k; b[0] -= dx * k; b[1] -= dy * k; } }
+      if (done) { P[pinK][0] = eyeS[0]; P[pinK][1] = eyeS[1]; }
+      for (const p of P) { p[1] = Math.min(H - 4, p[1]); p[0] = Math.max(-60, Math.min(W + 60, p[0])); }
     }
-    shake *= .9;
-    return n;
   }
-  function drawNeedle(n, front) {
-    ctx.save(); ctx.translate(n.cx, n.cy); ctx.rotate(n.a);
-    const w = n.sw / 2, g = ctx.createLinearGradient(-w, 0, w, 0);
-    g.addColorStop(0, '#8e8a83'); g.addColorStop(.35, '#f2f0eb'); g.addColorStop(.6, '#bdb9b1'); g.addColorStop(1, '#7c7871');
-    if (!front) {
-      ctx.fillStyle = 'rgba(0,0,0,.08)'; ctx.beginPath(); ctx.ellipse(10, n.len * .5, w * 1.2, n.len * .55, 0, 0, Math.PI * 2); ctx.fill();   // soft shadow
-      ctx.fillStyle = g; ctx.beginPath();
-      ctx.moveTo(-w * .9, -n.top); ctx.quadraticCurveTo(0, -n.top - w * 1.6, w * .9, -n.top);   // rounded head
-      ctx.lineTo(w, n.len * .55); ctx.lineTo(0, n.len); ctx.lineTo(-w, n.len * .55); ctx.closePath(); ctx.fill();
-      ctx.globalCompositeOperation = 'destination-out'; ctx.beginPath(); ctx.ellipse(0, 0, n.ew / 2, n.eh / 2, 0, 0, Math.PI * 2); ctx.fill();   // the eye is a hole
-      ctx.globalCompositeOperation = 'source-over';
-      ctx.strokeStyle = 'rgba(60,56,50,.35)'; ctx.lineWidth = 1; ctx.beginPath(); ctx.ellipse(0, 0, n.ew / 2, n.eh / 2, 0, 0, Math.PI * 2); ctx.stroke();
-    } else {
-      // once threaded, the eye's sides are drawn again over the thread so it reads as going through
-      ctx.fillStyle = g; ctx.beginPath(); ctx.rect(-w, -n.eh / 2 - 2, w - n.ew / 2, n.eh + 4); ctx.rect(n.ew / 2, -n.eh / 2 - 2, w - n.ew / 2, n.eh + 4); ctx.fill();
-    }
-    ctx.restore();
+  function buildThread() {
+    const pts = P.map((p, i) => toWorld(p[0], p[1], done && Math.abs(i - pinK) <= 1 ? 0 : .32));   // in front of the needle, except where it goes through the eye
+    const g = new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), N * 3, .036, 8, false); thread.geometry.dispose(); thread.geometry = g;
   }
-  function drawThread() {
-    ctx.lineCap = 'round'; ctx.lineJoin = 'round';
-    ctx.strokeStyle = '#141414'; ctx.lineWidth = 2.4 * S; ctx.beginPath(); ctx.moveTo(P[0][0], P[0][1]);
-    for (let i = 1; i < N - 1; i++) { const mx = (P[i][0] + P[i + 1][0]) / 2, my = (P[i][1] + P[i + 1][1]) / 2; ctx.quadraticCurveTo(P[i][0], P[i][1], mx, my); }
-    ctx.stroke();
-    // a frayed tip
-    const [x, y] = P[0], dx = P[0][0] - P[1][0], dy = P[0][1] - P[1][1], d = Math.hypot(dx, dy) || 1, ux = dx / d, uy = dy / d;
-    ctx.lineWidth = .9; ctx.strokeStyle = 'rgba(20,20,20,.75)';
-    for (const sp of [-.5, 0, .45]) { ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x + (ux * Math.cos(sp) - uy * Math.sin(sp)) * 6, y + (ux * Math.sin(sp) + uy * Math.cos(sp)) * 6); ctx.stroke(); }
-  }
+  function drawFx() { fctx.setTransform(dpr, 0, 0, dpr, 0, 0); fctx.clearRect(0, 0, W, H);
+    for (let i = parts.length - 1; i >= 0; i--) { const c = parts[i]; c.vy += .22; c.vx *= .985; c.x += c.vx; c.y += c.vy; c.r += c.vr; c.life -= .008;
+      if (c.life <= 0 || c.y > H + 20) { parts.splice(i, 1); continue; }
+      fctx.save(); fctx.globalAlpha = Math.min(1, c.life * 1.6); fctx.translate(c.x, c.y); fctx.rotate(c.r); fctx.fillStyle = c.c; fctx.fillRect(-c.w / 2, -c.h / 2, c.w, c.h); fctx.restore(); }
+    if (!isTouch && !done) { fctx.strokeStyle = 'rgba(243,241,236,.35)'; fctx.lineWidth = 1; fctx.beginPath(); fctx.arc(tx, ty, 9, 0, Math.PI * 2); fctx.stroke(); } }
   let on = false;
   new IntersectionObserver(es => { on = es[0].isIntersecting; if (on) requestAnimationFrame(frame); }, { threshold: .05 }).observe(box);
-  function frame(now) {
-    if (!on) return; requestAnimationFrame(frame);
-    const t = now / 1000, n = step(t);
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, W, H);
-    drawNeedle(n, false); drawThread(); if (threaded) drawNeedle(n, true);
-    // a small cursor ring where the pointer is (desktop)
-    if (!touch) { ctx.strokeStyle = 'rgba(20,20,20,.35)'; ctx.lineWidth = 1; ctx.beginPath(); ctx.arc(tx, ty, 9, 0, Math.PI * 2); ctx.stroke(); }
-  }
+  function frame() { if (!on) return; requestAnimationFrame(frame); step(); buildThread(); R.render(S, C); drawFx(); }
   addEventListener('resize', () => { size(); reset(); });
   size(); reset();
+  window.__ng = { local, fromLocal, get done() { return done; } };   // used by the screenshot tests
 })();
 </script>
 </body>
