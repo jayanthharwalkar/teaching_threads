@@ -248,6 +248,20 @@ nav .links a{color:var(--ink);text-decoration:none}
  .foot{padding:22px 22px 80px}
 }
 @media (prefers-reduced-motion:reduce){.rv{opacity:1;transform:none;transition:none}}
+
+/* ================= the game: thread the needle ================= */
+.game{padding-bottom:12vh}
+.game .sub{margin-top:18px;max-width:44ch;font-size:clamp(17px,1.4vw,20px);line-height:1.5;color:var(--body)}
+.gbox{position:relative;margin-top:44px;height:min(64vh,620px);border-radius:22px;background:#F3F1EC;box-shadow:0 30px 60px -44px rgba(0,0,0,.4);overflow:hidden;touch-action:none;cursor:none}
+.gbox canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.ghud{position:absolute;left:22px;top:18px;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);pointer-events:none}
+.ghint{position:absolute;left:50%;bottom:22px;transform:translateX(-50%);padding:8px 14px;border-radius:999px;background:rgba(20,20,20,.85);color:#f3f1ec;font-size:11px;letter-spacing:.16em;text-transform:uppercase;pointer-events:none;white-space:nowrap;transition:opacity .5s}
+.gwin{position:absolute;right:22px;top:16px;display:flex;gap:10px;opacity:0;pointer-events:none;transition:opacity .5s}
+.gwin.on{opacity:1;pointer-events:auto}
+.gwin button{background:none;border:1px solid var(--ink);padding:9px 16px;font:400 13px var(--sans);cursor:pointer;color:var(--ink)}
+.game .won{display:none;margin-top:22px}
+.game.done .won{display:inline-block}
+@media (max-width:900px){.gbox{height:58vh;margin-top:30px}}
 </style>
 </head>
 <body>
@@ -398,6 +412,15 @@ nav .links a{color:var(--ink);text-decoration:none}
    <a class="cta fill open" href="https://www.google.com/maps/search/Teaching+Threads+Hubballi" target="_blank" rel="noopener">Open in Google Maps</a>
   </div>
  </div>
+</section>
+<section class="sec game" id="game" aria-label="A small game">
+ <p class="eyebrow">Before you go</p>
+ <h2 class="rv" id="gh">Can you thread <em>the needle?</em></h2>
+ <p class="sub rv" id="gsub">Guide the thread through the eye. It's the first thing every tailor learns.</p>
+ <a class="cta fill won" href="https://wa.me/919353562706?text=Hi%2C%20I%20just%20threaded%20the%20needle%20on%20your%20website%20%F0%9F%A7%B5" target="_blank" rel="noopener">Book your first class on WhatsApp</a>
+ <div class="gbox" id="gbox"><canvas id="gcv" aria-label="Thread the needle game: move the thread through the needle's eye"></canvas>
+  <span class="ghud" id="ghud">Tries: 0</span><span class="ghint" id="ghint">Drag the thread to the needle</span>
+  <div class="gwin" id="gwin"><button type="button" id="gagain">Play again</button></div></div>
 </section>
 <section class="closing" aria-label="Get in touch">
  <h2 class="rv">Your first measurement is <em>one message away.</em></h2>
@@ -905,6 +928,118 @@ requestAnimationFrame(frame);
   if (path) { const L = path.getTotalLength(); path.style.strokeDasharray = L; path.style.strokeDashoffset = L;
     const draw = () => { const r = box.getBoundingClientRect(), k = Math.min(1, Math.max(0, (innerHeight * .9 - r.top) / (innerHeight * .55))); path.style.strokeDashoffset = L * (1 - k); };
     addEventListener('scroll', draw, { passive: true }); draw(); }
+})();
+</script>
+<script>
+/* Thread the needle. The thread is a light rope (verlet); its tip follows the pointer with a little lag, so fast
+   flicks overshoot. The needle sways. Crossing the needle's line inside the eye threads it; crossing the metal
+   is blocked and counts as a try. Collision is worked out in the needle's own frame (it tilts as it sways). */
+(function () {
+  const box = document.getElementById('gbox'), cv = document.getElementById('gcv'), ctx = cv.getContext('2d');
+  const hud = document.getElementById('ghud'), hint = document.getElementById('ghint'), win = document.getElementById('gwin');
+  const sec = document.getElementById('game'), gh = document.getElementById('gh'), gsub = document.getElementById('gsub');
+  const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let W = 1, H = 1, dpr = 1, S = 1;           // S: scale for phones
+  const N = 44, SEG = 8;
+  let P = [], Q = [];                          // rope points now / before
+  let px = 0, py = 0, tx = 0, ty = 0, active = false, touch = false;
+  let tries = 0, lastMiss = 0, threaded = false, pinK = -1, t0 = 0, tWin = 0, shake = 0, used = false;
+  function size() { const r = box.getBoundingClientRect(); dpr = Math.min(devicePixelRatio || 1, 2); W = r.width; H = r.height;
+    cv.width = W * dpr; cv.height = H * dpr; S = W < 600 ? .8 : 1; }
+  function reset() {
+    const x0 = W * .18, y0 = H * .72; P = []; Q = [];
+    for (let i = 0; i < N; i++) { const p = [x0 - i * SEG * .7, y0 + i * SEG * .5]; P.push(p.slice()); Q.push(p.slice()); }
+    tx = px = x0; ty = py = y0; tries = 0; threaded = false; pinK = -1; t0 = 0; used = false;
+    hud.textContent = 'Tries: 0'; hint.style.opacity = 1; win.classList.remove('on'); sec.classList.remove('done');
+    gh.innerHTML = 'Can you thread <em>the needle?</em>'; gsub.textContent = "Guide the thread through the eye. It's the first thing every tailor learns.";
+  }
+  // the needle: eye centre (cx, cy), tilt a; the shaft runs from 70px above the eye to H*.5 below it
+  function needle(t) { const sw = RM ? 0 : 1;
+    return { cx: W * .58 + Math.sin(t * .62) * 34 * S * sw + (shake > 0 ? Math.sin(t * 60) * shake * 6 : 0), cy: H * .3 + Math.sin(t * .9) * 10 * S * sw,
+      a: Math.sin(t * .45) * .1 * sw, eh: 46 * S, ew: 10 * S, sw: 18 * S, top: 34 * S, len: H * .56 }; }
+  const toLocal = (n, x, y) => { const dx = x - n.cx, dy = y - n.cy, c = Math.cos(-n.a), s = Math.sin(-n.a); return [dx * c - dy * s, dx * s + dy * c]; };
+  const toWorld = (n, x, y) => { const c = Math.cos(n.a), s = Math.sin(n.a); return [n.cx + x * c - y * s, n.cy + x * s + y * c]; };
+  function pos(e) { const r = box.getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top - (e.pointerType === 'touch' ? 46 : 0)]; }
+  box.addEventListener('pointerdown', e => { active = true; touch = e.pointerType === 'touch'; [tx, ty] = pos(e); box.setPointerCapture(e.pointerId); if (!t0) t0 = performance.now(); used = true; hint.style.opacity = 0; });
+  box.addEventListener('pointermove', e => { if (e.pointerType === 'mouse' || active) { [tx, ty] = pos(e); if (e.pointerType === 'mouse' && !t0) { t0 = performance.now(); } if (!used && e.pointerType === 'mouse') { used = true; hint.style.opacity = 0; } } });
+  box.addEventListener('pointerup', () => { active = false; });
+  document.getElementById('gagain').addEventListener('click', e => { e.stopPropagation(); reset(); });
+
+  function step(t) {
+    const n = needle(t);
+    // tip follows the pointer, a little behind
+    const ox = P[0][0], oy = P[0][1];
+    let nx = ox + (tx - ox) * .28, ny = oy + (ty - oy) * .28;
+    nx = Math.max(4, Math.min(W - 4, nx)); ny = Math.max(4, Math.min(H - 4, ny));
+    if (!threaded) {
+      const a = toLocal(n, ox, oy), b = toLocal(n, nx, ny);
+      if (a[0] * b[0] < 0) {                          // the tip crosses the needle's line
+        const k = a[0] / (a[0] - b[0]), y = a[1] + (b[1] - a[1]) * k;
+        if (Math.abs(y) < n.eh / 2 - 2) {             // through the eye
+          threaded = true; pinK = 3; tWin = performance.now();
+          const secs = ((tWin - (t0 || tWin)) / 1000).toFixed(1), tr = tries + 1;
+          gh.innerHTML = 'Threaded in ' + tr + (tr === 1 ? ' try.' : ' tries.') + ' <em>You have the hands for this.</em>';
+          gsub.textContent = 'That took you ' + secs + ' seconds. Class one starts with exactly this.';
+          sec.classList.add('done'); setTimeout(() => win.classList.add('on'), 900);
+        } else if (y > -n.top && y < n.len) {          // into the metal: blocked
+          const side = Math.sign(a[0]) || 1, back = toWorld(n, side * (n.sw / 2 + 3), y);
+          nx = back[0]; ny = back[1];
+          const now = performance.now(); if (now - lastMiss > 450) { tries++; hud.textContent = 'Tries: ' + tries; shake = 1; } lastMiss = now;
+        }
+      }
+    }
+    P[0][0] = nx; P[0][1] = ny; Q[0][0] = nx; Q[0][1] = ny;
+    // the rest of the thread: verlet, light gravity
+    for (let i = 1; i < N; i++) { const p = P[i], q = Q[i], vx = (p[0] - q[0]) * .96, vy = (p[1] - q[1]) * .96; q[0] = p[0]; q[1] = p[1]; p[0] += vx; p[1] += vy + .28; }
+    for (let it = 0; it < 10; it++) {
+      for (let i = 0; i < N - 1; i++) { const a = P[i], b = P[i + 1], dx = b[0] - a[0], dy = b[1] - a[1], d = Math.hypot(dx, dy) || 1, k = (d - SEG) / d * .5;
+        if (i === 0) { b[0] -= dx * k * 2; b[1] -= dy * k * 2; } else { a[0] += dx * k; a[1] += dy * k; b[0] -= dx * k; b[1] -= dy * k; } }
+      if (threaded) { const e = toWorld(n, 0, 0); P[pinK][0] = e[0]; P[pinK][1] = e[1]; }   // held by the eye
+      for (const p of P) { p[1] = Math.min(H - 3, p[1]); p[0] = Math.max(-40, Math.min(W + 40, p[0])); }
+    }
+    shake *= .9;
+    return n;
+  }
+  function drawNeedle(n, front) {
+    ctx.save(); ctx.translate(n.cx, n.cy); ctx.rotate(n.a);
+    const w = n.sw / 2, g = ctx.createLinearGradient(-w, 0, w, 0);
+    g.addColorStop(0, '#8e8a83'); g.addColorStop(.35, '#f2f0eb'); g.addColorStop(.6, '#bdb9b1'); g.addColorStop(1, '#7c7871');
+    if (!front) {
+      ctx.fillStyle = 'rgba(0,0,0,.08)'; ctx.beginPath(); ctx.ellipse(10, n.len * .5, w * 1.2, n.len * .55, 0, 0, Math.PI * 2); ctx.fill();   // soft shadow
+      ctx.fillStyle = g; ctx.beginPath();
+      ctx.moveTo(-w * .9, -n.top); ctx.quadraticCurveTo(0, -n.top - w * 1.6, w * .9, -n.top);   // rounded head
+      ctx.lineTo(w, n.len * .55); ctx.lineTo(0, n.len); ctx.lineTo(-w, n.len * .55); ctx.closePath(); ctx.fill();
+      ctx.globalCompositeOperation = 'destination-out'; ctx.beginPath(); ctx.ellipse(0, 0, n.ew / 2, n.eh / 2, 0, 0, Math.PI * 2); ctx.fill();   // the eye is a hole
+      ctx.globalCompositeOperation = 'source-over';
+      ctx.strokeStyle = 'rgba(60,56,50,.35)'; ctx.lineWidth = 1; ctx.beginPath(); ctx.ellipse(0, 0, n.ew / 2, n.eh / 2, 0, 0, Math.PI * 2); ctx.stroke();
+    } else {
+      // once threaded, the eye's sides are drawn again over the thread so it reads as going through
+      ctx.fillStyle = g; ctx.beginPath(); ctx.rect(-w, -n.eh / 2 - 2, w - n.ew / 2, n.eh + 4); ctx.rect(n.ew / 2, -n.eh / 2 - 2, w - n.ew / 2, n.eh + 4); ctx.fill();
+    }
+    ctx.restore();
+  }
+  function drawThread() {
+    ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    ctx.strokeStyle = '#141414'; ctx.lineWidth = 2.4 * S; ctx.beginPath(); ctx.moveTo(P[0][0], P[0][1]);
+    for (let i = 1; i < N - 1; i++) { const mx = (P[i][0] + P[i + 1][0]) / 2, my = (P[i][1] + P[i + 1][1]) / 2; ctx.quadraticCurveTo(P[i][0], P[i][1], mx, my); }
+    ctx.stroke();
+    // a frayed tip
+    const [x, y] = P[0], dx = P[0][0] - P[1][0], dy = P[0][1] - P[1][1], d = Math.hypot(dx, dy) || 1, ux = dx / d, uy = dy / d;
+    ctx.lineWidth = .9; ctx.strokeStyle = 'rgba(20,20,20,.75)';
+    for (const sp of [-.5, 0, .45]) { ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x + (ux * Math.cos(sp) - uy * Math.sin(sp)) * 6, y + (ux * Math.sin(sp) + uy * Math.cos(sp)) * 6); ctx.stroke(); }
+  }
+  let on = false;
+  new IntersectionObserver(es => { on = es[0].isIntersecting; if (on) requestAnimationFrame(frame); }, { threshold: .05 }).observe(box);
+  function frame(now) {
+    if (!on) return; requestAnimationFrame(frame);
+    const t = now / 1000, n = step(t);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, W, H);
+    drawNeedle(n, false); drawThread(); if (threaded) drawNeedle(n, true);
+    // a small cursor ring where the pointer is (desktop)
+    if (!touch) { ctx.strokeStyle = 'rgba(20,20,20,.35)'; ctx.lineWidth = 1; ctx.beginPath(); ctx.arc(tx, ty, 9, 0, Math.PI * 2); ctx.stroke(); }
+  }
+  addEventListener('resize', () => { size(); reset(); });
+  size(); reset();
 })();
 </script>
 </body>
