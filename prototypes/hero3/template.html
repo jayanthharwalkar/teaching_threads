@@ -411,6 +411,12 @@ nav .links a{color:var(--ink);text-decoration:none}
 <script src="https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/loaders/GLTFLoader.js"></script>
 <script>
+/* load one of the page's own data files: each is a script that calls window.__got(name, data) */
+window.__wait={};window.__got=(k,v)=>{const w=__wait[k];if(w){delete __wait[k];w[0](v)}};
+window.loadData=(k,url)=>new Promise((ok,no)=>{__wait[k]=[ok,no];const sc=document.createElement('script');sc.src=url;sc.async=true;
+ sc.onerror=()=>{delete __wait[k];no(new Error('could not load '+url))};document.head.appendChild(sc)});
+</script>
+<script>
 (()=>{
 const $=id=>document.getElementById(id);
 const pin=$('pin'),cv=$('gl'),panel=$('panel'),band=$('band'),end=$('end');
@@ -685,7 +691,7 @@ addEventListener('scroll',readScroll,{passive:true});readScroll();pp=target;
 /* ---------- load the form (parsed in place: the page can't fetch) ---------- */
 let ready=false,t0=0;setTape('paper');
 // the model is its own file (base64 in JSON: the host won't serve .glb), so the page paints first
-fetch('model/dress-form.json').then(r=>r.json()).then(j=>{const glbBin=Uint8Array.from(atob(j.b64),c=>c.charCodeAt(0));
+loadData('model','model/dress-form.js').then(b64=>{const glbBin=Uint8Array.from(atob(b64),c=>c.charCodeAt(0));
 new THREE.GLTFLoader().parse(glbBin.buffer,'',g=>{const torso=g.scene;torso.traverse(c=>{if(c.isMesh)c.material=clay});form.add(torso);
  const r0=form.rotation.y;form.rotation.y=0;form.updateMatrixWorld(true);buildTable(torso);form.rotation.y=r0;
  ready=true;t0=performance.now();cv.classList.add('ready');$('loading').remove()},
@@ -816,7 +822,7 @@ requestAnimationFrame(frame);
     for (const s of shots) {
       if (!s.dataset.seq) continue;
       const clip = s.dataset.seq.split('/')[1];
-      try { loadShot(s, await (await fetch('stages/' + clip + '.json')).json()); } catch (e) { console.warn('frames', clip, e); }
+      try { loadShot(s, await loadData(clip, 'stages/' + clip + '.js')); } catch (e) { console.warn('frames', clip, e); }
     }
   }
   const trigger = document.getElementById('s2') || sec;
